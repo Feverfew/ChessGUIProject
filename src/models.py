@@ -90,12 +90,21 @@ class Board(object):
                     legal_moves.append(move)
             return legal_moves
         if isinstance(piece, Rook):
-            pass
+            for move in piece.possible_moves:
+                if self.field[move[0]][move[1]]:
+                    pass
+                else:
+                    pass
             
 
-    def is_in_check(self, colour):
+    def is_in_check(self, colour, possible_board):
         """Checks if the king of the corresponding colour is in check."""
         king_coords = get_king_coords(colour)
+        for x in range(8):
+            for y in range(8):
+                if isinstance(possible_board[x][y], Piece) and possible_board[x][y].colour != colour:
+                    pass
+        
         
 
     def __repr__(self):
