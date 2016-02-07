@@ -17,6 +17,7 @@ class Board(object):
 
 
     def new_board(self):
+        """Creates a new fresh board"""
         self.field = []
         # Black side of the board
         row = [
@@ -70,6 +71,7 @@ class Board(object):
         self.field.append(row)
 
     def move_piece(self, old_x, old_y, new_x, new_y):
+        """Moves a piece on the board"""
         self.field[new_x][new_y] = self.field[old_x][old_y]
         self.field[old_x][old_y] = 0
         self.move_logger.start.append([old_x, old_y])
@@ -83,9 +85,11 @@ class Board(object):
                     return [x, y]
 
     def get_legal_moves(self, piece):
+        """Get all the legal moves of a piece and return them"""
         legal_moves = []
         if isinstance(piece, King):
             for move in piece.possible_moves:
+                # If there is no piece on that part of the board...
                 if not self.field[move[0]][move[1]]:
                     legal_moves.append(move)
             return legal_moves
@@ -95,7 +99,9 @@ class Board(object):
                     pass
                 else:
                     pass
-            
+   
+    def get_attacking_moves(self, piece):
+        pass
 
     def is_in_check(self, colour, possible_board):
         """Checks if the king of the corresponding colour is in check."""
@@ -114,6 +120,10 @@ class Board(object):
                 output += str(field)
             output += "\n"
         return output
+
+class MoveValidator(object):
+    """Contains functions that validates moves"""
+    pass
 
 class MoveLogger(object):
 
