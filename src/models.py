@@ -84,7 +84,7 @@ class Board(object):
                 if isinstance(self.field[x][y], King) and self.field[x][y].colour == colour:
                     return [x, y]
 
-    def get_legal_moves(self, piece):
+    def calculate_legal_moves(self, piece):
         """Get all the legal moves of a piece and return them"""
         legal_moves = []
         if isinstance(piece, King):
@@ -111,8 +111,8 @@ class Board(object):
         illegal_moves = []
         def get_legal_moves():
             for move in piece.possible_moves:
-                if move not in 
-            pass
+                if move not in illegal_moves:
+                    legal_moves.append(move)
         if isinstance(piece, Rook):
             for move in piece.possible_moves:
                 if self.field[move[0]][move[1]]:
@@ -252,11 +252,6 @@ class Board(object):
             if piece.colour == "White":
                 pass
 
-
-        
-            
-                        
-
     def is_in_check(self, colour, possible_board):
         """Checks if the king of the corresponding colour is in check."""
         king_coords = get_king_coords(colour)
@@ -264,8 +259,6 @@ class Board(object):
             for y in range(8):
                 if isinstance(possible_board[x][y], Piece) and possible_board[x][y].colour != colour:
                     pass
-        
-        
 
     def __repr__(self):
         output = ""
@@ -305,7 +298,14 @@ class Piece(object):
         self.colour = colour
         self.has_moved = has_moved
         self.possible_moves = []
+
+        @property
+        def position(self):
+            return self.position
         
+        @position.setter
+        def position(self):
+            self.calculate_possible_moves()
 
     def calculate_possible_moves(self):
         """
