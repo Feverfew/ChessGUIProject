@@ -19,7 +19,7 @@ class Board(object):
 
     def new_board(self):
         """Creates a new fresh board"""
-        self.field = []
+        self.board = []
         # Black side of the board
         row = [
             Rook([0,0], "Black"),
@@ -31,7 +31,7 @@ class Board(object):
             Knight([0,6], "Black"),
             Rook([0,7], "Black")
         ]
-        self.field.append(row)
+        self.board.append(row)
         row = [
             Pawn([1,0], "Black"),
             Pawn([1,1], "Black"),
@@ -42,11 +42,11 @@ class Board(object):
             Pawn([1,6], "Black"),
             Pawn([1,7], "Black")
         ]
-        self.field.append(row)
+        self.board.append(row)
         # Add empty space
         for i in range(4):
             row = [0 for x in range(8)]
-            self.field.append(row)
+            self.board.append(row)
         # Add white pieces
         row = [
             Pawn([6,0], "White"),
@@ -58,7 +58,7 @@ class Board(object):
             Pawn([6,6], "White"),
             Pawn([6,7], "White")
         ]
-        self.field.append(row)
+        self.board.append(row)
         row = [
             Rook([7,0], "White"),
             Knight([7,1], "White"),
@@ -69,11 +69,11 @@ class Board(object):
             Knight([7,6], "White"),
             Rook([7,7], "White")
         ]
-        self.field.append(row)
+        self.board.append(row)
 
     def move_piece(self, board, old_coords, new_coords):
         """Moves a piece on the board"""
-        board[new_coords[0]][new_coords[1]] = self.field[old_coords[0]][old_coords[1]]
+        board[new_coords[0]][new_coords[1]] = self.board[old_coords[0]][old_coords[1]]
         board[old_coords[0]][old_coords[1]] = 0
         return board
 
@@ -81,7 +81,7 @@ class Board(object):
         """Finds the coords of the king depending on  its colour"""
         for x in range(8):
             for y in range(8):
-                if isinstance(self.field[x][y], King) and self.field[x][y].colour == colour:
+                if isinstance(self.board[x][y], King) and self.board[x][y].colour == colour:
                     return [x, y]
 
     def calculate_legal_moves(self, piece):
@@ -89,7 +89,7 @@ class Board(object):
         possible_legal_moves = self.calculate_legal_moves(piece)
         illegal_moves = []
         for move in possible_legal_moves:
-            possible_board = self.move_piece(self.field, piece.position, move)
+            possible_board = self.move_piece(self.board, piece.position, move)
             if self.is_in_check(piece.color, possible_board):
                 illegal_moves.append(move)
 
@@ -110,7 +110,7 @@ class Board(object):
         if isinstance(piece, Rook):
             for move in piece.possible_moves:
                 # If there is a piece in the way
-                if self.field[move[0]][move[1]]:
+                if self.board[move[0]][move[1]]:
                     # If piece in the way is above
                     if piece.position[0] > move[0]:
                         # Then it cannot influence anything above that piece
@@ -138,7 +138,7 @@ class Board(object):
             return get_legal_moves()
         elif isinstance(piece, Bishop):
             for move in piece.possible_moves:
-                if self.field[move[0]][move[1]]:
+                if self.board[move[0]][move[1]]:
                     counter = 0
                     on_edge = False
                     # If piece in the way is north-west
@@ -182,7 +182,7 @@ class Board(object):
         # This function is a combination of Rook and Bishop
         elif isinstance(piece, Queen):
             for move in possible_moves:
-                if self.field[move[0]][move[1]]:
+                if self.board[move[0]][move[1]]:
                     counter = 0
                     on_edge = False
                     # If piece in the way is above
@@ -274,7 +274,7 @@ class Board(object):
 
     def __repr__(self):
         output = ""
-        for row in self.field:
+        for row in self.board:
             for field in row:
                 output += str(field)
             output += "\n"
@@ -299,7 +299,7 @@ class MoveLogger(object):
 def test():
     board = Board()
     print(board)
-    board.move_piece(board.field, 6, 4, 4, 4)
+    board.move_piece(board.board, [6, 4], [4, 4])
     print(board)
     print(board.get_king_coords("White"))
     print(board.get_king_coords("Black"))
