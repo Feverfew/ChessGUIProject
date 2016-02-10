@@ -107,12 +107,12 @@ class Board(object):
         this shows you what the pieces can force a check while the other functions
         tells you whether the piece can move there.
         """
-        legal_moves = []
+        legal_attacking_moves = []
         illegal_moves = []
         def get_legal_moves():
             for move in piece.possible_moves:
                 if move not in illegal_moves:
-                    legal_moves.append(move)
+                    legal_attacking_moves.append(move)
         if isinstance(piece, Rook):
             for move in piece.possible_moves:
                 if self.field[move[0]][move[1]]:
