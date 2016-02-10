@@ -71,12 +71,11 @@ class Board(object):
         ]
         self.field.append(row)
 
-    def move_piece(self, old_x, old_y, new_x, new_y):
+    def move_piece(self, board, old_coords, new_coords):
         """Moves a piece on the board"""
-        self.field[new_x][new_y] = self.field[old_x][old_y]
-        self.field[old_x][old_y] = 0
-        self.move_logger.start.append([old_x, old_y])
-        self.move_logger.end.append([new_x, new_y])
+        board[new_coords[0]][new_coords[1]] = self.field[old_coords[0]][old_coords[1]]
+        board[old_coords[0]][old_coords[1]] = 0
+        return board
 
     def get_king_coords(self, colour):
         """Finds the coords of the king depending on  its colour"""
@@ -87,20 +86,13 @@ class Board(object):
 
     def calculate_legal_moves(self, piece):
         """Get all the legal moves of a piece and return them"""
-        legal_moves = []
-        if isinstance(piece, King):
-            for move in piece.possible_moves:
-                # If there is no piece on that part of the board...
-                if not self.field[move[0]][move[1]]:
-                    legal_moves.append(move)
-            return legal_moves
-        elif isinstance(piece, Rook):
-            for move in piece.possible_moves:
-                if self.field[move[0]][move[1]]:
-                    pass
-                else:
-                    pass
-   
+        possible_legal_moves = self.calculate_legal_moves(piece)
+        illegal_moves = []
+        for move in possible_legal_moves:
+            possible_board = self.move_piece(self.field, piece.position, move)
+            if self.is_in_check(piece.color, possible_board):
+                illegal_moves.append(move)
+
     def get_attacking_moves(self, piece):
         """
         Get all the attacking moves of a piece and return them.
@@ -263,6 +255,10 @@ class Board(object):
                 legal_moves.append([piece.position[1]+1, piece.position[1]+1])
                 legal_moves.append([piece.position[1]+1, piece.position[1]-1])
             return legal_moves
+        elif isinstance(piece, Knight):
+            return piece.possible_moves
+        else:
+            return legal_moves
         
 
     def is_in_check(self, colour, possible_board):
@@ -271,7 +267,10 @@ class Board(object):
         for x in range(8):
             for y in range(8):
                 if isinstance(possible_board[x][y], Piece) and possible_board[x][y].colour != colour:
-                    pass
+                    if king_coords in self.get_attacking_moves(possible_board[x][y]):
+                        return True
+        return False
+                    
 
     def __repr__(self):
         output = ""
@@ -300,12 +299,10 @@ class MoveLogger(object):
 def test():
     board = Board()
     print(board)
-    board.move_piece(6, 4, 4, 4)
+    board.move_piece(board.field, 6, 4, 4, 4)
     print(board)
     print(board.get_king_coords("White"))
     print(board.get_king_coords("Black"))
-    print(board.move_logger.start)
-    print(board.move_logger.end)
     print('\n')
     bishop = Bishop([5, 5], "White")
     bishop.calculate_possible_moves()
