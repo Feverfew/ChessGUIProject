@@ -1,3 +1,4 @@
+from pieces import *
 __author__ = "Alexander Saoutkin"
 
 class Board(object):
@@ -107,46 +108,49 @@ class Board(object):
         this shows you what the pieces can force a check while the other functions
         tells you whether the piece can move there.
         """
-        legal_attacking_moves = []
+        legal_moves = []
         illegal_moves = []
         def get_legal_moves():
             for move in piece.possible_moves:
                 if move not in illegal_moves:
-                    legal_attacking_moves.append(move)
+                    legal_moves.append(move)
+            return legal_moves
         if isinstance(piece, Rook):
             for move in piece.possible_moves:
+                # If there is a piece in the way
                 if self.field[move[0]][move[1]]:
-                    # If piece in the way is on the left side
-                    if piece.position[0] < move[0]:
-                        # Then it cannot influence anything left of it...
+                    # If piece in the way is above
+                    if piece.position[0] > move[0]:
+                        # Then it cannot influence anything above that piece
                         for i in range(move[0]+1):
                             if [i, move[1]] not in illegal_moves:
                                 illegal_moves.append([i, move[1]])
-                    # If piece in the way is on the right side
-                    elif piece.position[0] > move[0]:
-                        # Then it cannot influence anything right of it...
+                    # If piece in the way is below
+                    elif piece.position[0] < move[0]:
+                        # Then it cannot influence anything below that piece
                         for i in range(7, move[0]-1, -1):
                             if [i, move[1]] not in illegal_moves:
                                 illegal_moves.append([i, move[1]])
-                    # If piece in the way is above
-                    elif piece.position[1] < move[1]:
-                        # Then it cannot influence anything above that piece
+                    # If piece in the way is to the left
+                    elif piece.position[1] > move[1]:
+                        # Then it cannot influence anything to the left
                         for i in range(move[1]+1):
                             if [move[1], i] not in illegal_moves:
                                 illegal_moves.append([move[0], i])
-                    # If piece in the way is bellow
-                    elif piece.position[1] > move[1]:
-                        # Then it cannot influence anything below that piece
+                    # If piece in the way is to the right
+                    elif piece.position[1] < move[1]:
+                        # Then it cannot influence anything to the right
                         for i in range(7, move[1]-1, -1):
                             if [move[1], i] not in illegal_moves:
                                 illegal_moves.append([move[0], i])
+            return get_legal_moves()
         elif isinstance(piece, Bishop):
             for move in piece.possible_moves:
                 if self.field[move[0]][move[1]]:
                     counter = 0
                     on_edge = False
                     # If piece in the way is north-west
-                    if piece.position[0] < move[0] and piece.position[1] < move[1]:
+                    if piece.position[0] > move[0] and piece.position[1] > move[1]:
                         # Then it cannot influence anything north-west
                         while not on_edge:
                             counter += 1
@@ -155,7 +159,7 @@ class Board(object):
                             if move[0]-counter is 0 or move[1]-counter is 0:
                                 on_edge = True
                     # If piece in the way is north-east
-                    elif piece.position[0] < move[0] and piece.position[1] > move[1]:
+                    elif piece.position[0] > move[0] and piece.position[1] < move[1]:
                         # Then it cannot influence anything north-east
                         while not on_edge:
                             counter += 1
@@ -164,7 +168,7 @@ class Board(object):
                             if move[0]-counter is 0 or move[1]+counter is 7:
                                 on_edge = True
                     # If piece in the way is south-west
-                    elif piece.position[0] > move[0] and piece.position[1] < move[1]:
+                    elif piece.position[0] < move[0] and piece.position[1] > move[1]:
                         # Then it cannot influence anything south-west
                         while not on_edge:
                             counter += 1
@@ -173,7 +177,7 @@ class Board(object):
                             if move[0]+counter is 7 or move[1]-counter is 0:
                                 on_edge = True
                     # If piece in the way is south-east
-                    elif piece.position[0] > move[0] and piece.position[1] > move[1]:
+                    elif piece.position[0] < move[0] and piece.position[1] < move[1]:
                         # Then it cannot influence anything south-east
                         while not on_edge:
                             counter += 1
@@ -182,37 +186,39 @@ class Board(object):
                             illegal_moves.append([move[0]+counter, move[1]+counter])
                             if move[0]+counter is 7 or move[1]+counter is 7:
                                 on_edge = True
+            return get_legal_moves()
+        # This function is a combination of Rook and Bishop
         elif isinstance(piece, Queen):
             for move in possible_moves:
                 if self.field[move[0]][move[1]]:
                     counter = 0
                     on_edge = False
-                    # If piece in the way is on the left side
-                    if piece.position[0] < move[0] and piece.position[1] == move[1]:
-                        # Then it cannot influence anything left of it...
+                    # If piece in the way is above
+                    if piece.position[0] > move[0] and piece.position[1] == move[1]:
+                        # Then it cannot influence anything above it
                         for i in range(move[0]+1):
                             if [i, move[1]] not in illegal_moves:
                                 illegal_moves.append([i, move[1]])
-                    # If piece in the way is on the right side
-                    elif piece.position[0] > move[0] and piece.position[1] == move[1]:
-                        # Then it cannot influence anything right of it...
+                    # If piece in the way is below
+                    elif piece.position[0] < move[0] and piece.position[1] == move[1]:
+                        # Then it cannot influence below it...
                         for i in range(7, move[0]-1, -1):
                             if [i, move[1]] not in illegal_moves:
                                 illegal_moves.append([i, move[1]])
-                    # If piece in the way is above
-                    elif piece.position[1] < move[1] and piece.position[0] == move[0]:
-                        # Then it cannot influence anything above that piece
+                    # If piece in the way is to the left
+                    elif piece.position[1] > move[1] and piece.position[0] == move[0]:
+                        # Then it cannot influence anything to the left of it
                         for i in range(move[1]+1):
                             if [move[1], i] not in illegal_moves:
                                 illegal_moves.append([move[0], i])
-                    # If piece in the way is bellow
-                    elif piece.position[1] > move[1] and piece.position[0] == move[0]:
-                        # Then it cannot influence anything below that piece
+                    # If piece in the way is to the right
+                    elif piece.position[1] < move[1] and piece.position[0] == move[0]:
+                        # Then it cannot influence anything to the right of it
                         for i in range(7, move[1]-1, -1):
                             if [move[1], i] not in illegal_moves:
                                 illegal_moves.append([move[0], i])
-                    # If piece in the way is north-west
-                    elif piece.position[0] < move[0] and piece.position[1] < move[1]:
+                   # If piece in the way is north-west
+                    elif piece.position[0] > move[0] and piece.position[1] > move[1]:
                         # Then it cannot influence anything north-west
                         while not on_edge:
                             counter += 1
@@ -221,7 +227,7 @@ class Board(object):
                             if move[0]-counter is 0 or move[1]-counter is 0:
                                 on_edge = True
                     # If piece in the way is north-east
-                    elif piece.position[0] < move[0] and piece.position[1] > move[1]:
+                    elif piece.position[0] > move[0] and piece.position[1] < move[1]:
                         # Then it cannot influence anything north-east
                         while not on_edge:
                             counter += 1
@@ -230,7 +236,7 @@ class Board(object):
                             if move[0]-counter is 0 or move[1]+counter is 7:
                                 on_edge = True
                     # If piece in the way is south-west
-                    elif piece.position[0] > move[0] and piece.position[1] < move[1]:
+                    elif piece.position[0] < move[0] and piece.position[1] > move[1]:
                         # Then it cannot influence anything south-west
                         while not on_edge:
                             counter += 1
@@ -239,7 +245,7 @@ class Board(object):
                             if move[0]+counter is 7 or move[1]-counter is 0:
                                 on_edge = True
                     # If piece in the way is south-east
-                    elif piece.position[0] > move[0] and piece.position[1] > move[1]:
+                    elif piece.position[0] < move[0] and piece.position[1] < move[1]:
                         # Then it cannot influence anything south-east
                         while not on_edge:
                             counter += 1
@@ -248,9 +254,16 @@ class Board(object):
                             illegal_moves.append([move[0]+counter, move[1]+counter])
                             if move[0]+counter is 7 or move[1]+counter is 7:
                                 on_edge = True
+            return get_legal_moves()
         elif isinstance(piece, Pawn):
             if piece.colour == "White":
-                pass
+                legal_moves.append([piece.position[0]-1, piece.position[1]-1])
+                legal_moves.append([piece.position[1]-1, piece.position[1]+1])
+            elif piece.colour == "Black":
+                legal_moves.append([piece.position[1]+1, piece.position[1]+1])
+                legal_moves.append([piece.position[1]+1, piece.position[1]-1])
+            return legal_moves
+        
 
     def is_in_check(self, colour, possible_board):
         """Checks if the king of the corresponding colour is in check."""
@@ -283,233 +296,6 @@ class MoveLogger(object):
         """
         self.start = start
         self.end = end
-        
-
-
-class Piece(object):
-    """Base class for chess pieces"""
-
-    def __init__(self, position, colour, has_moved=False):
-        """"
-        :param coords: Coordinates on the board
-        :type coords: list (with only two elements)
-        """
-        self.position = position
-        self.colour = colour
-        self.has_moved = has_moved
-        self.possible_moves = []
-
-        @property
-        def position(self):
-            return self.position
-        
-        @position.setter
-        def position(self):
-            self.calculate_possible_moves()
-
-    def calculate_possible_moves(self):
-        """
-        Shows us the coords it can go to assuming
-        that there are no other pieces on the board
-        :param x: x coordinate of the piece
-        :type x: int
-        :param y: y coordinate of the piece
-        :type y: int
-        """
-        raise NotImplementedError
-
-
-class Rook(Piece):
-    """Class for a Rook"""
-
-    def calculate_possible_moves(self):
-        self.possible_moves = []
-        for i in range(8):
-            if self.position[1] != i:
-                self.possible_moves.append([self.position[0], i])
-            if self.position[0] != i:
-                self.possible_moves.append([i, self.position[1]])
-        
-
-    def __str__(self):
-        return 'R'
-
-
-class Knight(Piece):
-    """Class for a Knight"""
-
-    def calculate_possible_moves(self):
-        self.possible_moves = []
-        potential_moves = []
-        potential_moves.append([self.position[0]+2, self.position[1]+1])
-        potential_moves.append([self.position[0]+2, self.position[1]-1])
-        potential_moves.append([self.position[0]-2, self.position[1]+1])
-        potential_moves.append([self.position[0]-2, self.position[1]-1])
-        potential_moves.append([self.position[0]+1, self.position[1]+2])
-        potential_moves.append([self.position[0]+1, self.position[1]-2])
-        potential_moves.append([self.position[0]-1, self.position[1]+2])
-        potential_moves.append([self.position[0]-1, self.position[1]-2])
-        for move in potential_moves:
-            if move[0] <= 7 and move [0] >= 0 and move[1] <= 7 and move[1] >= 0:
-                self.possible_moves.append(move)
-            
-                
-            
-
-    def __str__(self):
-        return 'N'
-
-
-class Bishop(Piece):
-    """Class for a Bishop"""
-
-    def calculate_possible_moves(self):
-        self.possible_moves = []
-        on_edge = False
-        counter = 0
-        # Dont' bother iterating to the right if already on the edge
-        if self.position[0] is 7 or self.position[1] is 7:
-            on_edge = True
-        # Find all positions diagonally  to south-east.
-        while not on_edge:
-            counter += 1
-            self.possible_moves.append([self.position[0]+counter, self.position[1]+counter])
-            if self.position[0]+counter is 7 or self.position[1]+counter is 7:
-                on_edge = True
-        counter = 0
-        on_edge = False
-        # Dont' bother iterating to the right if already on the edge
-        if self.position[0] is 0 or self.position[1] is 0:
-            on_edge = True
-        # Find all positions diagonally to north-west
-        while not on_edge:
-            counter += 1
-            self.possible_moves.append([self.position[0]-counter, self.position[1]-counter])
-            if self.position[0]-counter is 0 or self.position[1]-counter is 0:
-                on_edge = True
-        counter = 0
-        on_edge = False
-        # Find all positions diagonally to north-east
-        if self.position[0] is 0 or self.position[1] is 7:
-            on_edge = True
-        while not on_edge:
-            counter +=1
-            self.possible_moves.append([self.position[0]-counter, self.position[1]+counter])
-            if self.position[0]-counter is 0 or self.position[1]+counter is 7:
-                on_edge = True
-        counter = 0
-        on_edge = False
-        # Find all positions diagonally to south-west
-        if self.position[0] is 7 or self.position[1] is 0:
-            on_edge = True
-        while not on_edge:
-            counter +=1
-            self.possible_moves.append([self.position[0]+counter, self.position[1]-counter])
-            if self.position[0]+counter is 7 or self.position[1]-counter is 0:
-                on_edge = True                
-    
-    def __str__(self):
-        return 'B'
-
-
-class Queen(Piece):
-    """Class for a Queen"""
-
-    def calculate_possible_moves(self):
-        self.possible_moves = []
-        on_edge = False
-        counter = 0
-        # Do not bother iterating if already on the edge
-        if self.position[0] is 7 or self.position[1] is 7:
-            on_edge = True
-        # Find all positions diagonally  to south-east.
-        while not on_edge:
-            counter += 1
-            self.possible_moves.append([self.position[0]+counter, self.position[1]+counter])
-            if self.position[0]+counter is 7 or self.position[1]+counter is 7:
-                on_edge = True
-        counter = 0
-        on_edge = False
-        if self.position[0] is 0 or self.position[1] is 0:
-            on_edge = True
-        # Find all positions diagonally to north-west
-        while not on_edge:
-            counter += 1
-            self.possible_moves.append([self.position[0]-counter, self.position[1]-counter])
-            if self.position[0]-counter is 0 or self.position[1]-counter is 0:
-                on_edge = True
-        counter = 0
-        on_edge = False
-        # Find all positions diagonally to north-east
-        if self.position[0] is 0 or self.position[1] is 7:
-            on_edge = True
-        while not on_edge:
-            counter +=1
-            self.possible_moves.append([self.position[0]-counter, self.position[1]+counter])
-            if self.position[0]-counter is 0 or self.position[1]+counter is 7:
-                on_edge = True
-        counter = 0
-        on_edge = False
-        # Find all positions diagonally to south-west
-        if self.position[0] is 7 or self.position[1] is 0:
-            on_edge = True
-        while not on_edge:
-            counter +=1
-            self.possible_moves.append([self.position[0]+counter, self.position[1]-counter])
-            if self.position[0]+counter is 7 or self.position[1]-counter is 0:
-                on_edge = True
-        # Find all positions horizontally and vertically
-        for i in range(8):
-            if self.position[1] != i:
-                self.possible_moves.append([self.position[0], i])
-            if self.position[0] != i:
-                self.possible_moves.append([i, self.position[1]])
-    
-    def __str__(self):
-        return 'Q'
-
-
-class King(Piece):
-    """Class for a King"""
-
-    def calculate_possible_moves(self):
-        self.possible_moves.clear()
-        potential_moves = []
-        potential_moves.append([self.position[0]+1, self.position[1]+1])
-        potential_moves.append([self.position[0]+1, self.position[1]-1])
-        potential_moves.append([self.position[0]+1, self.position[1]])
-        potential_moves.append([self.position[0]-1, self.position[1]+1])
-        potential_moves.append([self.position[0]-1, self.position[1]-1])
-        potential_moves.append([self.position[0]-1, self.position[1]])
-        potential_moves.append([self.position[0], self.position[1]+1])
-        potential_moves.append([self.position[0], self.position[1]-1])
-        for move in potential_moves:
-            if move[0] <= 7 and move [0] >= 0 and move[1] <= 7 and move[1] >= 0:
-                self.possible_moves.append(move)    
-        if not self.has_moved:
-            pass
-
-    def can_castle(self):
-        pass
-        
-    def __str__(self):
-        return 'K'
-
-
-class Pawn(Piece):
-    """Class for a Pawn"""
-
-    def calculate_possible_moves(self):
-        self.possible_moves.clear()
-        if self.colour == "White":
-            self.possible_moves.append([self.position[0]-1, self.position[1]])
-        else:
-            self.possible_moves.append([self.position[0]+1, self.position[1]])
-
-        
-    
-    def __str__(self):
-        return 'P'
 
 def test():
     board = Board()
