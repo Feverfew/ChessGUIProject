@@ -13,6 +13,7 @@ class Board(object):
         self.move_num = 1
         self.is_checkmate = False
         self.is_stalemate = False
+        self.game_over = False
         self.player_one = player_one
         self.player_two = player_two
         self.move_logger = MoveLogger()
@@ -75,9 +76,13 @@ class Board(object):
 
     def move_piece(self, board, old_coords, new_coords):
         """Moves a piece on the board"""
-        board[new_coords[0]][new_coords[1]] = self.board[old_coords[0]][old_coords[1]]
-        board[old_coords[0]][old_coords[1]] = 0
-        return board
+        if not game_over:
+            board[new_coords[0]][new_coords[1]] = self.board[old_coords[0]][old_coords[1]]
+            board[old_coords[0]][old_coords[1]] = 0
+            self.move_num += 1
+            if self.is_checkmate(board[new_coords[0]][new_coords[1]].colour) or self.is_in_check(colour, self.board):
+                self.game_over = True
+            return board
 
     def get_king_coords(self, colour):
         """Finds the coords of the king depending on  its colour"""
@@ -268,10 +273,26 @@ class Board(object):
             return legal_moves
         
     def is_checkmate(self, colour):
-        pass
+        """Finds out if the a player has been checkmated"""
+        if self.is_in_check(colour, self.board):
+            for row in self.board:
+                for piece in row:
+                    if self.calculate_legal_moves(piece):
+                        return False
+            return True
+        else:
+            return False
 
     def is_stalemate(self, colour):
-        pass
+        """Finds out if the game in """
+        if not self.is_in_check("White", self.board) and not self.is_in_check("Black", self.board):
+            for row in self.board:
+                for piece in row:
+                    if self.calculate_legal_moves(piece):
+                        return False
+            return True
+        else:
+            return False
 
     def is_in_check(self, colour, possible_board):
         """Checks if the king of the corresponding colour is in check."""
