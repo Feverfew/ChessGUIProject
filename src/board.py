@@ -11,6 +11,8 @@ class Board(object):
         """
         self.turn = "White"
         self.move_num = 1
+        self.is_checkmate = False
+        self.is_stalemate = False
         self.player_one = player_one
         self.player_two = player_two
         self.move_logger = MoveLogger()
@@ -86,12 +88,17 @@ class Board(object):
 
     def calculate_legal_moves(self, piece):
         """Get all the legal moves of a piece and return them"""
-        possible_legal_moves = self.calculate_legal_moves(piece)
+        possible_legal_moves = self.get_attacking_moves(piece)
         illegal_moves = []
+        legal_moves = []
         for move in possible_legal_moves:
             possible_board = self.move_piece(self.board, piece.position, move)
             if self.is_in_check(piece.color, possible_board):
                 illegal_moves.append(move)
+        for move in possible_legal_moves:
+            if move not in illegal_moves:
+                legal_moves.append(move)
+        return legal_moves
 
     def get_attacking_moves(self, piece):
         """
@@ -260,6 +267,11 @@ class Board(object):
         else:
             return legal_moves
         
+    def is_checkmate(self, colour):
+        pass
+
+    def is_stalemate(self, colour):
+        pass
 
     def is_in_check(self, colour, possible_board):
         """Checks if the king of the corresponding colour is in check."""
