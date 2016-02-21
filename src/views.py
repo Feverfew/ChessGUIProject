@@ -54,13 +54,11 @@ class ChessBoard(object):
         self.submit_btn = QtGui.QPushButton(self.horizontalLayoutWidget_2)
         self.submit_btn.setObjectName("submit_btn")
         self.horizontalLayout_2.addWidget(self.submit_btn)
-        self.chess_board = QtGui.QTableView(Form)
+        self.chess_board = QtGui.QTableWidget(Form)
         self.chess_board.setGeometry(QtCore.QRect(10, 50, 640, 640))
-        self.chess_board.setAutoFillBackground(False)
-        self.chess_board.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
-        self.chess_board.setEditTriggers(QtGui.QAbstractItemView.NoEditTriggers)
-        self.chess_board.setTabKeyNavigation(False)
         self.chess_board.setObjectName("chess_board")
+        self.chess_board.setColumnCount(0)
+        self.chess_board.setRowCount(0)
 
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
@@ -70,3 +68,4 @@ class ChessBoard(object):
         self.player_one_label.setText(QtGui.QApplication.translate("Form", "Player 1:", None, QtGui.QApplication.UnicodeUTF8))
         self.player_two_label.setText(QtGui.QApplication.translate("Form", "Player 2:", None, QtGui.QApplication.UnicodeUTF8))
         self.submit_btn.setText(QtGui.QApplication.translate("Form", "Submit Move", None, QtGui.QApplication.UnicodeUTF8))
+
