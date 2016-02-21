@@ -40,7 +40,10 @@ class Rook(Piece):
         
 
     def __str__(self):
-        return 'R'
+        if self.colour == "White":
+            return '♖'
+        else:
+            return '♜'
 
 
 class Knight(Piece):
@@ -65,7 +68,10 @@ class Knight(Piece):
             
 
     def __str__(self):
-        return 'N'
+        if self.colour == "White":
+            return '♘'
+        else:
+            return '♞'
 
 
 class Bishop(Piece):
@@ -117,7 +123,10 @@ class Bishop(Piece):
                 on_edge = True                
     
     def __str__(self):
-        return 'B'
+        if self.colour == "White":
+            return '♗'
+        else:
+            return '♝'
 
 
 class Queen(Piece):
@@ -174,7 +183,10 @@ class Queen(Piece):
                 self.possible_moves.append([i, self.position[1]])
     
     def __str__(self):
-        return 'Q'
+        if self.colour == "White":
+            return '♕'
+        else:
+            return '♛'
 
 
 class King(Piece):
@@ -201,7 +213,10 @@ class King(Piece):
         pass
         
     def __str__(self):
-        return 'K'
+        if self.colour == "White":
+            return '♔'
+        else:
+            return '♚'
 
 
 class Pawn(Piece):
@@ -217,4 +232,7 @@ class Pawn(Piece):
         
     
     def __str__(self):
-        return 'P'
+        if self.colour == "White":
+            return '♙'
+        else:
+            return '♟'

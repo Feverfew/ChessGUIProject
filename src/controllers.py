@@ -15,3 +15,10 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
     def __init__(self):
         super(ChessBoardController, self).__init__()
         self.setupUi(self)
+        self.board = Board()
+
+    def intialise_board(self):
+        pass
+
+    def output_board(self):
+        pass

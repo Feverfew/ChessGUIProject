@@ -76,11 +76,11 @@ class Board(object):
 
     def move_piece(self, board, old_coords, new_coords):
         """Moves a piece on the board"""
-        if not game_over:
+        if not self.game_over:
             board[new_coords[0]][new_coords[1]] = self.board[old_coords[0]][old_coords[1]]
             board[old_coords[0]][old_coords[1]] = 0
             self.move_num += 1
-            if self.is_checkmate(board[new_coords[0]][new_coords[1]].colour) or self.is_in_check(colour, self.board):
+            if self.calculate_is_checkmate(board[new_coords[0]][new_coords[1]].colour) or self.is_in_check(board[new_coords[0]][new_coords[1]].colour, self.board):
                 self.game_over = True
             return board
 
@@ -193,7 +193,7 @@ class Board(object):
             return get_legal_moves()
         # This function is a combination of Rook and Bishop
         elif isinstance(piece, Queen):
-            for move in possible_moves:
+            for move in piece.possible_moves:
                 if self.board[move[0]][move[1]]:
                     counter = 0
                     on_edge = False
@@ -272,7 +272,7 @@ class Board(object):
         else:
             return legal_moves
         
-    def is_checkmate(self, colour):
+    def calculate_is_checkmate(self, colour):
         """Finds out if the a player has been checkmated"""
         if self.is_in_check(colour, self.board):
             for row in self.board:
@@ -283,7 +283,7 @@ class Board(object):
         else:
             return False
 
-    def is_stalemate(self, colour):
+    def calculate_is_stalemate(self, colour):
         """Finds out if the game in """
         if not self.is_in_check("White", self.board) and not self.is_in_check("Black", self.board):
             for row in self.board:
@@ -296,7 +296,7 @@ class Board(object):
 
     def is_in_check(self, colour, possible_board):
         """Checks if the king of the corresponding colour is in check."""
-        king_coords = get_king_coords(colour)
+        king_coords = self.get_king_coords(colour)
         for x in range(8):
             for y in range(8):
                 if isinstance(possible_board[x][y], Piece) and possible_board[x][y].colour != colour:
