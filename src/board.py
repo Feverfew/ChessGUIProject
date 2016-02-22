@@ -80,6 +80,10 @@ class Board(object):
             board[new_coords[0]][new_coords[1]] = self.board[old_coords[0]][old_coords[1]]
             board[old_coords[0]][old_coords[1]] = 0
             self.move_num += 1
+            if move_num % 2 == 0:
+                self.turn = "Black"
+            else:
+                self.turn = "White"
             if self.calculate_is_checkmate(board[new_coords[0]][new_coords[1]].colour) or self.is_in_check(board[new_coords[0]][new_coords[1]].colour, self.board):
                 self.game_over = True
             return board

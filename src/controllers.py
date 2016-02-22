@@ -1,4 +1,4 @@
-from PySide import QtCore, QtGui
+from PySide import QtGui, QtCore
 import views
 from board import Board
 
@@ -16,6 +16,8 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
         super(ChessBoardController, self).__init__()
         self.setupUi(self)
         self.board = Board()
+        self.from_cell = []
+        self.to_cell = []
         self.initialise_board()
         self.output_board()
 
@@ -38,6 +40,11 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
         for y in range(8):
             for x in range(8):
                 item = QtGui.QTableWidgetItem()
+                item.setSizeHint(QtCore.QSize(80, 80))
+                font = QtGui.QFont()
+                font.setPixelSize(80)
+                font.setFamily("Arial")
+                item.setFont(font)
                 if (x+y) % 2 == 0:
                     item.setBackground(QtGui.QBrush(QtGui.QColor(31, 177, 209))) # light
                 else:
