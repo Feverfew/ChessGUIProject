@@ -1,5 +1,4 @@
 __author__ = "Alexander Saoutkin"
-
 class Piece(object):
     """Base class for chess pieces"""
 
@@ -41,9 +40,9 @@ class Rook(Piece):
 
     def __str__(self):
         if self.colour == "White":
-            return '♖'
+            return '\u2656'
         else:
-            return '♜'
+            return '\u265C'
 
 
 class Knight(Piece):
@@ -69,9 +68,9 @@ class Knight(Piece):
 
     def __str__(self):
         if self.colour == "White":
-            return '♘'
+            return '\u2658'
         else:
-            return '♞'
+            return '\u265E'
 
 
 class Bishop(Piece):
@@ -124,9 +123,9 @@ class Bishop(Piece):
     
     def __str__(self):
         if self.colour == "White":
-            return '♗'
+            return '\u2657'
         else:
-            return '♝'
+            return '\u265D'
 
 
 class Queen(Piece):
@@ -184,9 +183,9 @@ class Queen(Piece):
     
     def __str__(self):
         if self.colour == "White":
-            return '♕'
+            return '\u2655'
         else:
-            return '♛'
+            return '\u265B'
 
 
 class King(Piece):
@@ -214,9 +213,9 @@ class King(Piece):
         
     def __str__(self):
         if self.colour == "White":
-            return '♔'
+            return '\u2654'
         else:
-            return '♚'
+            return '\u265A'
 
 
 class Pawn(Piece):
@@ -233,6 +232,6 @@ class Pawn(Piece):
     
     def __str__(self):
         if self.colour == "White":
-            return '♙'
+            return '\u2659'
         else:
-            return '♟'
+            return '\u265F'
