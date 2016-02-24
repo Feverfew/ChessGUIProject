@@ -102,10 +102,7 @@ class Board(object):
         legal_moves = []
         for move in possible_legal_moves:
             possible_board = self.move_piece(self.board, piece.position, move)
-            if self.is_in_check(piece.color, possible_board):
-                illegal_moves.append(move)
-        for move in possible_legal_moves:
-            if move not in illegal_moves:
+            if not self.is_in_check(piece.color, possible_board):
                 legal_moves.append(move)
         return legal_moves
 
