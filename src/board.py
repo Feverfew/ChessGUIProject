@@ -80,12 +80,13 @@ class Board(object):
             board[new_coords[0]][new_coords[1]] = self.board[old_coords[0]][old_coords[1]]
             board[old_coords[0]][old_coords[1]] = 0
             self.move_num += 1
-            if move_num % 2 == 0:
+            if self.move_num % 2 == 0:
                 self.turn = "Black"
             else:
                 self.turn = "White"
-            if self.calculate_is_checkmate(board[new_coords[0]][new_coords[1]].colour) or self.is_in_check(board[new_coords[0]][new_coords[1]].colour, self.board):
-                self.game_over = True
+            if isinstance(board[new_coords[0]][new_coords[1]], Piece):
+                if self.calculate_is_checkmate(board[new_coords[0]][new_coords[1]].colour) or self.is_in_check(board[new_coords[0]][new_coords[1]].colour, self.board):
+                    self.game_over = True
             return board
 
     def get_king_coords(self, colour):
@@ -102,7 +103,7 @@ class Board(object):
         legal_moves = []
         for move in possible_legal_moves:
             possible_board = self.move_piece(self.board, piece.position, move)
-            if not self.is_in_check(piece.color, possible_board):
+            if not self.is_in_check(piece.colour, possible_board):
                 legal_moves.append(move)
         return legal_moves
 
