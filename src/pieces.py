@@ -44,9 +44,9 @@ class Rook(Piece):
 
     def __str__(self):
         if self.colour == "White":
-            return '\u2656'
+            return 'WR'
         else:
-            return '\u265C'
+            return 'BR'
 
 
 class Knight(Piece):
@@ -75,9 +75,9 @@ class Knight(Piece):
 
     def __str__(self):
         if self.colour == "White":
-            return '\u2658'
+            return 'WN'
         else:
-            return '\u265E'
+            return 'BN'
 
 
 class Bishop(Piece):
@@ -133,9 +133,9 @@ class Bishop(Piece):
     
     def __str__(self):
         if self.colour == "White":
-            return '\u2657'
+            return 'WB'
         else:
-            return '\u265D'
+            return 'BB'
 
 
 class Queen(Piece):
@@ -196,9 +196,9 @@ class Queen(Piece):
     
     def __str__(self):
         if self.colour == "White":
-            return '\u2655'
+            return 'WQ'
         else:
-            return '\u265B'
+            return 'BQ'
 
 
 class King(Piece):
@@ -229,9 +229,9 @@ class King(Piece):
         
     def __str__(self):
         if self.colour == "White":
-            return '\u2654'
+            return 'WK'
         else:
-            return '\u265A'
+            return 'BK'
 
 
 class Pawn(Piece):
@@ -251,6 +251,6 @@ class Pawn(Piece):
     
     def __str__(self):
         if self.colour == "White":
-            return '\u2659'
+            return 'WP'
         else:
-            return '\u265F'
+            return 'BP'

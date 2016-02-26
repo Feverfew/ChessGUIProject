@@ -20,10 +20,13 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
         self.to_cell = []
         self.initialise_board()
         self.output_board()
-        self.chess_board.cellClicked.connect(self.table_clicked)
+        self.chess_board.itemClicked.connect(self.table_clicked)
 
     def enable_disable_buttons(self, legal_moves=[]):
         """Enable cells where there are pieces or if the move is legal"""
+        self.chess_board.clear()
+        self.chess_board.setRowCount(8)
+        self.chess_board.setColumnCount(8)
         for y in range(8):
             for x in range(8):
                 if self.board.board[y][x]:
@@ -45,12 +48,14 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
             self.chess_board.setItem(move[0], move[1], item)
 
 
-    def table_clicked(self, row, column):
+    def table_clicked(self):
+        row = self.chess_board.currentRow()
+        column = self.chess_board.currentColumn()
         if not self.from_cell and not self.to_cell:
             self.from_cell = [row, column]
-            self.enable_disable_buttons(self.board.calculate_legal_moves(self.board.board[row][column]))
+            self.output_board(self.board.calculate_legal_moves(self.board.board[row][column]))
         elif self.from_cell and not self.to_cell:
-            self.board.move_piece(self.board, from_cell, [row, column])
+            self.board.move_piece(self.board, self.from_cell, [row, column])
             self.output_board()
             self.from_cell = []
 
@@ -68,21 +73,79 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
                     item.setBackground(QtGui.QBrush(QtGui.QColor(11, 129, 156)))
                 self.chess_board.setItem(y, x, item)
 
-    def output_board(self):
+    def output_board(self, legal_moves=[]):
         """Output the board onto the GUI"""
+        self.chess_board.clear()
+        self.chess_board.setRowCount(8)
+        self.chess_board.setColumnCount(8)
         for y in range(8):
             for x in range(8):
-                item = QtGui.QTableWidgetItem()
-                item.setSizeHint(QtCore.QSize(80, 80))
-                """font = QtGui.QFont()
-                font.setPixelSize(80)
-                font.setFamily("Arial")
-                item.setFont(font)"""
-                if (x+y) % 2 == 0:
-                    item.setBackground(QtGui.QBrush(QtGui.QColor(31, 177, 209))) # light
-                else:
-                    item.setBackground(QtGui.QBrush(QtGui.QColor(11, 129, 156))) # dark
                 if self.board.board[y][x]:
-                    item.setIcon(QtGui.QIcon(self.board.board[y][x].img_path))
-                    item.setText(self.board.board[y][x].img_path)
-                self.chess_board.setItem(y, x, item)
+                    if self.board.move_num % 2 == 0 and self.board.board[y][x].colour == "Black":
+                        item = QtGui.QTableWidgetItem()
+                        item.setSizeHint(QtCore.QSize(80, 80))
+                        font = QtGui.QFont()
+                        font.setPixelSize(40)
+                        font.setFamily("Arial Unicode MS")
+                        item.setFont(font)
+                        item.setText(str(self.board.board[y][x]))
+                        if (x+y) % 2 == 0:
+                            item.setBackground(QtGui.QBrush(QtGui.QColor(31, 177, 209))) # light
+                        else:
+                            item.setBackground(QtGui.QBrush(QtGui.QColor(11, 129, 156))) # dark
+                        item.setFlags(QtCore.Qt.ItemIsEnabled)
+                        self.chess_board.setItem(y, x, item)
+                    elif self.board.move_num % 2 != 0 and self.board.board[y][x].colour == "White":
+                        item = QtGui.QTableWidgetItem()
+                        item.setSizeHint(QtCore.QSize(80, 80))
+                        font = QtGui.QFont()
+                        font.setPixelSize(40)
+                        font.setFamily("Arial Unicode MS")
+                        item.setFont(font)
+                        item.setText(str(self.board.board[y][x]))
+                        if (x+y) % 2 == 0:
+                            item.setBackground(QtGui.QBrush(QtGui.QColor(31, 177, 209))) # light
+                        else:
+                            item.setBackground(QtGui.QBrush(QtGui.QColor(11, 129, 156))) # dark
+                        item.setFlags(QtCore.Qt.ItemIsEnabled)
+                        self.chess_board.setItem(y, x, item)
+                    else:
+                        item = QtGui.QTableWidgetItem()
+                        item.setSizeHint(QtCore.QSize(80, 80))
+                        font = QtGui.QFont()
+                        font.setPixelSize(40)
+                        font.setFamily("Arial Unicode MS")
+                        item.setFont(font)
+                        item.setText(str(self.board.board[y][x]))
+                        if (x+y) % 2 == 0:
+                            item.setBackground(QtGui.QBrush(QtGui.QColor(31, 177, 209))) # light
+                        else:
+                            item.setBackground(QtGui.QBrush(QtGui.QColor(11, 129, 156))) # dark
+                        item.setFlags(QtCore.Qt.NoItemFlags)
+                        self.chess_board.setItem(y, x, item)
+                elif [y, x] in legal_moves:
+                    item = QtGui.QTableWidgetItem()
+                    item.setSizeHint(QtCore.QSize(80, 80))
+                    font = QtGui.QFont()
+                    font.setPixelSize(40)
+                    font.setFamily("Arial Unicode MS")
+                    item.setFont(font)
+                    if (x+y) % 2 == 0:
+                        item.setBackground(QtGui.QBrush(QtGui.QColor(31, 177, 209))) # light
+                    else:
+                        item.setBackground(QtGui.QBrush(QtGui.QColor(11, 129, 156))) # dark
+                    item.setFlags(QtCore.Qt.ItemIsEnabled)
+                    self.chess_board.setItem(y, x, item)
+                else:
+                    item = QtGui.QTableWidgetItem()
+                    item.setSizeHint(QtCore.QSize(80, 80))
+                    font = QtGui.QFont()
+                    font.setPixelSize(40)
+                    font.setFamily("Arial Unicode MS")
+                    item.setFont(font)
+                    if (x+y) % 2 == 0:
+                        item.setBackground(QtGui.QBrush(QtGui.QColor(31, 177, 209))) # light
+                    else:
+                        item.setBackground(QtGui.QBrush(QtGui.QColor(11, 129, 156))) # dark
+                    item.setFlags(QtCore.Qt.NoItemFlags)
+                    self.chess_board.setItem(y, x, item)
