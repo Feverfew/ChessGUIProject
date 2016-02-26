@@ -29,6 +29,10 @@ class Piece(object):
 class Rook(Piece):
     """Class for a Rook"""
 
+    def __init__(self, position, colour, has_moved = False):
+        super().__init__(position, colour, has_moved)
+        self.img_path = "{}_rook.png".format(self.colour.lower())
+
     def calculate_possible_moves(self):
         self.possible_moves = []
         for i in range(8):
@@ -47,6 +51,9 @@ class Rook(Piece):
 
 class Knight(Piece):
     """Class for a Knight"""
+    def __init__(self, position, colour, has_moved = False):
+        super().__init__(position, colour, has_moved)
+        self.img_path = "{}_knight.png".format(self.colour.lower())
 
     def calculate_possible_moves(self):
         self.possible_moves = []
@@ -75,6 +82,9 @@ class Knight(Piece):
 
 class Bishop(Piece):
     """Class for a Bishop"""
+    def __init__(self, position, colour, has_moved = False):
+        super().__init__(position, colour, has_moved)
+        self.img_path = "{}_bishop.png".format(self.colour.lower())
 
     def calculate_possible_moves(self):
         self.possible_moves = []
@@ -130,6 +140,9 @@ class Bishop(Piece):
 
 class Queen(Piece):
     """Class for a Queen"""
+    def __init__(self, position, colour, has_moved = False):
+        super().__init__(position, colour, has_moved)
+        self.img_path = "{}_queen.png".format(self.colour.lower())
 
     def calculate_possible_moves(self):
         self.possible_moves = []
@@ -190,6 +203,9 @@ class Queen(Piece):
 
 class King(Piece):
     """Class for a King"""
+    def __init__(self, position, colour, has_moved = False):
+        super().__init__(position, colour, has_moved)
+        self.img_path = "{}_king.png".format(self.colour.lower())
 
     def calculate_possible_moves(self):
         self.possible_moves.clear()
@@ -220,6 +236,9 @@ class King(Piece):
 
 class Pawn(Piece):
     """Class for a Pawn"""
+    def __init__(self, position, colour, has_moved = False):
+        super().__init__(position, colour, has_moved)
+        self.img_path = "{}_pawn.png".format(self.colour.lower())
 
     def calculate_possible_moves(self):
         self.possible_moves.clear()
