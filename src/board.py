@@ -74,20 +74,21 @@ class Board(object):
         ]
         self.board.append(row)
 
-    def move_piece(self, board, old_coords, new_coords):
+    def move_piece(self, chess_board, old_coords, new_coords):
         """Moves a piece on the board"""
         if not self.game_over:
-            board[new_coords[0]][new_coords[1]] = self.board[old_coords[0]][old_coords[1]]
-            board[old_coords[0]][old_coords[1]] = 0
+            chess_board[new_coords[0]][new_coords[1]] = self.board[old_coords[0]][old_coords[1]]
+            chess_board[old_coords[0]][old_coords[1]] = 0
+            chess_board[new_coords[0]][new_coords[1]].position = [new_coords[0], new_coords[1]]
             self.move_num += 1
             if self.move_num % 2 == 0:
                 self.turn = "Black"
             else:
                 self.turn = "White"
-            if isinstance(board[new_coords[0]][new_coords[1]], Piece):
-                if self.calculate_is_checkmate(board[new_coords[0]][new_coords[1]].colour) or self.is_in_check(board[new_coords[0]][new_coords[1]].colour, self.board):
+            if isinstance(chess_board[new_coords[0]][new_coords[1]], Piece):
+                if self.calculate_is_checkmate(chess_board[new_coords[0]][new_coords[1]].colour) or self.is_in_check(chess_board[new_coords[0]][new_coords[1]].colour, self.board):
                     self.game_over = True
-            return board
+            return chess_board
 
     def get_king_coords(self, colour):
         """Finds the coords of the king depending on  its colour"""
@@ -98,14 +99,25 @@ class Board(object):
 
     def calculate_legal_moves(self, piece):
         """Get all the legal moves of a piece and return them"""
-        possible_legal_moves = self.get_attacking_moves(piece)
         illegal_moves = []
         legal_moves = []
-        for move in possible_legal_moves:
-            possible_board = self.move_piece(self.board, piece.position, move)
-            if not self.is_in_check(piece.colour, possible_board):
-                legal_moves.append(move)
+        if not isinstance(piece, Pawn):
+            possible_legal_moves = self.get_attacking_moves(piece)
+            for move in possible_legal_moves:
+                possible_board = self.move_piece(self.board, piece.position, move)
+                if not self.is_in_check(piece.colour, possible_board):
+                    legal_moves.append(move)
+        else:
+            if piece.colour == "White":
+                legal_moves.append([piece.position[0]-1, piece.position[1]])
+                if piece.position[0] == 6:
+                    legal_moves.append([piece.position[0]-2, piece.position[1]])
+            else:
+                legal_moves.append([piece.position[0]+1, piece.position[1]])
+                if piece.position[0] == 1:
+                    legal_moves.append([piece.position[0]+2, piece.position[1]])
         return legal_moves
+
 
     def get_attacking_moves(self, piece):
         """
@@ -120,6 +132,7 @@ class Board(object):
             for move in piece.possible_moves:
                 if move not in illegal_moves:
                     legal_moves.append(move)
+            print(legal_moves)
             return legal_moves
         if isinstance(piece, Rook):
             for move in piece.possible_moves:
