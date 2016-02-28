@@ -24,13 +24,13 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
     def table_clicked(self):
         row = self.chess_board.currentRow()
         column = self.chess_board.currentColumn()
-        print(row, column)
         if not self.from_cell and column != -1 and row != -1:
+            print("from: ({},{})".format(row, column))
             self.from_cell = [row, column]
-            print(self.board.calculate_legal_moves(self.board.board[row][column]))
             self.output_board(self.board.calculate_legal_moves(self.board.board[row][column]))
         elif self.from_cell and column != -1 and row != -1:
             self.board.board = self.board.move_piece(self.board.board, self.from_cell, [row, column])
+            print("from: {} to: {},{}".format(self.from_cell, row, column))
             self.output_board()
             self.from_cell = []
 

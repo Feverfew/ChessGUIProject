@@ -79,13 +79,13 @@ class Board(object):
         if not self.game_over:
             chess_board[new_coords[0]][new_coords[1]] = self.board[old_coords[0]][old_coords[1]]
             chess_board[old_coords[0]][old_coords[1]] = 0
-            chess_board[new_coords[0]][new_coords[1]].position = [new_coords[0], new_coords[1]]
             self.move_num += 1
             if self.move_num % 2 == 0:
                 self.turn = "Black"
             else:
                 self.turn = "White"
             if isinstance(chess_board[new_coords[0]][new_coords[1]], Piece):
+                chess_board[new_coords[0]][new_coords[1]].position = [new_coords[0], new_coords[1]]
                 if self.calculate_is_checkmate(chess_board[new_coords[0]][new_coords[1]].colour) or self.is_in_check(chess_board[new_coords[0]][new_coords[1]].colour, self.board):
                     self.game_over = True
             return chess_board
@@ -116,6 +116,7 @@ class Board(object):
                 legal_moves.append([piece.position[0]+1, piece.position[1]])
                 if piece.position[0] == 1:
                     legal_moves.append([piece.position[0]+2, piece.position[1]])
+        print(legal_moves)
         return legal_moves
 
 
@@ -132,7 +133,6 @@ class Board(object):
             for move in piece.possible_moves:
                 if move not in illegal_moves:
                     legal_moves.append(move)
-            print(legal_moves)
             return legal_moves
         if isinstance(piece, Rook):
             for move in piece.possible_moves:
