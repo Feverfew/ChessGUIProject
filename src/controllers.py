@@ -29,10 +29,15 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
             self.from_cell = [row, column]
             self.output_board(self.board.calculate_legal_moves(self.board.board[row][column]))
         elif self.from_cell and column != -1 and row != -1:
-            self.board.board = self.board.move_piece(self.board.board, self.from_cell, [row, column])
-            print("from: {} to: {},{}".format(self.from_cell, row, column))
-            self.output_board()
-            self.from_cell = []
+            if self.board.board[row][column]:
+                if self.board.board[self.from_cell[0]][self.from_cell[1]].colour == self.board.board[row][column].colour:
+                    self.from_cell = [row, column]
+                    self.output_board(self.board.calculate_legal_moves(self.board.board[row][column]))
+            else:
+                self.board.board = self.board.permanently_move_piece(self.board.board, self.from_cell, [row, column])
+                print("from: {} to: {},{}".format(self.from_cell, row, column))
+                self.output_board()
+                self.from_cell = []
 
     def initialise_board(self):  
         self.chess_board.horizontalHeader().setResizeMode(QtGui.QHeaderView.Stretch)
@@ -56,7 +61,7 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
         for y in range(8):
             for x in range(8):
                 if self.board.board[y][x]:
-                    if self.board.move_num % 2 == 0 and self.board.board[y][x].colour == "Black":
+                    if self.board.turn == "Black" and self.board.board[y][x].colour == "Black":
                         item = QtGui.QTableWidgetItem()
                         item.setSizeHint(QtCore.QSize(80, 80))
                         font = QtGui.QFont()
@@ -70,7 +75,7 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
                             item.setBackground(QtGui.QBrush(QtGui.QColor(11, 129, 156))) # dark
                         item.setFlags(QtCore.Qt.ItemIsEnabled)
                         self.chess_board.setItem(y, x, item)
-                    elif self.board.move_num % 2 != 0 and self.board.board[y][x].colour == "White":
+                    elif self.board.turn == "White" and self.board.board[y][x].colour == "White":
                         item = QtGui.QTableWidgetItem()
                         item.setSizeHint(QtCore.QSize(80, 80))
                         font = QtGui.QFont()
@@ -96,7 +101,10 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
                             item.setBackground(QtGui.QBrush(QtGui.QColor(31, 177, 209))) # light
                         else:
                             item.setBackground(QtGui.QBrush(QtGui.QColor(11, 129, 156))) # dark
-                        item.setFlags(QtCore.Qt.NoItemFlags)
+                        if [y, x] in legal_moves:
+                            item.setFlags(QtCore.Qt.ItemIsEnabled)
+                        else:
+                            item.setFlags(QtCore.Qt.NoItemFlags)
                         self.chess_board.setItem(y, x, item)
                 elif [y, x] in legal_moves:
                     item = QtGui.QTableWidgetItem()
