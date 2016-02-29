@@ -73,8 +73,15 @@ class Board(object):
             Rook([7,7], "White")
         ]
         self.board.append(row)
+     
+    def preliminary_move_piece(self, chess_board, old_coords, new_coords):
+        chess_board[new_coords[0]][new_coords[1]] = self.board[old_coords[0]][old_coords[1]]
+        chess_board[old_coords[0]][old_coords[1]] = 0
+        if isinstance(chess_board[new_coords[0]][new_coords[1]], Piece):
+            chess_board[new_coords[0]][new_coords[1]].position = [new_coords[0], new_coords[1]]
+        return chess_board
 
-    def move_piece(self, chess_board, old_coords, new_coords):
+    def permanently_move_piece(self, chess_board, old_coords, new_coords):
         """Moves a piece on the board"""
         if not self.game_over:
             chess_board[new_coords[0]][new_coords[1]] = self.board[old_coords[0]][old_coords[1]]
@@ -86,27 +93,35 @@ class Board(object):
                 self.turn = "White"
             if isinstance(chess_board[new_coords[0]][new_coords[1]], Piece):
                 chess_board[new_coords[0]][new_coords[1]].position = [new_coords[0], new_coords[1]]
-                if self.calculate_is_checkmate(chess_board[new_coords[0]][new_coords[1]].colour) or self.is_in_check(chess_board[new_coords[0]][new_coords[1]].colour, self.board):
+                if self.calculate_is_checkmate(chess_board[new_coords[0]][new_coords[1]].colour, chess_board):
                     self.game_over = True
             return chess_board
 
-    def get_king_coords(self, colour):
+    def get_king_coords(self, colour, board):
         """Finds the coords of the king depending on  its colour"""
         for x in range(8):
             for y in range(8):
-                if isinstance(self.board[x][y], King) and self.board[x][y].colour == colour:
+                if isinstance(board[x][y], King) and board[x][y].colour == colour:
                     return [x, y]
 
     def calculate_legal_moves(self, piece):
         """Get all the legal moves of a piece and return them"""
-        illegal_moves = []
         legal_moves = []
+        print(str(self.__repr__()))
         if not isinstance(piece, Pawn):
             possible_legal_moves = self.get_attacking_moves(piece)
             for move in possible_legal_moves:
-                possible_board = self.move_piece(self.board, piece.position, move)
-                if not self.is_in_check(piece.colour, possible_board):
-                    legal_moves.append(move)
+                if isinstance(self.board[move[0]][move[1]], Piece):
+                    if not piece.colour == self.board[move[0]][move[1]].colour:
+                        possible_board = self.preliminary_move_piece(self.board, piece.position, move)
+                        print(str(self.__repr__()))
+                        if not self.is_in_check(piece.colour, possible_board):
+                            legal_moves.append(move)
+                else:
+                    possible_board = self.preliminary_move_piece(self.board, piece.position, move)
+                    print(str(self.__repr__()))
+                    if not self.is_in_check(piece.colour, possible_board):
+                        legal_moves.append(move)
         else:
             if piece.colour == "White":
                 legal_moves.append([piece.position[0]-1, piece.position[1]])
@@ -287,10 +302,10 @@ class Board(object):
         else:
             return legal_moves
         
-    def calculate_is_checkmate(self, colour):
+    def calculate_is_checkmate(self, colour, board):
         """Finds out if the a player has been checkmated"""
-        if self.is_in_check(colour, self.board):
-            for row in self.board:
+        if self.is_in_check(colour, board):
+            for row in board:
                 for piece in row:
                     if self.calculate_legal_moves(piece):
                         return False
@@ -298,10 +313,10 @@ class Board(object):
         else:
             return False
 
-    def calculate_is_stalemate(self, colour):
+    def calculate_is_stalemate(self, colour, board):
         """Finds out if the game in """
-        if not self.is_in_check("White", self.board) and not self.is_in_check("Black", self.board):
-            for row in self.board:
+        if not self.is_in_check("White", board) and not self.is_in_check("Black", board):
+            for row in board:
                 for piece in row:
                     if self.calculate_legal_moves(piece):
                         return False
@@ -311,7 +326,7 @@ class Board(object):
 
     def is_in_check(self, colour, possible_board):
         """Checks if the king of the corresponding colour is in check."""
-        king_coords = self.get_king_coords(colour)
+        king_coords = self.get_king_coords(colour, possible_board)
         for x in range(8):
             for y in range(8):
                 if isinstance(possible_board[x][y], Piece) and possible_board[x][y].colour != colour:
@@ -327,11 +342,6 @@ class Board(object):
                 output += str(field)
             output += "\n"
         return output
-
-class MoveValidator(object):
-    """Contains functions that validates moves"""
-    pass
-
 class MoveLogger(object):
 
     def __init__(self, start=[], end=[]):
@@ -347,10 +357,10 @@ class MoveLogger(object):
 def test():
     board = Board()
     print(board)
-    board.move_piece(board.board, [6, 4], [4, 4])
+    board.permanently_move_piece(board.board, [6, 4], [4, 4])
     print(board)
-    print(board.get_king_coords("White"))
-    print(board.get_king_coords("Black"))
+    print(board.get_king_coords("White", board.board))
+    print(board.get_king_coords("Black", board.board))
     print('\n')
     bishop = Bishop([5, 5], "White")
     bishop.calculate_possible_moves()
