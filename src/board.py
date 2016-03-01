@@ -98,28 +98,25 @@ class Board(object):
             return chess_board
 
     def get_king_coords(self, colour, board):
-        """Finds the coords of the king depending on  its colour"""
+        """Finds the coords of the king depending on its colour"""
         for x in range(8):
             for y in range(8):
                 if isinstance(board[x][y], King) and board[x][y].colour == colour:
                     return [x, y]
 
     def calculate_legal_moves(self, piece):
-        """Get all the legal moves of a piece and return them"""
+        """Get all the legal moves of a piece and returns them"""
         legal_moves = []
-        print(str(self.__repr__()))
         if not isinstance(piece, Pawn):
             possible_legal_moves = self.get_attacking_moves(piece)
             for move in possible_legal_moves:
                 if isinstance(self.board[move[0]][move[1]], Piece):
                     if not piece.colour == self.board[move[0]][move[1]].colour:
                         possible_board = self.preliminary_move_piece(self.board, piece.position, move)
-                        print(str(self.__repr__()))
                         if not self.is_in_check(piece.colour, possible_board):
                             legal_moves.append(move)
                 else:
                     possible_board = self.preliminary_move_piece(self.board, piece.position, move)
-                    print(str(self.__repr__()))
                     if not self.is_in_check(piece.colour, possible_board):
                         legal_moves.append(move)
         else:
@@ -131,7 +128,6 @@ class Board(object):
                 legal_moves.append([piece.position[0]+1, piece.position[1]])
                 if piece.position[0] == 1:
                     legal_moves.append([piece.position[0]+2, piece.position[1]])
-        print(legal_moves)
         return legal_moves
 
 
