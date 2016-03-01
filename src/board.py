@@ -1,4 +1,5 @@
 from pieces import *
+import copy
 __author__ = "Alexander Saoutkin"
 
 class Board(object):
@@ -75,7 +76,7 @@ class Board(object):
         self.board.append(row)
      
     def preliminary_move_piece(self, chess_board, old_coords, new_coords):
-        chess_board[new_coords[0]][new_coords[1]] = self.board[old_coords[0]][old_coords[1]]
+        chess_board[new_coords[0]][new_coords[1]] = chess_board[old_coords[0]][old_coords[1]]
         chess_board[old_coords[0]][old_coords[1]] = 0
         if isinstance(chess_board[new_coords[0]][new_coords[1]], Piece):
             chess_board[new_coords[0]][new_coords[1]].position = [new_coords[0], new_coords[1]]
@@ -107,17 +108,19 @@ class Board(object):
     def calculate_legal_moves(self, piece):
         """Get all the legal moves of a piece and returns them"""
         legal_moves = []
+        tup_board = tuple(self.board)
+        original_board = list(tup_board)
         if not isinstance(piece, Pawn):
             possible_legal_moves = self.get_attacking_moves(piece)
             for move in possible_legal_moves:
                 if isinstance(self.board[move[0]][move[1]], Piece):
-                    if not piece.colour == self.board[move[0]][move[1]].colour:
-                        possible_board = self.preliminary_move_piece(self.board, piece.position, move)
-                        if not self.is_in_check(piece.colour, possible_board):
+                    if not piece.colour == original_board[move[0]][move[1]].colour:
+                        possible_board = self.preliminary_move_piece(original_board, piece.position, move)
+                        if not self.is_in_check(piece.colour, original_board):
                             legal_moves.append(move)
                 else:
-                    possible_board = self.preliminary_move_piece(self.board, piece.position, move)
-                    if not self.is_in_check(piece.colour, possible_board):
+                    possible_board = self.preliminary_move_piece(original_board, piece.position, move)
+                    if not self.is_in_check(piece.colour, original_board):
                         legal_moves.append(move)
         else:
             if piece.colour == "White":
@@ -128,6 +131,7 @@ class Board(object):
                 legal_moves.append([piece.position[0]+1, piece.position[1]])
                 if piece.position[0] == 1:
                     legal_moves.append([piece.position[0]+2, piece.position[1]])
+        self.board = list(tup_board)
         return legal_moves
 
 
