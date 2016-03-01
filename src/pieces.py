@@ -11,6 +11,7 @@ class Piece(object):
         self.colour = colour
         self.has_moved = has_moved
         self.possible_moves = []
+        self.calculate_possible_moves()
 
         @property
         def position(self):
