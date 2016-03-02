@@ -1,4 +1,5 @@
 __author__ = "Alexander Saoutkin"
+
 class Piece(object):
     """Base class for chess pieces"""
 
@@ -70,9 +71,6 @@ class Knight(Piece):
         for move in potential_moves:
             if move[0] <= 7 and move [0] >= 0 and move[1] <= 7 and move[1] >= 0:
                 self.possible_moves.append(move)
-            
-                
-            
 
     def __str__(self):
         if self.colour == "White":

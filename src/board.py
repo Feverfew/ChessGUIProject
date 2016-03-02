@@ -12,7 +12,7 @@ class Board(object):
         """
         self.turn = "White"
         self.move_num = 1
-        self.is_checkmate = False
+        self.winner = False
         self.is_stalemate = False
         self.game_over = False
         self.player_one = player_one
@@ -92,6 +92,7 @@ class Board(object):
                 self.turn = "White"
             if isinstance(chess_board[new_coords[0]][new_coords[1]], Piece):
                 chess_board[new_coords[0]][new_coords[1]].position = [new_coords[0], new_coords[1]]
+                chess_board[new_coords[0]][new_coords[1]].calculate_possible_moves()
                 if self.calculate_is_checkmate(chess_board[new_coords[0]][new_coords[1]].colour, chess_board):
                     self.game_over = True
                 elif self.is_in_check(self.turn, chess_board):
