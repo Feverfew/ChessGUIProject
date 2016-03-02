@@ -17,7 +17,10 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
         self.setupUi(self)
         self.board = Board()
         self.from_cell = []
-        self.initialise_board()
+        self.chess_board.horizontalHeader().setResizeMode(QtGui.QHeaderView.Stretch)
+        self.chess_board.verticalHeader().setResizeMode(QtGui.QHeaderView.Stretch)
+        self.chess_board.horizontalHeader().hide()
+        self.chess_board.verticalHeader().hide()
         self.output_board()
         self.chess_board.itemClicked.connect(self.table_clicked)
 
@@ -33,25 +36,16 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
                 if self.board.board[self.from_cell[0]][self.from_cell[1]].colour == self.board.board[row][column].colour:
                     self.from_cell = [row, column]
                     self.output_board(self.board.calculate_legal_moves(self.board.board[row][column]))
+                else:
+                    self.board.board = self.board.permanently_move_piece(self.board.board, self.from_cell, [row, column])
+                    print("from: {} to: {},{}".format(self.from_cell, row, column))
+                    self.output_board()
+                    self.from_cell = []
             else:
                 self.board.board = self.board.permanently_move_piece(self.board.board, self.from_cell, [row, column])
                 print("from: {} to: {},{}".format(self.from_cell, row, column))
                 self.output_board()
                 self.from_cell = []
-
-    def initialise_board(self):  
-        self.chess_board.horizontalHeader().setResizeMode(QtGui.QHeaderView.Stretch)
-        self.chess_board.verticalHeader().setResizeMode(QtGui.QHeaderView.Stretch)
-        self.chess_board.horizontalHeader().hide()
-        self.chess_board.verticalHeader().hide()
-        for y in range(8):
-            for x in range(8):
-                item = QtGui.QTableWidgetItem()
-                if (x+y) % 2 == 0:
-                    item.setBackground(QtGui.QBrush(QtGui.QColor(31, 177, 209)))
-                else:
-                    item.setBackground(QtGui.QBrush(QtGui.QColor(11, 129, 156)))
-                self.chess_board.setItem(y, x, item)
 
     def output_board(self, legal_moves=[]):
         """Output the board onto the GUI"""
@@ -132,3 +126,10 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
                         item.setBackground(QtGui.QBrush(QtGui.QColor(11, 129, 156))) # dark
                     item.setFlags(QtCore.Qt.NoItemFlags)
                     self.chess_board.setItem(y, x, item)
+        
+    def show_message(self, msg):
+        """If there are errors show them in a message box."""
+        msg_box = QtGui.QMessageBox()
+        msg_box.setWindowTitle("Game State")
+        msg_box.setText(msg)
+        msg_box.exec_()

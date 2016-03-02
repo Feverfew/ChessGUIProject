@@ -17,9 +17,7 @@ class Board(object):
         self.game_over = False
         self.player_one = player_one
         self.player_two = player_two
-        self.move_logger = MoveLogger()
         self.new_board()
-
 
     def new_board(self):
         """Creates a new fresh board"""
@@ -96,6 +94,8 @@ class Board(object):
                 chess_board[new_coords[0]][new_coords[1]].position = [new_coords[0], new_coords[1]]
                 if self.calculate_is_checkmate(chess_board[new_coords[0]][new_coords[1]].colour, chess_board):
                     self.game_over = True
+                elif self.is_in_check(self.turn, chess_board):
+                    pass
             return chess_board
 
     def get_king_coords(self, colour, board):
@@ -108,19 +108,18 @@ class Board(object):
     def calculate_legal_moves(self, piece):
         """Get all the legal moves of a piece and returns them"""
         legal_moves = []
-        tup_board = tuple(self.board)
-        original_board = list(tup_board)
+        original_board = copy.deepcopy(self.board) # fixed the moving bug.
         if not isinstance(piece, Pawn):
             possible_legal_moves = self.get_attacking_moves(piece)
             for move in possible_legal_moves:
-                if isinstance(self.board[move[0]][move[1]], Piece):
+                if isinstance(original_board[move[0]][move[1]], Piece):
                     if not piece.colour == original_board[move[0]][move[1]].colour:
                         possible_board = self.preliminary_move_piece(original_board, piece.position, move)
-                        if not self.is_in_check(piece.colour, original_board):
+                        if not self.is_in_check(piece.colour, possible_board):
                             legal_moves.append(move)
                 else:
                     possible_board = self.preliminary_move_piece(original_board, piece.position, move)
-                    if not self.is_in_check(piece.colour, original_board):
+                    if not self.is_in_check(piece.colour, possible_board):
                         legal_moves.append(move)
         else:
             if piece.colour == "White":
@@ -131,9 +130,7 @@ class Board(object):
                 legal_moves.append([piece.position[0]+1, piece.position[1]])
                 if piece.position[0] == 1:
                     legal_moves.append([piece.position[0]+2, piece.position[1]])
-        self.board = list(tup_board)
         return legal_moves
-
 
     def get_attacking_moves(self, piece):
         """
@@ -299,6 +296,8 @@ class Board(object):
             return legal_moves
         elif isinstance(piece, Knight):
             return piece.possible_moves
+        elif isinstance(piece, King):
+            return piece.possible_moves
         else:
             return legal_moves
         
@@ -307,19 +306,21 @@ class Board(object):
         if self.is_in_check(colour, board):
             for row in board:
                 for piece in row:
-                    if self.calculate_legal_moves(piece):
-                        return False
+                    if isinstance(piece, Piece):
+                        if self.calculate_legal_moves(piece):
+                            return False
             return True
         else:
             return False
 
     def calculate_is_stalemate(self, colour, board):
-        """Finds out if the game in """
+        """Finds out if the game is in stalemate"""
         if not self.is_in_check("White", board) and not self.is_in_check("Black", board):
             for row in board:
                 for piece in row:
-                    if self.calculate_legal_moves(piece):
-                        return False
+                    if isinstance(piece, Piece):
+                        if self.calculate_legal_moves(piece):
+                            return False
             return True
         else:
             return False
@@ -333,7 +334,6 @@ class Board(object):
                     if king_coords in self.get_attacking_moves(possible_board[x][y]):
                         return True
         return False
-                    
 
     def __repr__(self):
         output = ""
@@ -342,42 +342,3 @@ class Board(object):
                 output += str(field)
             output += "\n"
         return output
-class MoveLogger(object):
-
-    def __init__(self, start=[], end=[]):
-        """
-        :param start: starting position before move
-        :type start: 2d list
-        :param end: ending position after move
-        :type end: 2d list
-        """
-        self.start = start
-        self.end = end
-
-def test():
-    board = Board()
-    print(board)
-    board.permanently_move_piece(board.board, [6, 4], [4, 4])
-    print(board)
-    print(board.get_king_coords("White", board.board))
-    print(board.get_king_coords("Black", board.board))
-    print('\n')
-    bishop = Bishop([5, 5], "White")
-    bishop.calculate_possible_moves()
-    print(bishop.possible_moves)
-    print('\n')
-    queen = Queen([5, 5], "White")
-    queen.calculate_possible_moves()
-    print(queen.possible_moves)
-    print('\n')
-    knight = Knight([7, 7], "White")
-    knight.calculate_possible_moves()
-    print(knight.possible_moves)
-    print('\n')
-    king = King([5, 5], "White")
-    king.calculate_possible_moves()
-    print(king.possible_moves)
-    
-
-if __name__ == "__main__":
-    test()
