@@ -102,6 +102,11 @@ class Board(object):
                         self.winner = "Black"
                 elif self.is_in_check(self.turn, chess_board):
                     self.colour_in_check = self.turn
+                elif self.calculate_is_stalemate(self.turn, chess_board):
+                    self.is_stalemate = True
+                    self.game_over = True
+                else:
+                    self.colour_in_check = ""
             return chess_board
 
     def get_king_coords(self, colour, board):
@@ -130,12 +135,12 @@ class Board(object):
         else:
             # To move up the board
             if piece.colour == "White":
-                if not isinstance(original_board[piece.position[0]-1][piece.position[1]], Piece):
+                if piece.position[0] > 0 and not isinstance(original_board[piece.position[0]-1][piece.position[1]], Piece):
                     legal_moves.append([piece.position[0]-1, piece.position[1]])
                 if piece.position[0] == 6 and not isinstance(original_board[piece.position[0]-2][piece.position[1]], Piece):
                     legal_moves.append([piece.position[0]-2, piece.position[1]])
             else:
-                if not isinstance(original_board[piece.position[0]+1][piece.position[1]], Piece):
+                if piece.position[0] < 7 and not isinstance(original_board[piece.position[0]+1][piece.position[1]], Piece):
                     legal_moves.append([piece.position[0]+1, piece.position[1]])
                 if piece.position[0] == 1 and not isinstance(original_board[piece.position[0]+2][piece.position[1]], Piece):
                     legal_moves.append([piece.position[0]+2, piece.position[1]])
@@ -145,6 +150,7 @@ class Board(object):
                     possible_board = self.preliminary_move_piece(original_board, piece.position, move)
                     if not self.is_in_check(piece.colour, possible_board):
                         legal_moves.append(move)
+        print(legal_moves)
         return legal_moves
 
     def get_attacking_moves(self, piece):
@@ -303,11 +309,15 @@ class Board(object):
             return get_legal_moves()
         elif isinstance(piece, Pawn):
             if piece.colour == "White":
-                legal_moves.append([piece.position[0]-1, piece.position[1]-1])
-                legal_moves.append([piece.position[1]-1, piece.position[1]+1])
+                if piece.position[0] > 0 and piece.position[1] > 0:
+                    legal_moves.append([piece.position[0]-1, piece.position[1]-1])
+                if piece.position[0] > 0 and piece.position[1] < 7:
+                    legal_moves.append([piece.position[1]-1, piece.position[1]+1])
             elif piece.colour == "Black":
-                legal_moves.append([piece.position[1]+1, piece.position[1]+1])
-                legal_moves.append([piece.position[1]+1, piece.position[1]-1])
+                if piece.position[0] < 7 and piece.position[1] < 7:
+                    legal_moves.append([piece.position[0]+1, piece.position[1]+1])
+                if piece.position[0] < 7 and piece.position[1] > 0:
+                    legal_moves.append([piece.position[0]+1, piece.position[1]-1])
             return legal_moves
         elif isinstance(piece, Knight):
             return piece.possible_moves
