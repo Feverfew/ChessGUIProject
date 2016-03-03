@@ -47,6 +47,7 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
                 self.output_board()
                 self.from_cell = []
 
+
     def output_board(self, legal_moves=[]):
         """Output the board onto the GUI"""
         self.chess_board.clear()

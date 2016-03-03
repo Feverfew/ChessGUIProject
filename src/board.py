@@ -12,7 +12,8 @@ class Board(object):
         """
         self.turn = "White"
         self.move_num = 1
-        self.winner = False
+        self.winner = ""
+        self.colour_in_check = ""
         self.is_stalemate = False
         self.game_over = False
         self.player_one = player_one
@@ -95,8 +96,12 @@ class Board(object):
                 chess_board[new_coords[0]][new_coords[1]].calculate_possible_moves()
                 if self.calculate_is_checkmate(chess_board[new_coords[0]][new_coords[1]].colour, chess_board):
                     self.game_over = True
+                    if chess_board[new_coords[0]][new_coords[1]].colour == "Black":
+                        self.winner = "White"
+                    else:
+                        self.winner = "Black"
                 elif self.is_in_check(self.turn, chess_board):
-                    pass
+                    self.colour_in_check = self.turn
             return chess_board
 
     def get_king_coords(self, colour, board):
@@ -110,8 +115,8 @@ class Board(object):
         """Get all the legal moves of a piece and returns them"""
         legal_moves = []
         original_board = copy.deepcopy(self.board) # fixed the moving bug.
+        possible_legal_moves = self.get_attacking_moves(piece)
         if not isinstance(piece, Pawn):
-            possible_legal_moves = self.get_attacking_moves(piece)
             for move in possible_legal_moves:
                 if isinstance(original_board[move[0]][move[1]], Piece):
                     if not piece.colour == original_board[move[0]][move[1]].colour:
@@ -123,14 +128,23 @@ class Board(object):
                     if not self.is_in_check(piece.colour, possible_board):
                         legal_moves.append(move)
         else:
+            # To move up the board
             if piece.colour == "White":
-                legal_moves.append([piece.position[0]-1, piece.position[1]])
-                if piece.position[0] == 6:
+                if not isinstance(original_board[piece.position[0]-1][piece.position[1]], Piece):
+                    legal_moves.append([piece.position[0]-1, piece.position[1]])
+                if piece.position[0] == 6 and not isinstance(original_board[piece.position[0]-2][piece.position[1]], Piece):
                     legal_moves.append([piece.position[0]-2, piece.position[1]])
             else:
-                legal_moves.append([piece.position[0]+1, piece.position[1]])
-                if piece.position[0] == 1:
+                if not isinstance(original_board[piece.position[0]+1][piece.position[1]], Piece):
+                    legal_moves.append([piece.position[0]+1, piece.position[1]])
+                if piece.position[0] == 1 and not isinstance(original_board[piece.position[0]+2][piece.position[1]], Piece):
                     legal_moves.append([piece.position[0]+2, piece.position[1]])
+            # When pawn moves diagonally to take piece
+            for move in possible_legal_moves:
+                if isinstance(original_board[move[0]][move[1]], Piece) and not isinstance(original_board[move[0]][move[1]], King):
+                    possible_board = self.preliminary_move_piece(original_board, piece.position, move)
+                    if not self.is_in_check(piece.colour, possible_board):
+                        legal_moves.append(move)
         return legal_moves
 
     def get_attacking_moves(self, piece):
