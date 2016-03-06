@@ -65,11 +65,7 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
                     if self.board.turn == "Black" and self.board.board[y][x].colour == "Black":
                         item = QtGui.QTableWidgetItem()
                         item.setSizeHint(QtCore.QSize(80, 80))
-                        font = QtGui.QFont()
-                        font.setPixelSize(40)
-                        font.setFamily("Arial Unicode MS")
-                        item.setFont(font)
-                        item.setText(str(self.board.board[y][x]))
+                        item.setIcon(QtGui.QIcon(":/pieces/{}".format(self.board.board[y][x].img_path)))
                         if (x+y) % 2 == 0:
                             item.setBackground(QtGui.QBrush(QtGui.QColor(31, 177, 209))) # light
                         else:
@@ -79,11 +75,7 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
                     elif self.board.turn == "White" and self.board.board[y][x].colour == "White":
                         item = QtGui.QTableWidgetItem()
                         item.setSizeHint(QtCore.QSize(80, 80))
-                        font = QtGui.QFont()
-                        font.setPixelSize(40)
-                        font.setFamily("Arial Unicode MS")
-                        item.setFont(font)
-                        item.setText(str(self.board.board[y][x]))
+                        item.setIcon(QtGui.QIcon(":/pieces/{}".format(self.board.board[y][x].img_path)))
                         if (x+y) % 2 == 0:
                             item.setBackground(QtGui.QBrush(QtGui.QColor(31, 177, 209))) # light
                         else:
@@ -93,11 +85,7 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
                     else:
                         item = QtGui.QTableWidgetItem()
                         item.setSizeHint(QtCore.QSize(80, 80))
-                        font = QtGui.QFont()
-                        font.setPixelSize(40)
-                        font.setFamily("Arial Unicode MS")
-                        item.setFont(font)
-                        item.setText(str(self.board.board[y][x]))
+                        item.setIcon(QtGui.QIcon(":/pieces/{}".format(self.board.board[y][x].img_path)))
                         if (x+y) % 2 == 0:
                             item.setBackground(QtGui.QBrush(QtGui.QColor(31, 177, 209))) # light
                         else:
@@ -110,10 +98,6 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
                 elif [y, x] in legal_moves:
                     item = QtGui.QTableWidgetItem()
                     item.setSizeHint(QtCore.QSize(80, 80))
-                    font = QtGui.QFont()
-                    font.setPixelSize(40)
-                    font.setFamily("Arial Unicode MS")
-                    item.setFont(font)
                     if (x+y) % 2 == 0:
                         item.setBackground(QtGui.QBrush(QtGui.QColor(31, 177, 209))) # light
                     else:
@@ -123,10 +107,6 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
                 else:
                     item = QtGui.QTableWidgetItem()
                     item.setSizeHint(QtCore.QSize(80, 80))
-                    font = QtGui.QFont()
-                    font.setPixelSize(40)
-                    font.setFamily("Arial Unicode MS")
-                    item.setFont(font)
                     if (x+y) % 2 == 0:
                         item.setBackground(QtGui.QBrush(QtGui.QColor(31, 177, 209))) # light
                     else:

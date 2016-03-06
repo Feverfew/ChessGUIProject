@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'chessboard.ui'
 #
-# Created: Sun Feb 21 19:50:46 2016
+# Created: Sun Mar  6 22:48:13 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -128,3 +128,4 @@ class Ui_Form(object):
         self.chess_board.horizontalHeaderItem(6).setText(QtGui.QApplication.translate("Form", "New Column", None, QtGui.QApplication.UnicodeUTF8))
         self.chess_board.horizontalHeaderItem(7).setText(QtGui.QApplication.translate("Form", "New Column", None, QtGui.QApplication.UnicodeUTF8))
 
+import resources_rc

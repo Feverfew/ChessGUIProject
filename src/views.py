@@ -1,4 +1,5 @@
 from PySide import QtCore, QtGui
+import resources_rc
 
 class MainWindow(object):
     def setupUi(self, MainWindow):
@@ -139,4 +140,3 @@ class ChessBoard(object):
         self.chess_board.horizontalHeaderItem(5).setText(QtGui.QApplication.translate("Form", "New Column", None, QtGui.QApplication.UnicodeUTF8))
         self.chess_board.horizontalHeaderItem(6).setText(QtGui.QApplication.translate("Form", "New Column", None, QtGui.QApplication.UnicodeUTF8))
         self.chess_board.horizontalHeaderItem(7).setText(QtGui.QApplication.translate("Form", "New Column", None, QtGui.QApplication.UnicodeUTF8))
-
