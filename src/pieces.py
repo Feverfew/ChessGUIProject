@@ -245,8 +245,6 @@ class Pawn(Piece):
             self.possible_moves.append([self.position[0]-1, self.position[1]])
         else:
             self.possible_moves.append([self.position[0]+1, self.position[1]])
-
-        
     
     def __str__(self):
         if self.colour == "White":
