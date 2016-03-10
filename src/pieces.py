@@ -34,6 +34,7 @@ class Rook(Piece):
     def __init__(self, position, colour, has_moved = False):
         super().__init__(position, colour, has_moved)
         self.img_path = "{}_rook.png".format(self.colour.lower())
+        self.has_moved = has_moved
 
     def calculate_possible_moves(self):
         self.possible_moves = []
@@ -205,6 +206,7 @@ class King(Piece):
     def __init__(self, position, colour, has_moved = False):
         super().__init__(position, colour, has_moved)
         self.img_path = "{}_king.png".format(self.colour.lower())
+        self.has_moved = has_moved
 
     def calculate_possible_moves(self):
         self.possible_moves.clear()
@@ -245,6 +247,8 @@ class Pawn(Piece):
             self.possible_moves.append([self.position[0]-1, self.position[1]])
         else:
             self.possible_moves.append([self.position[0]+1, self.position[1]])
+
+        
     
     def __str__(self):
         if self.colour == "White":
