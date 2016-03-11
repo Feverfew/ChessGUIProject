@@ -221,9 +221,7 @@ class King(Piece):
         potential_moves.append([self.position[0], self.position[1]-1])
         for move in potential_moves:
             if move[0] <= 7 and move [0] >= 0 and move[1] <= 7 and move[1] >= 0:
-                self.possible_moves.append(move)    
-        if not self.has_moved:
-            pass
+                self.possible_moves.append(move)
 
     def can_castle(self):
         pass

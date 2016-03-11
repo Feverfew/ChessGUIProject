@@ -364,11 +364,3 @@ class Board(object):
     
     def can_castle(self, colour, possible_board):
         pass
-
-    def __repr__(self):
-        output = ""
-        for row in self.board:
-            for field in row:
-                output += str(field)
-            output += "\n"
-        return output
