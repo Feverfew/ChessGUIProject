@@ -79,6 +79,7 @@ class Board(object):
         chess_board[old_coords[0]][old_coords[1]] = 0
         if isinstance(chess_board[new_coords[0]][new_coords[1]], Piece):
             chess_board[new_coords[0]][new_coords[1]].position = [new_coords[0], new_coords[1]]
+            chess_board[new_coords[0]][new_coords[1]].calculate_possible_moves()
         return chess_board
 
     def permanently_move_piece(self, chess_board, old_coords, new_coords):
@@ -139,7 +140,7 @@ class Board(object):
                     possible_board = self.preliminary_move_piece(original_board, piece.position, [piece.position[0]-1, piece.position[1]])
                     if not self.is_in_check(piece.colour, possible_board):
                         legal_moves.append([piece.position[0]-1, piece.position[1]])
-                if piece.position[0] == 6 and not isinstance(original_board[piece.position[0]-2][piece.position[1]], Piece):#
+                if piece.position[0] == 6 and not isinstance(original_board[piece.position[0]-2][piece.position[1]], Piece):
                     possible_board = self.preliminary_move_piece(original_board, piece.position, [piece.position[0]-2, piece.position[1]])
                     if not self.is_in_check(piece.colour, possible_board):
                         legal_moves.append([piece.position[0]-2, piece.position[1]])
@@ -158,6 +159,7 @@ class Board(object):
                     possible_board = self.preliminary_move_piece(original_board, piece.position, [piece.position[0]+1, piece.position[1]])
                     if not self.is_in_check(piece.colour, possible_board):
                         legal_moves.append(move)
+        print(legal_moves)
         return legal_moves
 
     def get_attacking_moves(self, piece, board):
@@ -168,7 +170,8 @@ class Board(object):
         tells you whether the piece can move there.
         """
         legal_moves = []
-        illegal_moves = []
+        illegal_moves = piece.position
+
         def get_legal_moves():
             for move in piece.possible_moves:
                 if move not in illegal_moves:
@@ -241,7 +244,6 @@ class Board(object):
             for move in piece.possible_moves:
                 if board[move[0]][move[1]]:
                     counter = 0
-                    on_edge = False
                     # If piece in the way is above
                     if piece.position[0] > move[0] and piece.position[1] == move[1]:
                         # Then it cannot influence anything above it
@@ -298,24 +300,24 @@ class Board(object):
         elif isinstance(piece, Pawn):
             if piece.colour == "White":
                 if piece.position[0] > 0 and piece.position[1] > 0:
-                    if isinstance(self.board[piece.position[0]-1][piece.position[1]-1], Piece):
+                    if isinstance(board[piece.position[0]-1][piece.position[1]-1], Piece):
                         if not isinstance(board[piece.position[0]-1][piece.position[1]-1], King):
-                            if self.board[piece.position[0]-1][piece.position[1]-1].colour == "Black":
+                            if board[piece.position[0]-1][piece.position[1]-1].colour == "Black":
                                 legal_moves.append([piece.position[0]-1, piece.position[1]-1])
                 if piece.position[0] > 0 and piece.position[1] < 7:
                     if isinstance(board[piece.position[0]-1][piece.position[1]+1], Piece):
                         if not isinstance(board[piece.position[0]-1][piece.position[1]+1], King):
-                            if self.board[piece.position[0]-1][piece.position[1]+1].colour == "Black":
+                            if board[piece.position[0]-1][piece.position[1]+1].colour == "Black":
                                 legal_moves.append([piece.position[1]-1, piece.position[1]+1])
             elif piece.colour == "Black":
                 if piece.position[0] < 7 and piece.position[1] < 7:
                     if isinstance(board[piece.position[0]+1][piece.position[1]+1], Piece):
-                        if not isinstance(self.board[piece.position[0]+1][piece.position[1]+1], King):
+                        if not isinstance(board[piece.position[0]+1][piece.position[1]+1], King):
                             if board[piece.position[0]+1][piece.position[1]+1].colour == "White":
                                 legal_moves.append([piece.position[0]+1, piece.position[1]+1])
                 if piece.position[0] < 7 and piece.position[1] > 0:
                     if isinstance(board[piece.position[0]+1][piece.position[1]-1], Piece):
-                        if not isinstance(self.board[piece.position[0]+1][piece.position[1]-1], King):
+                        if not isinstance(board[piece.position[0]+1][piece.position[1]-1], King):
                             if board[piece.position[0]+1][piece.position[1]-1].colour == "White":
                                 legal_moves.append([piece.position[0]+1, piece.position[1]-1])
             return legal_moves
@@ -359,6 +361,9 @@ class Board(object):
                     if king_coords in self.get_attacking_moves(possible_board[x][y], possible_board):
                         return True
         return False
+    
+    def can_castle(self, colour, possible_board):
+        pass
 
     def __repr__(self):
         output = ""
