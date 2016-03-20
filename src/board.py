@@ -131,7 +131,7 @@ class Board(object):
                         possible_board = self.preliminary_move_piece(original_board, piece.position, move)
                         if not self.is_in_check(piece.colour, possible_board):
                             legal_moves.append(move)
-                else:
+                elif not isinstance(original_board[move[0]][move[1]], King):
                     possible_board = self.preliminary_move_piece(original_board, piece.position, move)
                     if not self.is_in_check(piece.colour, possible_board):
                         legal_moves.append(move)
@@ -161,7 +161,6 @@ class Board(object):
                     possible_board = self.preliminary_move_piece(original_board, piece.position, move)
                     if not self.is_in_check(piece.colour, possible_board):
                         legal_moves.append(move)
-        print(legal_moves)
         return legal_moves
 
     def get_attacking_moves(self, piece, board):
@@ -173,7 +172,6 @@ class Board(object):
         """
         legal_moves = []
         illegal_moves = piece.position
-
         def get_legal_moves():
             for move in piece.possible_moves:
                 if move not in illegal_moves:

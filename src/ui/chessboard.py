@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'chessboard.ui'
 #
-# Created: Sun Mar  6 22:48:13 2016
+# Created: Sat Mar 19 21:38:19 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -39,9 +39,12 @@ class Ui_Form(object):
         self.horizontalLayout_2 = QtGui.QHBoxLayout(self.horizontalLayoutWidget_2)
         self.horizontalLayout_2.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
-        self.submit_btn = QtGui.QPushButton(self.horizontalLayoutWidget_2)
-        self.submit_btn.setObjectName("submit_btn")
-        self.horizontalLayout_2.addWidget(self.submit_btn)
+        self.load_btn = QtGui.QPushButton(self.horizontalLayoutWidget_2)
+        self.load_btn.setObjectName("load_btn")
+        self.horizontalLayout_2.addWidget(self.load_btn)
+        self.save_btn = QtGui.QPushButton(self.horizontalLayoutWidget_2)
+        self.save_btn.setObjectName("save_btn")
+        self.horizontalLayout_2.addWidget(self.save_btn)
         self.chess_board = QtGui.QTableWidget(Form)
         self.chess_board.setGeometry(QtCore.QRect(10, 50, 640, 640))
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
@@ -110,7 +113,8 @@ class Ui_Form(object):
         Form.setWindowTitle(QtGui.QApplication.translate("Form", "Form", None, QtGui.QApplication.UnicodeUTF8))
         self.player_one_label.setText(QtGui.QApplication.translate("Form", "Player 1:", None, QtGui.QApplication.UnicodeUTF8))
         self.player_two_label.setText(QtGui.QApplication.translate("Form", "Player 2:", None, QtGui.QApplication.UnicodeUTF8))
-        self.submit_btn.setText(QtGui.QApplication.translate("Form", "Submit Move", None, QtGui.QApplication.UnicodeUTF8))
+        self.load_btn.setText(QtGui.QApplication.translate("Form", "Load Game", None, QtGui.QApplication.UnicodeUTF8))
+        self.save_btn.setText(QtGui.QApplication.translate("Form", "Save Game", None, QtGui.QApplication.UnicodeUTF8))
         self.chess_board.verticalHeaderItem(0).setText(QtGui.QApplication.translate("Form", "New Row", None, QtGui.QApplication.UnicodeUTF8))
         self.chess_board.verticalHeaderItem(1).setText(QtGui.QApplication.translate("Form", "New Row", None, QtGui.QApplication.UnicodeUTF8))
         self.chess_board.verticalHeaderItem(2).setText(QtGui.QApplication.translate("Form", "New Row", None, QtGui.QApplication.UnicodeUTF8))

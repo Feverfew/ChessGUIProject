@@ -30,7 +30,6 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
         if not self.from_cell and column != -1 and row != -1:
             self.from_cell = [row, column]
             self.output_board(self.board.calculate_legal_moves(self.board.board[row][column]))
-            print("from: ({},{})".format(row, column))
         elif self.from_cell and column != -1 and row != -1:
             if self.board.board[row][column]:
                 if self.board.board[self.from_cell[0]][self.from_cell[1]].colour == self.board.board[row][column].colour:
