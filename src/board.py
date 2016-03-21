@@ -76,7 +76,7 @@ class Board(object):
      
     def preliminary_move_piece(self, chess_board, old_coords, new_coords):
         """"Will move a piece temporarily. e.g. used to see if piece puts itself in check."""
-        chess_board[new_coords[0]][new_coords[1]] = chess_board[old_coords[0]][old_coords[1]]
+        chess_board[new_coords[0]][new_coords[1]] = copy.deepcopy(chess_board[old_coords[0]][old_coords[1]])
         chess_board[old_coords[0]][old_coords[1]] = 0
         if isinstance(chess_board[new_coords[0]][new_coords[1]], Piece):
             chess_board[new_coords[0]][new_coords[1]].position = [new_coords[0], new_coords[1]]
@@ -87,7 +87,7 @@ class Board(object):
         """Moves a piece on the board permanently. 
         It will also check for change in game state (checkmate, check, stalemate)."""
         if not self.game_over:
-            chess_board[new_coords[0]][new_coords[1]] = self.board[old_coords[0]][old_coords[1]]
+            chess_board[new_coords[0]][new_coords[1]] = copy.deepcopy(self.board[old_coords[0]][old_coords[1]])
             chess_board[old_coords[0]][old_coords[1]] = 0
             self.move_num += 1
             if self.move_num % 2 == 0:
@@ -97,7 +97,7 @@ class Board(object):
             if isinstance(chess_board[new_coords[0]][new_coords[1]], Piece):
                 chess_board[new_coords[0]][new_coords[1]].position = [new_coords[0], new_coords[1]]
                 chess_board[new_coords[0]][new_coords[1]].calculate_possible_moves()
-                if self.calculate_is_checkmate(chess_board[new_coords[0]][new_coords[1]].colour, chess_board):
+                if self.calculate_is_checkmate(self.turn, chess_board):
                     self.game_over = True
                     if chess_board[new_coords[0]][new_coords[1]].colour == "Black":
                         self.winner = "White"
@@ -126,6 +126,7 @@ class Board(object):
         possible_legal_moves = self.get_attacking_moves(piece, original_board)
         if not isinstance(piece, Pawn):
             for move in possible_legal_moves:
+                original_board = copy.deepcopy(self.board)
                 if isinstance(original_board[move[0]][move[1]], Piece) and not isinstance(original_board[move[0]][move[1]], King):
                     if not piece.colour == original_board[move[0]][move[1]].colour:
                         possible_board = self.preliminary_move_piece(original_board, piece.position, move)
@@ -157,6 +158,7 @@ class Board(object):
                         legal_moves.append([piece.position[0]+2, piece.position[1]])
             # When pawn moves diagonally to take piece
             for move in possible_legal_moves:
+                original_board = copy.deepcopy(self.board)
                 if isinstance(original_board[move[0]][move[1]], Piece) and not isinstance(original_board[move[0]][move[1]], King):
                     possible_board = self.preliminary_move_piece(original_board, piece.position, move)
                     if not self.is_in_check(piece.colour, possible_board):
@@ -171,7 +173,8 @@ class Board(object):
         tells you whether the piece can move there.
         """
         legal_moves = []
-        illegal_moves = piece.position
+        illegal_moves = []
+        illegal_moves.append(piece.position)
         def get_legal_moves():
             for move in piece.possible_moves:
                 if move not in illegal_moves:
