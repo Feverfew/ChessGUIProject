@@ -99,7 +99,7 @@ class Board(object):
                 chess_board[new_coords[0]][new_coords[1]].calculate_possible_moves()
                 if self.calculate_is_checkmate(self.turn, chess_board):
                     self.game_over = True
-                    if chess_board[new_coords[0]][new_coords[1]].colour == "Black":
+                    if self.turn == "Black":
                         self.winner = "White"
                     else:
                         self.winner = "Black"
@@ -336,7 +336,7 @@ class Board(object):
         if self.is_in_check(colour, board):
             for row in board:
                 for piece in row:
-                    if isinstance(piece, Piece):
+                    if isinstance(piece, Piece) and piece.colour == colour:
                         if self.calculate_legal_moves(piece):
                             return False
             return True
