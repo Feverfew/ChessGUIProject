@@ -137,7 +137,7 @@ class Board(object):
                     if not self.is_in_check(piece.colour, possible_board):
                         legal_moves.append(move)
         else:
-            # To move up the board
+            # vertical legal moves for pawn
             if piece.colour == "White":
                 if piece.position[0] > 0 and not isinstance(original_board[piece.position[0]-1][piece.position[1]], Piece):
                     possible_board = self.preliminary_move_piece(original_board, piece.position, [piece.position[0]-1, piece.position[1]])
@@ -153,7 +153,7 @@ class Board(object):
                     if not self.is_in_check(piece.colour, possible_board):
                         legal_moves.append([piece.position[0]+1, piece.position[1]])
                 if piece.position[0] == 1 and not isinstance(original_board[piece.position[0]+2][piece.position[1]], Piece):
-                    possible_board = self.preliminary_move_piece(original_board, piece.position, [piece.position[0]+1, piece.position[1]])
+                    possible_board = self.preliminary_move_piece(original_board, piece.position, [piece.position[0]+2, piece.position[1]])
                     if not self.is_in_check(piece.colour, possible_board):
                         legal_moves.append([piece.position[0]+2, piece.position[1]])
             # When pawn moves diagonally to take piece
