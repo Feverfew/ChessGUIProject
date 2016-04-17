@@ -99,7 +99,7 @@ class Board(object):
                 chess_board[new_coords[0]][new_coords[1]].calculate_possible_moves()
                 if self.calculate_is_checkmate(self.turn, chess_board):
                     self.game_over = True
-                    if chess_board[new_coords[0]][new_coords[1]].colour == "Black":
+                    if self.turn == "Black":
                         self.winner = "White"
                     else:
                         self.winner = "Black"
@@ -137,7 +137,7 @@ class Board(object):
                     if not self.is_in_check(piece.colour, possible_board):
                         legal_moves.append(move)
         else:
-            # To move up the board
+            # vertical legal moves for pawn
             if piece.colour == "White":
                 if piece.position[0] > 0 and not isinstance(original_board[piece.position[0]-1][piece.position[1]], Piece):
                     possible_board = self.preliminary_move_piece(original_board, piece.position, [piece.position[0]-1, piece.position[1]])
@@ -153,7 +153,7 @@ class Board(object):
                     if not self.is_in_check(piece.colour, possible_board):
                         legal_moves.append([piece.position[0]+1, piece.position[1]])
                 if piece.position[0] == 1 and not isinstance(original_board[piece.position[0]+2][piece.position[1]], Piece):
-                    possible_board = self.preliminary_move_piece(original_board, piece.position, [piece.position[0]+1, piece.position[1]])
+                    possible_board = self.preliminary_move_piece(original_board, piece.position, [piece.position[0]+2, piece.position[1]])
                     if not self.is_in_check(piece.colour, possible_board):
                         legal_moves.append([piece.position[0]+2, piece.position[1]])
             # When pawn moves diagonally to take piece
@@ -336,7 +336,7 @@ class Board(object):
         if self.is_in_check(colour, board):
             for row in board:
                 for piece in row:
-                    if isinstance(piece, Piece):
+                    if isinstance(piece, Piece) and piece.colour == colour:
                         if self.calculate_legal_moves(piece):
                             return False
             return True
