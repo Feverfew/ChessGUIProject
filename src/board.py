@@ -16,6 +16,14 @@ class Board(object):
         self.colour_in_check = ""
         self.is_stalemate = False
         self.game_over = False
+        self.can_enpassent = {
+            'black': True,
+            'white': True
+            }
+        self.can_castle = {
+            'black': True,
+            'white': True
+            }
         self.player_one = player_one
         self.player_two = player_two
         self.new_board()

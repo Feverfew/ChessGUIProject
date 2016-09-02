@@ -25,12 +25,13 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
         self.chess_board.itemClicked.connect(self.table_clicked)
 
     def table_clicked(self):
+        """Handler for when table is clicked"""
         row = self.chess_board.currentRow()
         column = self.chess_board.currentColumn()
-        if not self.from_cell and column != -1 and row != -1:
+        if not self.from_cell and column != -1 and row != -1: # Piece is selected
             self.from_cell = [row, column]
             self.output_board(self.board.calculate_legal_moves(self.board.board[row][column]))
-        elif self.from_cell and column != -1 and row != -1:
+        elif self.from_cell and column != -1 and row != -1: # Piece is moved
             if self.board.board[row][column]:
                 if self.board.board[self.from_cell[0]][self.from_cell[1]].colour == self.board.board[row][column].colour:
                     self.from_cell = [row, column]
