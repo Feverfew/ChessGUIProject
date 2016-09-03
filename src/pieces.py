@@ -238,6 +238,7 @@ class Pawn(Piece):
     def __init__(self, position, colour, has_moved = False):
         super().__init__(position, colour, has_moved)
         self.img_path = "{}_pawn.png".format(self.colour.lower())
+        self.first_moved = 0
 
     def calculate_possible_moves(self):
         self.possible_moves.clear()

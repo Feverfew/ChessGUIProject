@@ -16,7 +16,7 @@ class Board(object):
         self.colour_in_check = ""
         self.is_stalemate = False
         self.game_over = False
-        self.can_enpassent = {
+        self.enpassent_possible = {
             'black': True,
             'white': True
             }
@@ -91,6 +91,9 @@ class Board(object):
             chess_board[new_coords[0]][new_coords[1]].calculate_possible_moves()
         return chess_board
 
+    def preliminary_enpassent(self, chess_board):
+        pass
+
     def permanently_move_piece(self, chess_board, old_coords, new_coords):
         """Moves a piece on the board permanently. 
         It will also check for change in game state (checkmate, check, stalemate)."""
@@ -155,6 +158,8 @@ class Board(object):
                     possible_board = self.preliminary_move_piece(original_board, piece.position, [piece.position[0]-2, piece.position[1]])
                     if not self.is_in_check(piece.colour, possible_board):
                         legal_moves.append([piece.position[0]-2, piece.position[1]])
+                #if piece.position[0] == 3 and self.enpassent_possible['white'] and (original_board[piece.position[0]][piece.position[1]-1] or original_board[piece.position[0]][piece.position[1]+1]):
+                #    pass
             else:
                 if piece.position[0] < 7 and not isinstance(original_board[piece.position[0]+1][piece.position[1]], Piece):
                     possible_board = self.preliminary_move_piece(original_board, piece.position, [piece.position[0]+1, piece.position[1]])
@@ -374,4 +379,8 @@ class Board(object):
         return False
     
     def can_castle(self, colour, possible_board):
+        pass
+
+    def can_enpassent(self, colour, possible_board, piece_position):
+
         pass
