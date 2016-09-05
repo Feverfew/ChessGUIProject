@@ -154,9 +154,10 @@ class Board(object):
                     possible_board = self.preliminary_move_piece(original_board, piece.position, [piece.position[0]-1, piece.position[1]])
                     if not self.is_in_check(piece.colour, possible_board):
                         legal_moves.append([piece.position[0]-1, piece.position[1]])
+                original_board = copy.deepcopy(self.board)
                 if piece.position[0] == 6 and not isinstance(original_board[piece.position[0]-2][piece.position[1]], Piece):
                     possible_board = self.preliminary_move_piece(original_board, piece.position, [piece.position[0]-2, piece.position[1]])
-                    if not self.is_in_check(piece.colour, possible_board):
+                    if not (self.is_in_check(piece.colour, possible_board) or isinstance(original_board[piece.position[0]-1][piece.position[1]], Piece)):
                         legal_moves.append([piece.position[0]-2, piece.position[1]])
                 #if piece.position[0] == 3 and self.enpassent_possible['white'] and (original_board[piece.position[0]][piece.position[1]-1] or original_board[piece.position[0]][piece.position[1]+1]):
                 #    pass
@@ -165,9 +166,10 @@ class Board(object):
                     possible_board = self.preliminary_move_piece(original_board, piece.position, [piece.position[0]+1, piece.position[1]])
                     if not self.is_in_check(piece.colour, possible_board):
                         legal_moves.append([piece.position[0]+1, piece.position[1]])
+                original_board = copy.deepcopy(self.board)
                 if piece.position[0] == 1 and not isinstance(original_board[piece.position[0]+2][piece.position[1]], Piece):
                     possible_board = self.preliminary_move_piece(original_board, piece.position, [piece.position[0]+2, piece.position[1]])
-                    if not self.is_in_check(piece.colour, possible_board):
+                    if not(self.is_in_check(piece.colour, possible_board) or isinstance(original_board[piece.position[0]+1][piece.position[1]], Piece)):
                         legal_moves.append([piece.position[0]+2, piece.position[1]])
             # When pawn moves diagonally to take piece
             for move in possible_legal_moves:
@@ -317,25 +319,21 @@ class Board(object):
             if piece.colour == "White":
                 if piece.position[0] > 0 and piece.position[1] > 0:
                     if isinstance(board[piece.position[0]-1][piece.position[1]-1], Piece):
-                        if not isinstance(board[piece.position[0]-1][piece.position[1]-1], King):
-                            if board[piece.position[0]-1][piece.position[1]-1].colour == "Black":
-                                legal_moves.append([piece.position[0]-1, piece.position[1]-1])
+                        if board[piece.position[0]-1][piece.position[1]-1].colour == "Black":
+                            legal_moves.append([piece.position[0]-1, piece.position[1]-1])
                 if piece.position[0] > 0 and piece.position[1] < 7:
                     if isinstance(board[piece.position[0]-1][piece.position[1]+1], Piece):
-                        if not isinstance(board[piece.position[0]-1][piece.position[1]+1], King):
-                            if board[piece.position[0]-1][piece.position[1]+1].colour == "Black":
-                                legal_moves.append([piece.position[0]-1, piece.position[1]+1])
+                        if board[piece.position[0]-1][piece.position[1]+1].colour == "Black":
+                            legal_moves.append([piece.position[0]-1, piece.position[1]+1])
             elif piece.colour == "Black":
                 if piece.position[0] < 7 and piece.position[1] < 7:
                     if isinstance(board[piece.position[0]+1][piece.position[1]+1], Piece):
-                        if not isinstance(board[piece.position[0]+1][piece.position[1]+1], King):
-                            if board[piece.position[0]+1][piece.position[1]+1].colour == "White":
-                                legal_moves.append([piece.position[0]+1, piece.position[1]+1])
+                        if board[piece.position[0]+1][piece.position[1]+1].colour == "White":
+                            legal_moves.append([piece.position[0]+1, piece.position[1]+1])
                 if piece.position[0] < 7 and piece.position[1] > 0:
                     if isinstance(board[piece.position[0]+1][piece.position[1]-1], Piece):
-                        if not isinstance(board[piece.position[0]+1][piece.position[1]-1], King):
-                            if board[piece.position[0]+1][piece.position[1]-1].colour == "White":
-                                legal_moves.append([piece.position[0]+1, piece.position[1]-1])
+                        if board[piece.position[0]+1][piece.position[1]-1].colour == "White":
+                            legal_moves.append([piece.position[0]+1, piece.position[1]-1])
             return legal_moves
         elif isinstance(piece, Knight):
             return piece.possible_moves
