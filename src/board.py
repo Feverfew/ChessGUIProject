@@ -359,7 +359,7 @@ class Board(object):
         if not self.is_in_check("White", board) and not self.is_in_check("Black", board):
             for row in board:
                 for piece in row:
-                    if isinstance(piece, Piece):
+                    if isinstance(piece, Piece) and piece.colour == self.turn:
                         if self.calculate_legal_moves(piece):
                             return False
             return True

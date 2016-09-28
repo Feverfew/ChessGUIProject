@@ -52,9 +52,9 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
                 print("from: {} to: {},{}".format(self.from_cell, row, column))
                 self.output_board()
                 self.from_cell = []
-                if self.board.game_over:
+                if self.board.game_over and self.board.is_stalemate:
                     self.show_message("{} is the winner".format(self.board.winner))
-                elif self.board.game_over and self.board.is_stalemate:
+                elif self.board.game_over:
                     self.show_message("Game is a draw. No one wins")
                 elif self.board.colour_in_check:
                     self.show_message("{} is in check".format(self.board.colour_in_check))
