@@ -38,24 +38,22 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
                     self.output_board(self.board.calculate_legal_moves(self.board.board[row][column]))
                 else:
                     self.board.board = self.board.permanently_move_piece(self.board.board, self.from_cell, [row, column])
-                    print("from: {} to: {},{}".format(self.from_cell, row, column))
                     self.output_board()
                     self.from_cell = []
-                    if self.board.game_over:
-                        self.show_message("{} is the winner".format(self.board.winner))
-                    elif self.board.game_over and self.board.is_stalemate:
+                    if  self.board.game_over and self.board.is_stalemate:
                         self.show_message("Game is a draw. No one wins")
+                    elif self.board.game_over:
+                        self.show_message("{} is the winner".format(self.board.winner))
                     elif self.board.colour_in_check:
                         self.show_message("{} is in check".format(self.board.colour_in_check))
             else:
                 self.board.board = self.board.permanently_move_piece(self.board.board, self.from_cell, [row, column])
-                print("from: {} to: {},{}".format(self.from_cell, row, column))
                 self.output_board()
                 self.from_cell = []
                 if self.board.game_over and self.board.is_stalemate:
-                    self.show_message("{} is the winner".format(self.board.winner))
-                elif self.board.game_over:
                     self.show_message("Game is a draw. No one wins")
+                elif self.board.game_over:
+                    self.show_message("{} is the winner".format(self.board.winner))
                 elif self.board.colour_in_check:
                     self.show_message("{} is in check".format(self.board.colour_in_check))
 

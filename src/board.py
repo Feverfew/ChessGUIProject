@@ -17,12 +17,16 @@ class Board(object):
         self.is_stalemate = False
         self.game_over = False
         self.enpassent_possible = {
-            'black': True,
-            'white': True
+            'Black': True,
+            'White': True
             }
         self.can_castle = {
-            'black': True,
-            'white': True
+            'Black': True,
+            'White': True
+            }
+        self.enpassent_move = {
+            'from': [],
+            'to': []
             }
         self.player_one = player_one
         self.player_two = player_two
@@ -91,8 +95,14 @@ class Board(object):
             chess_board[new_coords[0]][new_coords[1]].calculate_possible_moves()
         return chess_board
 
-    def preliminary_enpassent(self, chess_board):
-        pass
+    def preliminary_enpassent(self, chess_board, old_coords, new_coords, removed_coords):
+        chess_board[new_coords[0]][new_coords[1]] = copy.deepcopy(chess_board[old_coords[0]][old_coords[1]])
+        chess_board[old_coords[0]][old_coords[1]] = 0
+        chess_board[removed_coords[0]][removed_coords[1]] = 0
+        if isinstance(chess_board[new_coords[0]][new_coords[1]], Piece):
+            chess_board[new_coords[0]][new_coords[1]].position = [new_coords[0], new_coords[1]]
+            chess_board[new_coords[0]][new_coords[1]].calculate_possible_moves()
+        return chess_board
 
     def permanently_move_piece(self, chess_board, old_coords, new_coords):
         """Moves a piece on the board permanently. 
@@ -106,6 +116,10 @@ class Board(object):
             else:
                 self.turn = "White"
             if isinstance(chess_board[new_coords[0]][new_coords[1]], Piece):
+                if isinstance(chess_board[new_coords[0]][new_coords[1]], Pawn): 
+                    # noted first moved, used for enpassent check
+                    if chess_board[new_coords[0]][new_coords[1]].first_moved == 0:
+                        chess_board[new_coords[0]][new_coords[1]].first_moved = self.move_num - 1
                 chess_board[new_coords[0]][new_coords[1]].position = [new_coords[0], new_coords[1]]
                 chess_board[new_coords[0]][new_coords[1]].calculate_possible_moves()
                 if self.calculate_is_checkmate(self.turn, chess_board):
@@ -160,7 +174,7 @@ class Board(object):
                     if not (self.is_in_check(piece.colour, possible_board) or isinstance(original_board[piece.position[0]-1][piece.position[1]], Piece)):
                         legal_moves.append([piece.position[0]-2, piece.position[1]])
                 #if piece.position[0] == 3 and self.enpassent_possible['white'] and (original_board[piece.position[0]][piece.position[1]-1] or original_board[piece.position[0]][piece.position[1]+1]):
-                #    pass
+                #     pass
             else:
                 if piece.position[0] < 7 and not isinstance(original_board[piece.position[0]+1][piece.position[1]], Piece):
                     possible_board = self.preliminary_move_piece(original_board, piece.position, [piece.position[0]+1, piece.position[1]])
@@ -184,7 +198,7 @@ class Board(object):
         """
         Get all the attacking moves of a piece and return them.
         The difference between this function and get_legal_moves is that
-        this shows you what the pieces can force a check while the other functions
+        this shows you what pieces can force a check while the other functions
         tells you whether the piece can move there.
         """
         legal_moves = []
@@ -379,6 +393,19 @@ class Board(object):
     def can_castle(self, colour, possible_board):
         pass
 
-    def can_enpassent(self, colour, possible_board, piece_position):
+    def can_enpassent(self, colour, chess_board, piece_position):
+        if self.enpassent_possible[colour] and (piece_position == 4 or piece_position == 3):
+            try:
+                if isinstance(possible_board[piece_position[0]][piece_position[1]-1], Pawn):
+                    if possible_board[piece_position[0]][piece_position[1]-1].first_moved == self.move_num - 1:
 
-        pass
+                        if self.colour == "Black":
+                            temp_board = self.preliminary_enpassent(possible_board, piece_position, [piece_position[0]+1, piece_position[1]-1], [piece_position[0], piece_position[1]-1])
+                        else:
+                            temp_board = self.preliminary_enpassent(possible_board, piece_position, [piece_position[0]+1, piece_position[1]-1], [piece_position[0], piece_position[1]-1])
+                    else:
+                        return False
+            except IndexError:
+                pass
+        else:
+            return False
