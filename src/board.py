@@ -394,18 +394,45 @@ class Board(object):
         pass
 
     def can_enpassent(self, colour, chess_board, piece_position):
-        if self.enpassent_possible[colour] and (piece_position == 4 or piece_position == 3):
+        if self.enpassent_possible[colour] and (piece_position[0] == 4 or piece_position[0] == 3):
             try:
                 if isinstance(possible_board[piece_position[0]][piece_position[1]-1], Pawn):
                     if possible_board[piece_position[0]][piece_position[1]-1].first_moved == self.move_num - 1:
-
                         if self.colour == "Black":
                             temp_board = self.preliminary_enpassent(possible_board, piece_position, [piece_position[0]+1, piece_position[1]-1], [piece_position[0], piece_position[1]-1])
+                            if self.is_in_check("Black", temp_board):
+                                return False
+                            else:
+                                return True
                         else:
-                            temp_board = self.preliminary_enpassent(possible_board, piece_position, [piece_position[0]+1, piece_position[1]-1], [piece_position[0], piece_position[1]-1])
+                            temp_board = self.preliminary_enpassent(possible_board, piece_position, [piece_position[0]-1, piece_position[1]-1], [piece_position[0], piece_position[1]-1])
+                            if self.is_in_check("White", temp_board):
+                                return False
+                            else:
+                                return True
                     else:
                         return False
             except IndexError:
                 pass
+            try:
+                if isinstance(possible_board[piece_position[0]][piece_position[1]+1], Pawn):
+                    if possible_board[piece_position[0]][piece_position[1]+1].first_moved == self.move_num - 1:
+                        if self.colour == "Black":
+                            temp_board = self.preliminary_enpassent(possible_board, piece_position, [piece_position[0]+1, piece_position[1]+1], [piece_position[0], piece_position[1]+1])
+                            if self.is_in_check("Black", temp_board):
+                                return False
+                            else:
+                                return True
+                        else:
+                            temp_board = self.preliminary_enpassent(possible_board, piece_position, [piece_position[0]-1, piece_position[1]+1], [piece_position[0], piece_position[1]+1])
+                            if self.is_in_check("White", temp_board):
+                                return False
+                            else:
+                                return True
+                    else:
+                        return False
+            except IndexError:
+                pass
+            return False
         else:
             return False
