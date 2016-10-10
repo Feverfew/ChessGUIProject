@@ -108,18 +108,29 @@ class Board(object):
         """Moves a piece on the board permanently. 
         It will also check for change in game state (checkmate, check, stalemate)."""
         if not self.game_over:
-            chess_board[new_coords[0]][new_coords[1]] = copy.deepcopy(self.board[old_coords[0]][old_coords[1]])
-            chess_board[old_coords[0]][old_coords[1]] = 0
+            if old_coords == self.enpassent_move['from'] and new_coords == self.enpassent_move['to'] and self.enpassent_possible[self.turn]:
+                chess_board[new_coords[0]][new_coords[1]] = copy.deepcopy(chess_board[old_coords[0]][old_coords[1]])
+                chess_board[old_coords[0]][old_coords[1]] = 0
+                chess_board[removed_coords[0]][removed_coords[1]] = 0
+                if isinstance(chess_board[new_coords[0]][new_coords[1]], Piece):
+                    chess_board[new_coords[0]][new_coords[1]].position = [new_coords[0], new_coords[1]]
+                    chess_board[new_coords[0]][new_coords[1]].calculate_possible_moves()
+                self.enpassent_possible[self.turn] = False
+                self.enpassent_move['from'] = []
+                self.enpassent_move['to'] = []
+            else:
+                if self.enpassent_move['from'] and self.enpassent_move['to']: # if possible but not done, then can never be done.
+                    self.enpassent_possible[self.turn] = False
+                    self.enpassent_move['from'] = []
+                    self.enpassent_move['to'] = []
+                chess_board[new_coords[0]][new_coords[1]] = copy.deepcopy(self.board[old_coords[0]][old_coords[1]])
+                chess_board[old_coords[0]][old_coords[1]] = 0
             self.move_num += 1
             if self.move_num % 2 == 0:
                 self.turn = "Black"
             else:
                 self.turn = "White"
             if isinstance(chess_board[new_coords[0]][new_coords[1]], Piece):
-                if isinstance(chess_board[new_coords[0]][new_coords[1]], Pawn): 
-                    # noted first moved, used for enpassent check
-                    if chess_board[new_coords[0]][new_coords[1]].first_moved == 0:
-                        chess_board[new_coords[0]][new_coords[1]].first_moved = self.move_num - 1
                 chess_board[new_coords[0]][new_coords[1]].position = [new_coords[0], new_coords[1]]
                 chess_board[new_coords[0]][new_coords[1]].calculate_possible_moves()
                 if self.calculate_is_checkmate(self.turn, chess_board):
@@ -393,22 +404,26 @@ class Board(object):
     def can_castle(self, colour, possible_board):
         pass
 
-    def can_enpassent(self, colour, chess_board, piece_position):
+    def can_enpassent(self, colour, possible_board, piece_position):
         if self.enpassent_possible[colour] and (piece_position[0] == 4 or piece_position[0] == 3):
             try:
                 if isinstance(possible_board[piece_position[0]][piece_position[1]-1], Pawn):
                     if possible_board[piece_position[0]][piece_position[1]-1].first_moved == self.move_num - 1:
-                        if self.colour == "Black":
+                        if possible_board[piece_position[0]][piece_position[1]].colour == "Black":
                             temp_board = self.preliminary_enpassent(possible_board, piece_position, [piece_position[0]+1, piece_position[1]-1], [piece_position[0], piece_position[1]-1])
                             if self.is_in_check("Black", temp_board):
                                 return False
                             else:
+                                self.enpassent_move['from'] = piece_position
+                                self.enpassent_move['to'] = [piece_position[0]+1, piece_position[1]-1]
                                 return True
                         else:
                             temp_board = self.preliminary_enpassent(possible_board, piece_position, [piece_position[0]-1, piece_position[1]-1], [piece_position[0], piece_position[1]-1])
                             if self.is_in_check("White", temp_board):
                                 return False
                             else:
+                                self.enpassent_move['from'] = piece_position
+                                self.enpassent_move['to'] = [piece_position[0]-1, piece_position[1]-1]
                                 return True
                     else:
                         return False
@@ -417,17 +432,21 @@ class Board(object):
             try:
                 if isinstance(possible_board[piece_position[0]][piece_position[1]+1], Pawn):
                     if possible_board[piece_position[0]][piece_position[1]+1].first_moved == self.move_num - 1:
-                        if self.colour == "Black":
+                        if possible_board[piece_position[0]][piece_position[1]].colour == "Black":
                             temp_board = self.preliminary_enpassent(possible_board, piece_position, [piece_position[0]+1, piece_position[1]+1], [piece_position[0], piece_position[1]+1])
                             if self.is_in_check("Black", temp_board):
                                 return False
                             else:
+                                self.enpassent_move['from'] = piece_position
+                                self.enpassent_move['to'] = [piece_position[0]+1, piece_position[1]+1]
                                 return True
                         else:
                             temp_board = self.preliminary_enpassent(possible_board, piece_position, [piece_position[0]-1, piece_position[1]+1], [piece_position[0], piece_position[1]+1])
                             if self.is_in_check("White", temp_board):
                                 return False
                             else:
+                                self.enpassent_move['from'] = piece_position
+                                self.enpassent_move['to'] = [piece_position[0]-1, piece_position[1]+1]
                                 return True
                     else:
                         return False
