@@ -93,6 +93,7 @@ class Board(object):
         return chess_board
 
     def preliminary_enpassent(self, chess_board, old_coords, new_coords, removed_coords):
+        """Will perform enpassent on a chess board and return that board."""
         chess_board[new_coords[0]][new_coords[1]] = copy.deepcopy(chess_board[old_coords[0]][old_coords[1]])
         chess_board[old_coords[0]][old_coords[1]] = 0
         chess_board[removed_coords[0]][removed_coords[1]] = 0
@@ -105,21 +106,25 @@ class Board(object):
         """Moves a piece on the board permanently. 
         It will also check for change in game state (checkmate, check, stalemate)."""
         if not self.game_over:
+            # Performs enpassent if conditions are met.
             if old_coords == self.enpassent_move['from'] and new_coords == self.enpassent_move['to'] and self.enpassent_possible[self.turn]:
-                chess_board[self.enpassent_move['to'][0], self.enpassent_move['to'][1]] = copy.deepcopy(chess_board[old_coords[0]][old_coords[1]])
+                chess_board[self.enpassent_move['to'][0]][self.enpassent_move['to'][1]] = copy.deepcopy(chess_board[old_coords[0]][old_coords[1]])
                 chess_board[old_coords[0]][old_coords[1]] = 0
-                chess_board[removed_coords[0]][removed_coords[1]] = 0
+                chess_board[self.enpassent_move['taken'][0]][self.enpassent_move['taken'][1]] = 0
                 if isinstance(chess_board[new_coords[0]][new_coords[1]], Piece):
                     chess_board[new_coords[0]][new_coords[1]].position = [new_coords[0], new_coords[1]]
                     chess_board[new_coords[0]][new_coords[1]].calculate_possible_moves()
                 self.enpassent_possible[self.turn] = False
                 self.enpassent_move['from'] = []
                 self.enpassent_move['to'] = []
+                self.enpassent_move['taken'] = []
             else:
-                if self.enpassent_move['from'] and self.enpassent_move['to']: # if possible but not done, then can never be done.
+                # if enpassent possible but not done, then can never be done again.
+                if self.enpassent_move['from'] and self.enpassent_move['to']:
                     self.enpassent_possible[self.turn] = False
                     self.enpassent_move['from'] = []
                     self.enpassent_move['to'] = []
+                    self.enpassent_move['taken'] = []
                 chess_board[new_coords[0]][new_coords[1]] = copy.deepcopy(self.board[old_coords[0]][old_coords[1]])
                 chess_board[old_coords[0]][old_coords[1]] = 0
             if isinstance(chess_board[new_coords[0]][new_coords[1]], Pawn):
@@ -417,6 +422,7 @@ class Board(object):
                             else:
                                 self.enpassent_move['from'] = piece.position
                                 self.enpassent_move['to'] = [piece.position[0]+1, piece.position[1]-1]
+                                self.enpassent_move['taken'] = [piece.position[0], piece.position[1]-1]
                                 return True
                         else:
                             temp_board = self.preliminary_enpassent(possible_board, piece.position, [piece.position[0]-1, piece.position[1]-1], [piece.position[0], piece.position[1]-1])
@@ -425,6 +431,7 @@ class Board(object):
                             else:
                                 self.enpassent_move['from'] = piece.position
                                 self.enpassent_move['to'] = [piece.position[0]-1, piece.position[1]-1]
+                                self.enpassent_move['taken'] = [piece.position[0], piece.position[1]-1]
                                 return True
                     else:
                         return False
@@ -440,6 +447,7 @@ class Board(object):
                             else:
                                 self.enpassent_move['from'] = piece.position
                                 self.enpassent_move['to'] = [piece.position[0]+1, piece.position[1]+1]
+                                self.enpassent_move['taken'] = [piece.position[0], piece.position[1]+1]
                                 return True
                         else:
                             temp_board = self.preliminary_enpassent(possible_board, piece.position, [piece.position[0]-1, piece.position[1]+1], [piece.position[0], piece.position[1]+1])
@@ -448,6 +456,7 @@ class Board(object):
                             else:
                                 self.enpassent_move['from'] = piece.position
                                 self.enpassent_move['to'] = [piece.position[0]-1, piece.position[1]+1]
+                                self.enpassent_move['taken'] = [piece.position[0], piece.position[1]+1]
                                 return True
                     else:
                         return False
