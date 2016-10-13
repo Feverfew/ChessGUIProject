@@ -411,7 +411,8 @@ class Board(object):
         pass
 
     def can_enpassent(self, piece, possible_board):
-        if self.enpassent_possible[piece.colour] and (piece.position[0] == 4 or piece.position[0] == 3):
+        """Checks if enpassent is possible, and assigns the enpassent move."""
+        if self.enpassent_possible[piece.colour] and ((piece.position[0] == 4 and piece.colour == "Black") or (piece.position[0] == 3 and piece.colour == "White")):
             try:
                 if isinstance(possible_board[piece.position[0]][piece.position[1]-1], Pawn):
                     if possible_board[piece.position[0]][piece.position[1]-1].first_moved == self.move_num - 1:
