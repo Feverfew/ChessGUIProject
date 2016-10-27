@@ -3,14 +3,13 @@ __author__ = "Alexander Saoutkin"
 class Piece(object):
     """Base class for chess pieces"""
 
-    def __init__(self, position, colour, has_moved=False):
+    def __init__(self, position, colour):
         """"
         :param coords: Coordinates on the board
         :type coords: list (with only two elements)
         """
         self.position = position
         self.colour = colour
-        self.has_moved = has_moved
         self.possible_moves = []
         self.calculate_possible_moves()
 
@@ -32,7 +31,7 @@ class Rook(Piece):
     """Class for a Rook"""
 
     def __init__(self, position, colour, has_moved = False):
-        super().__init__(position, colour, has_moved)
+        super().__init__(position, colour)
         self.img_path = "{}_rook.png".format(self.colour.lower())
         self.has_moved = has_moved
 
@@ -54,8 +53,8 @@ class Rook(Piece):
 
 class Knight(Piece):
     """Class for a Knight"""
-    def __init__(self, position, colour, has_moved = False):
-        super().__init__(position, colour, has_moved)
+    def __init__(self, position, colour):
+        super().__init__(position, colour)
         self.img_path = "{}_knight.png".format(self.colour.lower())
 
     def calculate_possible_moves(self):
@@ -82,8 +81,8 @@ class Knight(Piece):
 
 class Bishop(Piece):
     """Class for a Bishop"""
-    def __init__(self, position, colour, has_moved = False):
-        super().__init__(position, colour, has_moved)
+    def __init__(self, position, colour):
+        super().__init__(position, colour)
         self.img_path = "{}_bishop.png".format(self.colour.lower())
 
     def calculate_possible_moves(self):
@@ -140,8 +139,8 @@ class Bishop(Piece):
 
 class Queen(Piece):
     """Class for a Queen"""
-    def __init__(self, position, colour, has_moved = False):
-        super().__init__(position, colour, has_moved)
+    def __init__(self, position, colour):
+        super().__init__(position, colour)
         self.img_path = "{}_queen.png".format(self.colour.lower())
 
     def calculate_possible_moves(self):
@@ -203,10 +202,11 @@ class Queen(Piece):
 
 class King(Piece):
     """Class for a King"""
-    def __init__(self, position, colour, has_moved = False):
-        super().__init__(position, colour, has_moved)
+    def __init__(self, position, colour, has_moved=False, has_been_in_check=False, castling_moves=[]):
+        super().__init__(position, colour)
         self.img_path = "{}_king.png".format(self.colour.lower())
         self.has_moved = has_moved
+        self.castling_moves = castling_moves
 
     def calculate_possible_moves(self):
         self.possible_moves.clear()
@@ -235,8 +235,8 @@ class King(Piece):
 
 class Pawn(Piece):
     """Class for a Pawn"""
-    def __init__(self, position, colour, has_moved = False):
-        super().__init__(position, colour, has_moved)
+    def __init__(self, position, colour):
+        super().__init__(position, colour)
         self.img_path = "{}_pawn.png".format(self.colour.lower())
         self.first_moved = 0
 

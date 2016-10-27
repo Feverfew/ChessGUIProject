@@ -12,6 +12,10 @@ class Board(object):
         self.colour_in_check = ""
         self.is_stalemate = False
         self.game_over = False
+        self.has_been_in_check = {
+            'Black': False,
+            'White': False
+        }
         self.enpassent_possible = {
             'Black': True,
             'White': True
@@ -118,6 +122,33 @@ class Board(object):
                 self.enpassent_move['from'] = []
                 self.enpassent_move['to'] = []
                 self.enpassent_move['taken'] = []
+            elif isinstance(chess_board[old_coords[0]][old_coords[1]], King):
+                # If legal move is castling move, perform castling...
+                chess_board[new_coords[0]][new_coords[1]] = copy.deepcopy(self.board[old_coords[0]][old_coords[1]])
+                chess_board[old_coords[0]][old_coords[1]] = 0
+                if new_coords in chess_board[new_coords[0]][new_coords[1]].castling_moves:
+                    if old_coords[0] == 0:
+                        if new_coords[1] == 2:
+                            chess_board[0][3] = copy.deepcopy(self.board[0][0])
+                            chess_board[0][3].position = [0, 3]
+                            chess_board[0][3].calculate_possible_moves()
+                            chess_board[0][0] = 0
+                        else:
+                            chess_board[0][5] = copy.deepcopy(self.board[0][7])
+                            chess_board[0][5].position = [0, 5]
+                            chess_board[0][5].calculate_possible_moves()
+                            chess_board[0][7] = 0
+                    else:
+                        if new_coords[1] == 2:
+                            chess_board[7][3] = copy.deepcopy(self.board[7][0])
+                            chess_board[7][3].position = [7, 3]
+                            chess_board[7][3].calculate_possible_moves()
+                            chess_board[7][0] = 0
+                        else:
+                            chess_board[7][5] = copy.deepcopy(self.board[7][7])
+                            chess_board[7][5].position = [7, 5]
+                            chess_board[7][5].calculate_possible_moves()
+                            chess_board[7][7] = 0
             else:
                 # if enpassent possible but not done, then can never be done again.
                 if self.enpassent_move['from'] and self.enpassent_move['to']:
@@ -129,6 +160,9 @@ class Board(object):
                 chess_board[old_coords[0]][old_coords[1]] = 0
             if isinstance(chess_board[new_coords[0]][new_coords[1]], Pawn):
                 chess_board[new_coords[0]][new_coords[1]].first_moved = self.move_num
+            elif isinstance(chess_board[new_coords[0]][new_coords[1]], Rook) or isinstance(chess_board[new_coords[0]][new_coords[1]], King):
+                # Won't work for rook when castling, but that doesn't matter as king has already moved, so can't castle anyway
+                chess_board[new_coords[0]][new_coords[1]].has_moved = True
             self.move_num += 1
             if self.move_num % 2 == 0:
                 self.turn = "Black"
@@ -143,8 +177,11 @@ class Board(object):
                         self.winner = "White"
                     else:
                         self.winner = "Black"
+                    self.has_been_in_check[self.turn] = True
+
                 elif self.is_in_check(self.turn, chess_board):
                     self.colour_in_check = self.turn
+                    self.has_been_in_check[self.turn] = True
                 elif self.calculate_is_stalemate(self.turn, chess_board):
                     self.is_stalemate = True
                     self.game_over = True
@@ -175,6 +212,12 @@ class Board(object):
                 elif not isinstance(original_board[move[0]][move[1]], King):
                     possible_board = self.preliminary_move_piece(original_board, piece.position, move)
                     if not self.is_in_check(piece.colour, possible_board):
+                        legal_moves.append(move)
+            if isinstance(piece, King):
+                original_board = copy.deepcopy(self.board)
+                self.get_castling_moves(piece, original_board)
+                if piece.castling_moves:
+                    for move in piece.castling_moves:
                         legal_moves.append(move)
         else:
             # vertical legal moves for pawn
@@ -407,8 +450,47 @@ class Board(object):
                         return True
         return False
     
-    def can_castle(self, colour, possible_board):
-        pass
+    def get_castling_moves(self, king, original_board):
+        king.castling_moves = []
+        if not king.has_moved and not self.has_been_in_check[king.colour] and not self.is_in_check(king.colour, self.board):
+            if king.colour == "Black":
+                if isinstance(original_board[0][0], Rook):
+                    if original_board[0][0].colour == "Black" and not original_board[0][0].has_moved and not(original_board[0][2] or original_board[0][3]):
+                        original_board = copy.deepcopy(self.board)
+                        possible_board = self.preliminary_move_piece(original_board, king.position, [king.position[0], king.position[1]-1])
+                        if not self.is_in_check(king.colour, possible_board):
+                            original_board = copy.deepcopy(self.board)
+                            possible_board = self.preliminary_move_piece(original_board, king.position, [king.position[0], king.position[1]-2])
+                            if not self.is_in_check(king.colour, possible_board):
+                                king.castling_moves.append([king.position[0], king.position[1]-2])
+                if isinstance(original_board[0][7], Rook):
+                    if original_board[0][7].colour == "Black" and not original_board[0][7].has_moved and not(original_board[0][5] or original_board[0][6]):
+                        original_board = copy.deepcopy(self.board)
+                        possible_board = self.preliminary_move_piece(original_board, king.position, [king.position[0], king.position[1]+1])
+                        if not self.is_in_check(king.colour, possible_board):
+                            original_board = copy.deepcopy(self.board)
+                            possible_board = self.preliminary_move_piece(original_board, king.position, [king.position[0], king.position[1]+2])
+                            if not self.is_in_check(king.colour, possible_board):
+                                king.castling_moves.append([king.position[0], king.position[1]+2])                
+            else:
+                if isinstance(original_board[7][0], Rook):
+                    if original_board[7][0].colour == "White" and not original_board[7][0].has_moved and not(original_board[7][2] or original_board[7][3]):
+                        original_board = copy.deepcopy(self.board)
+                        possible_board = self.preliminary_move_piece(original_board, king.position, [king.position[0], king.position[1]-1])
+                        if not self.is_in_check(king.colour, possible_board):
+                            original_board = copy.deepcopy(self.board)
+                            possible_board = self.preliminary_move_piece(original_board, king.position, [king.position[0], king.position[1]-2])
+                            if not self.is_in_check(king.colour, possible_board):
+                                king.castling_moves.append([king.position[0], king.position[1]-2])
+                if isinstance(original_board[7][7], Rook):
+                    if original_board[7][7].colour == "White" and not original_board[7][7].has_moved and not(original_board[7][5] or original_board[7][6]):
+                        original_board = copy.deepcopy(self.board)
+                        possible_board = self.preliminary_move_piece(original_board, king.position, [king.position[0], king.position[1]+1])
+                        if not self.is_in_check(king.colour, possible_board):
+                            original_board = copy.deepcopy(self.board)
+                            possible_board = self.preliminary_move_piece(original_board, king.position, [king.position[0], king.position[1]+2])
+                            if not self.is_in_check(king.colour, possible_board):
+                                king.castling_moves.append([king.position[0], king.position[1]+2])
 
     def can_enpassent(self, piece, possible_board):
         """Checks if enpassent is possible, and assigns the enpassent move."""
