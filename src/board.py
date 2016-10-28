@@ -6,12 +6,15 @@ class Board(object):
     """Class which manages the pieces on the board."""
 
     def __init__(self, player_one="", player_two=""):
+        self.id = None
+        self.last_played = None
         self.turn = "White"
         self.move_num = 1
         self.winner = ""
         self.colour_in_check = ""
         self.is_stalemate = False
         self.game_over = False
+        self.must_promote = False
         self.has_been_in_check = {
             'Black': False,
             'White': False
@@ -123,9 +126,9 @@ class Board(object):
                 self.enpassent_move['to'] = []
                 self.enpassent_move['taken'] = []
             elif isinstance(chess_board[old_coords[0]][old_coords[1]], King):
-                # If legal move is castling move, perform castling...
                 chess_board[new_coords[0]][new_coords[1]] = copy.deepcopy(self.board[old_coords[0]][old_coords[1]])
                 chess_board[old_coords[0]][old_coords[1]] = 0
+                # If legal move is castling move, perform castling...
                 if new_coords in chess_board[new_coords[0]][new_coords[1]].castling_moves:
                     if old_coords[0] == 0:
                         if new_coords[1] == 2:
@@ -160,6 +163,11 @@ class Board(object):
                 chess_board[old_coords[0]][old_coords[1]] = 0
             if isinstance(chess_board[new_coords[0]][new_coords[1]], Pawn):
                 chess_board[new_coords[0]][new_coords[1]].first_moved = self.move_num
+                if chess_board[new_coords[0]][new_coords[1]].colour == "Black" and new_coords[0] == 7:
+                    self.must_promote = True
+                elif chess_board[new_coords[0]][new_coords[1]].colour == "White" and new_coords[0] == 0:
+                    self.must_promote = True
+
             elif isinstance(chess_board[new_coords[0]][new_coords[1]], Rook) or isinstance(chess_board[new_coords[0]][new_coords[1]], King):
                 # Won't work for rook when castling, but that doesn't matter as king has already moved, so can't castle anyway
                 chess_board[new_coords[0]][new_coords[1]].has_moved = True
@@ -171,23 +179,45 @@ class Board(object):
             if isinstance(chess_board[new_coords[0]][new_coords[1]], Piece):
                 chess_board[new_coords[0]][new_coords[1]].position = [new_coords[0], new_coords[1]]
                 chess_board[new_coords[0]][new_coords[1]].calculate_possible_moves()
-                if self.calculate_is_checkmate(self.turn, chess_board):
-                    self.game_over = True
-                    if self.turn == "Black":
-                        self.winner = "White"
-                    else:
-                        self.winner = "Black"
-                    self.has_been_in_check[self.turn] = True
-
-                elif self.is_in_check(self.turn, chess_board):
-                    self.colour_in_check = self.turn
-                    self.has_been_in_check[self.turn] = True
-                elif self.calculate_is_stalemate(self.turn, chess_board):
-                    self.is_stalemate = True
-                    self.game_over = True
-                else:
-                    self.colour_in_check = ""
             return chess_board
+
+    def permanently_promote_piece(self, type, coords):
+        colour = self.board[coords[0]][coords[1]].colour
+        if type == "Queen":
+            self.board[coords[0]][coords[1]] = Queen(coords, colour)
+            self.board[coords[0]][coords[1]].position = coords
+            self.board[coords[0]][coords[1]].calculate_possible_moves()
+        elif type == "Knight":
+            self.board[coords[0]][coords[1]] = Knight(coords, colour)
+            self.board[coords[0]][coords[1]].position = coords
+            self.board[coords[0]][coords[1]].calculate_possible_moves()
+        elif type == "Rook":
+            self.board[coords[0]][coords[1]] = Rook(coords, colour)
+            self.board[coords[0]][coords[1]].position = coords
+            self.board[coords[0]][coords[1]].calculate_possible_moves()
+        elif type == "Bishop":
+            self.board[coords[0]][coords[1]] = Bishop(coords, colour)
+            self.board[coords[0]][coords[1]].position = coords
+            self.board[coords[0]][coords[1]].calculate_possible_moves()
+        self.must_promote = False
+
+    def check_game_state(self):
+        if self.calculate_is_checkmate(self.turn, self.board):
+            self.game_over = True
+            if self.turn == "Black":
+                self.winner = "White"
+            else:
+                self.winner = "Black"
+            self.has_been_in_check[self.turn] = True
+        elif self.is_in_check(self.turn, self.board):
+            self.colour_in_check = self.turn
+            self.has_been_in_check[self.turn] = True
+        elif self.calculate_is_stalemate(self.turn, self.board):
+            self.is_stalemate = True
+            self.game_over = True
+        else:
+            self.colour_in_check = ""
+
 
     def get_king_coords(self, colour, board):
         """Finds the coords of the king depending on its colour"""

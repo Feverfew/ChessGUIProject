@@ -1,6 +1,9 @@
 from PySide import QtGui, QtCore
 import views
 from board import Board
+from pieces import *
+import json
+import datetime
 
 class MainWindowController(QtGui.QMainWindow, views.MainWindow): 
     """Controller for the main window of the application"""
@@ -16,6 +19,7 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
         super(ChessBoardController, self).__init__()
         self.setupUi(self)
         self.board = Board()
+        self.json_location = ""
         self.from_cell = []
         self.chess_board.horizontalHeader().setResizeMode(QtGui.QHeaderView.Stretch)
         self.chess_board.verticalHeader().setResizeMode(QtGui.QHeaderView.Stretch)
@@ -23,6 +27,7 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
         self.chess_board.verticalHeader().hide()
         self.output_board()
         self.chess_board.itemClicked.connect(self.table_clicked)
+        self.save_btn.clicked.connect(self.save_game)
 
     def table_clicked(self):
         """Handler for when table is clicked"""
@@ -38,6 +43,9 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
                     self.output_board(self.board.calculate_legal_moves(self.board.board[row][column]))
                 else:
                     self.board.board = self.board.permanently_move_piece(self.board.board, self.from_cell, [row, column])
+                    if self.board.must_promote:
+                        self.board.permanently_promote_piece(self.get_promotion_piece(), [row, column])
+                    self.board.check_game_state()
                     self.output_board()
                     self.from_cell = []
                     if  self.board.game_over and self.board.is_stalemate:
@@ -48,6 +56,9 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
                         self.show_message("{} is in check".format(self.board.colour_in_check))
             else:
                 self.board.board = self.board.permanently_move_piece(self.board.board, self.from_cell, [row, column])
+                if self.board.must_promote:
+                    self.board.permanently_promote_piece(self.get_promotion_piece(), [row, column])
+                self.board.check_game_state()
                 self.output_board()
                 self.from_cell = []
                 if self.board.game_over and self.board.is_stalemate:
@@ -116,6 +127,159 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
                         item.setBackground(QtGui.QBrush(QtGui.QColor(11, 129, 156))) # dark
                     item.setFlags(QtCore.Qt.NoItemFlags)
                     self.chess_board.setItem(y, x, item)
+
+    def save_game(self):
+        if self.player_one_edit.text() != "" and self.player_two_edit.text() != "":
+            self.board.player_one = self.player_one_edit.text()
+            self.board.player_two = self.player_two_edit.text()
+            game = {
+                'id': None,
+                'last_played': datetime.datetime.now(),
+                'turn': self.board.turn,
+                'move_num': self.board.move_num,
+                'winner': self.board.winner,
+                'colour_in_check': self.board.colour_in_check,
+                'is_stalemate': self.board.is_stalemate,
+                'game_over': self.board.game_over,
+                'must_promote': self.board.must_promote,
+                'has_been_in_check': {
+                    'Black': self.board.has_been_in_check['Black'],
+                    'White': self.board.has_been_in_check['White']
+                    },
+                'enpassent_possible': {
+                    'Black': self.board.enpassent_possible['Black'],
+                    'White': self.board.enpassent_possible['White']
+                    },
+                'enpassent_move': {
+                    'from': self.board.enpassent_move['from'],
+                    'to': self.board.enpassent_move['to'],
+                    'taken': self.board.enpassent_move['taken']
+                    },
+                'can_castle': {
+                    'Black': self.board.can_castle['Black'],
+                    'White': self.board.can_castle['White']
+                },
+                'player_one': self.board.player_one,
+                'player_two': self.board.player_two,
+                'pieces': {
+                    'kings': [],
+                    'queens': [],
+                    'knights': [],
+                    'bishops': [],
+                    'rooks': [],
+                    'pawns': []
+                }
+            }
+            for row in self.board.board:
+                for field in row:
+                    if field:
+                        if isinstance(field, Queen):
+                            piece = {
+                                'position': field.position,
+                                'colour': field.colour
+                            }
+                            game['pieces']['queens'].append(piece)
+                        elif isinstance(field, Bishop):
+                            piece = {
+                                'position': field.position,
+                                'colour': field.colour
+                            }
+                            game['pieces']['bishops'].append(piece)
+                        elif isinstance(field, Knight):
+                            piece = {
+                                'position': field.position,
+                                'colour': field.colour
+                            }
+                            game['pieces']['knights'].append(piece)
+                        elif isinstance(field, Rook):
+                            piece = {
+                                'position': field.position,
+                                'colour': field.colour,
+                                'has_moved': field.has_moved
+                            }
+                            game['pieces']['rooks'].append(piece)
+                        elif isinstance(field, King):
+                            piece = {
+                                'position': field.position,
+                                'colour': field.colour,
+                                'has_moved': field.has_moved,
+                                'castling_moves': field.castling_moves
+                            }
+                            game['pieces']['kings'].append(piece)
+                        elif isinstance(field, Pawn):
+                            piece = {
+                                'position': field.position,
+                                'colour': field.colour,
+                                'first_moved': field.first_moved
+                            }
+                            game['pieces']['pawns'].append(piece)
+            if self.json_location:
+                try:
+                    data = json.load(json_location)
+                    id_list = [x['id'] for x in data['games']]
+
+                    self.quick_sort(id_list)
+                    if self.binary_search(game['id'], id_list):
+                        for x in range(len(data['games'])):
+                            pass
+                #TODO Finish this whole section
+                except:
+                    pass
+                data['games'].append(game)
+            else:
+                invalid = True
+                while invalid:
+                        json_dir = QtGui.QFileDialog().getExistingDirectory()
+                        json_name = QtGui.QInputDialog.getText(self, "JSON File Name Input", "JSON File Name:")
+                        if json_dir and json_name[1]:
+                            invalid = False
+                        else:
+                            self.show_message("Please fill in save directory and name")
+
+                self.json_location = "{}\{}.json".format(json_dir, json_name[0])
+                data = {'games': []}
+                data['games'].append(game)
+                with open(self.json_location, 'w') as jsonfile:
+                    json.dump(data, jsonfile, indent=4, separators=(',', ':'))
+        else:
+            self.show_message("Please fill in the player names")
+
+    def binary_search(self, search_term, array):
+        """Searches for an item in an already sorted list."""
+        found = False
+        while len(array) > 1 and found == False:
+            half_array = int(len(array)/2)
+            if search_term == array[half_array]:
+                found = True
+            elif search_term > array[half_array]:
+                array = array[half_array:]
+            else:
+                array = array[:half_array]
+        return found
+
+    def quick_sort(array, low=0, high=None):
+        """Sorts a list using the quicksort algorithm"""
+        def split(array, low, high):
+            pivot = low
+            for i in range(low, high):
+                if array[i] <= array[high]: 
+                    array[i], array[pivot] = array[pivot], array[i]
+                    pivot += 1
+            array[pivot], array[high] = array[high], array[pivot]
+            return pivot
+        if not high:
+            high = len(array) - 1
+        if low < high:
+            s = split(array, low, high)
+            quick_sort(array, low, s - 1)
+            quick_sort(array, s + 1, high)
+
+    def get_promotion_piece(self):
+        """Gets the piece that needs to be promoted"""
+        choice = ["", False]
+        while not choice[1]:
+            choice = QtGui.QInputDialog.getItem(self, "Piece to promote", "Choose piece:", ["Queen", "Knight", "Rook", "Bishop"], 0, False)
+        return choice[0]
         
     def show_message(self, msg):
         """If there are errors show them in a message box."""
@@ -123,3 +287,4 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
         msg_box.setWindowTitle("Game State")
         msg_box.setText(msg)
         msg_box.exec_()
+

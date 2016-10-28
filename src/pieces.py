@@ -202,7 +202,7 @@ class Queen(Piece):
 
 class King(Piece):
     """Class for a King"""
-    def __init__(self, position, colour, has_moved=False, has_been_in_check=False, castling_moves=[]):
+    def __init__(self, position, colour, has_moved=False, castling_moves=[]):
         super().__init__(position, colour)
         self.img_path = "{}_king.png".format(self.colour.lower())
         self.has_moved = has_moved
