@@ -4,6 +4,7 @@ from board import Board
 from pieces import *
 import json
 import datetime
+from builtins import IOError
 
 class MainWindowController(QtGui.QMainWindow, views.MainWindow): 
     """Controller for the main window of the application"""
@@ -19,7 +20,8 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
         super(ChessBoardController, self).__init__()
         self.setupUi(self)
         self.board = Board()
-        self.json_location = ""
+        self.settings = QtCore.QSettings("ComputingProjectAlex", "Chess")
+        self.json_location = self.settings.value("json_location")
         self.from_cell = []
         self.chess_board.horizontalHeader().setResizeMode(QtGui.QHeaderView.Stretch)
         self.chess_board.verticalHeader().setResizeMode(QtGui.QHeaderView.Stretch)
@@ -134,7 +136,7 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
             self.board.player_two = self.player_two_edit.text()
             game = {
                 'id': None,
-                'last_played': datetime.datetime.now(),
+                'last_played': str(datetime.datetime.now()),
                 'turn': self.board.turn,
                 'move_num': self.board.move_num,
                 'winner': self.board.winner,
@@ -215,17 +217,26 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
                             game['pieces']['pawns'].append(piece)
             if self.json_location:
                 try:
-                    data = json.load(json_location)
+                    data = None
+                    with open(self.json_location) as json_file:    
+                        data = json.load(json_file)
                     id_list = [x['id'] for x in data['games']]
 
                     self.quick_sort(id_list)
-                    if self.binary_search(game['id'], id_list):
-                        for x in range(len(data['games'])):
-                            pass
+                    if game['id']:
+                        if self.binary_search(game['id'], id_list):
+                            for x in range(len(data['games'])):
+                                if game['id'] == data['games'][x]['id']:
+                                    data['games'][x] = game
+                    else:
+                        game['id'] = id_list[-1] + 1
+                        data['games'].append(game)
+                    with open(self.json_location, 'w') as jsonfile:
+                        json.dump(data, jsonfile, indent=4, separators=(',', ':'))
                 #TODO Finish this whole section
-                except:
-                    pass
-                data['games'].append(game)
+                except IOError as e:
+                    self.show_message("Error: File not found")
+                    self.json_location = ""
             else:
                 invalid = True
                 while invalid:
@@ -237,7 +248,9 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
                             self.show_message("Please fill in save directory and name")
 
                 self.json_location = "{}\{}.json".format(json_dir, json_name[0])
+                self.settings.setValue("json_location", self.json_location)
                 data = {'games': []}
+                game['id'] = 1
                 data['games'].append(game)
                 with open(self.json_location, 'w') as jsonfile:
                     json.dump(data, jsonfile, indent=4, separators=(',', ':'))
@@ -257,22 +270,30 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
                 array = array[:half_array]
         return found
 
-    def quick_sort(array, low=0, high=None):
+    def quick_sort(self, array, low=0, high=None):
         """Sorts a list using the quicksort algorithm"""
         def split(array, low, high):
-            pivot = low
-            for i in range(low, high):
-                if array[i] <= array[high]: 
-                    array[i], array[pivot] = array[pivot], array[i]
-                    pivot += 1
-            array[pivot], array[high] = array[high], array[pivot]
-            return pivot
+            pivot = array[low]
+            i = low + 1
+            j = high
+            while True:
+                while i <= j  and array[i] <= pivot:
+                    i +=1
+                while j >= i and array[j] >= pivot:
+                    j -=1
+                if j <= i:
+                    break
+                array[i], array[j] = array[j], array[i]
+            array[low], array[j] = array[j], array[low]
+            return j
         if not high:
             high = len(array) - 1
-        if low < high:
+        if high <= low:
+            return
+        else:
             s = split(array, low, high)
-            quick_sort(array, low, s - 1)
-            quick_sort(array, s + 1, high)
+            self.quick_sort(array, low, s - 1)
+            self.quick_sort(array, s + 1, high)
 
     def get_promotion_piece(self):
         """Gets the piece that needs to be promoted"""
