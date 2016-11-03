@@ -4,7 +4,7 @@ from board import Board
 from pieces import *
 import json
 import datetime
-from builtins import IOError
+from builtins import IOError, FileNotFoundError
 
 class MainWindowController(QtGui.QMainWindow, views.MainWindow): 
     """Controller for the main window of the application"""
@@ -216,39 +216,35 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
                             }
                             game['pieces']['pawns'].append(piece)
             if self.json_location:
-                try:
-                    data = None
-                    with open(self.json_location) as json_file:    
-                        data = json.load(json_file)
-                    id_list = [x['id'] for x in data['games']]
+                not_saved = True
+                while not_saved:
+                    try:
+                        data = None
+                        with open(self.json_location) as json_file:    
+                            data = json.load(json_file)
+                        id_list = [x['id'] for x in data['games']]
 
-                    self.quick_sort(id_list)
-                    if game['id']:
-                        if self.binary_search(game['id'], id_list):
-                            for x in range(len(data['games'])):
-                                if game['id'] == data['games'][x]['id']:
-                                    data['games'][x] = game
-                    else:
-                        game['id'] = id_list[-1] + 1
-                        data['games'].append(game)
-                    with open(self.json_location, 'w') as jsonfile:
-                        json.dump(data, jsonfile, indent=4, separators=(',', ':'))
-                #TODO Finish this whole section
-                except IOError as e:
-                    self.show_message("Error: File not found")
-                    self.json_location = ""
-            else:
-                invalid = True
-                while invalid:
-                        json_dir = QtGui.QFileDialog().getExistingDirectory()
-                        json_name = QtGui.QInputDialog.getText(self, "JSON File Name Input", "JSON File Name:")
-                        if json_dir and json_name[1]:
-                            invalid = False
+                        self.quick_sort(id_list)
+                        if game['id']:
+                            if self.binary_search(game['id'], id_list):
+                                for x in range(len(data['games'])):
+                                    if game['id'] == data['games'][x]['id']:
+                                        data['games'][x] = game
+                            else:
+                                game['id'] = id_list[-1] + 1
+                                data['games'].append(game)
                         else:
-                            self.show_message("Please fill in save directory and name")
-
-                self.json_location = "{}\{}.json".format(json_dir, json_name[0])
-                self.settings.setValue("json_location", self.json_location)
+                            game['id'] = id_list[-1] + 1
+                            data['games'].append(game)
+                        with open(self.json_location, 'w') as jsonfile:
+                            json.dump(data, jsonfile, indent=4, separators=(',', ':'))
+                        not_saved = False
+                    #TODO Finish this whole section
+                    except (IOError, FileNotFoundError) as e:
+                        self.show_message("Error: File not found")
+                        self.json_location = self.get_json_file()
+            else:
+                self.json_location = self.get_json_file()
                 data = {'games': []}
                 game['id'] = 1
                 data['games'].append(game)
@@ -270,30 +266,34 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
                 array = array[:half_array]
         return found
 
-    def quick_sort(self, array, low=0, high=None):
-        """Sorts a list using the quicksort algorithm"""
-        def split(array, low, high):
-            pivot = array[low]
+    def quick_sort(self, array, low, high):
+        """Sorts a list recursively."""
+        def partition(array, low, high):
+            """Partition array using a pivot value"""
             i = low + 1
-            j = high
-            while True:
-                while i <= j  and array[i] <= pivot:
-                    i +=1
-                while j >= i and array[j] >= pivot:
-                    j -=1
-                if j <= i:
-                    break
-                array[i], array[j] = array[j], array[i]
-            array[low], array[j] = array[j], array[low]
-            return j
-        if not high:
-            high = len(array) - 1
-        if high <= low:
-            return
-        else:
-            s = split(array, low, high)
-            self.quick_sort(array, low, s - 1)
-            self.quick_sort(array, s + 1, high)
+            pivot = array[low]
+            for j in range(low+1, high+1):
+                if array[j] < pivot:
+                   array[j], array[i] = array[i], array[j]
+                   i += 1
+            array[low], array[i-1] = array[i-1], array[low]
+            return i - 1
+        if low < high:
+            pivot = partition(array, low, high)
+            self.quick_sort(array, low, pivot-1)
+            self.quick_sort(array, pivot+1, high)
+    
+    def get_json_file(self):
+        """Gets the location of the file from the user"""
+        while True:
+            json_dir = QtGui.QFileDialog().getExistingDirectory()
+            json_name = QtGui.QInputDialog.getText(self, "JSON File Name Input", "JSON File Name:")
+            if json_dir and json_name[1]:
+                json_location = "{}\{}.json".format(json_dir, json_name[0])
+                self.settings.setValue("json_location", self.json_location)
+                return json_location
+            else:
+                self.show_message("Please fill in save directory and name")
 
     def get_promotion_piece(self):
         """Gets the piece that needs to be promoted"""
