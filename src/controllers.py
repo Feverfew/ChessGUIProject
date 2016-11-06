@@ -2,6 +2,7 @@ from PySide import QtGui, QtCore
 import views
 from board import Board
 from pieces import *
+import algorithms
 import json
 import datetime
 from builtins import IOError, FileNotFoundError
@@ -30,6 +31,7 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
         self.output_board()
         self.chess_board.itemClicked.connect(self.table_clicked)
         self.save_btn.clicked.connect(self.save_game)
+        self.load_btn.clicked.connect(self.load_game)
 
     def table_clicked(self):
         """Handler for when table is clicked"""
@@ -129,6 +131,10 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
                         item.setBackground(QtGui.QBrush(QtGui.QColor(11, 129, 156))) # dark
                     item.setFlags(QtCore.Qt.NoItemFlags)
                     self.chess_board.setItem(y, x, item)
+    
+    def load_game(self):
+        game_loader = LoadDialogController()
+        game_loader.exec()
 
     def save_game(self):
         if self.player_one_edit.text() != "" and self.player_two_edit.text() != "":
@@ -224,9 +230,9 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
                             data = json.load(json_file)
                         id_list = [x['id'] for x in data['games']]
 
-                        self.quick_sort(id_list)
+                        algorithms.quick_sort(id_list)
                         if game['id']:
-                            if self.binary_search(game['id'], id_list):
+                            if algorithms.binary_search(game['id'], id_list):
                                 for x in range(len(data['games'])):
                                     if game['id'] == data['games'][x]['id']:
                                         data['games'][x] = game
@@ -252,36 +258,6 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
                     json.dump(data, jsonfile, indent=4, separators=(',', ':'))
         else:
             self.show_message("Please fill in the player names")
-
-    def binary_search(self, search_term, array):
-        """Searches for an item in an already sorted list."""
-        found = False
-        while len(array) > 1 and found == False:
-            half_array = int(len(array)/2)
-            if search_term == array[half_array]:
-                found = True
-            elif search_term > array[half_array]:
-                array = array[half_array:]
-            else:
-                array = array[:half_array]
-        return found
-
-    def quick_sort(self, array, low, high):
-        """Sorts a list recursively."""
-        def partition(array, low, high):
-            """Partition array using a pivot value"""
-            i = low + 1
-            pivot = array[low]
-            for j in range(low+1, high+1):
-                if array[j] < pivot:
-                   array[j], array[i] = array[i], array[j]
-                   i += 1
-            array[low], array[i-1] = array[i-1], array[low]
-            return i - 1
-        if low < high:
-            pivot = partition(array, low, high)
-            self.quick_sort(array, low, pivot-1)
-            self.quick_sort(array, pivot+1, high)
     
     def get_json_file(self):
         """Gets the location of the file from the user"""
@@ -309,3 +285,11 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
         msg_box.setText(msg)
         msg_box.exec_()
 
+class LoadDialogController(QtGui.QDialog, views.LoadDialog):
+    def __init__(self, **kwargs):
+        super(LoadDialogController, self).__init__()
+        self.setupUi(self)
+        self.buttonBox.accepted.connect(self.get_game)
+
+    def get_game(self):
+        pass
