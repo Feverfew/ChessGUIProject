@@ -7,6 +7,7 @@ import json
 import datetime
 from builtins import IOError, FileNotFoundError
 
+
 class MainWindowController(QtGui.QMainWindow, views.MainWindow): 
     """Controller for the main window of the application"""
     def __init__(self):
@@ -14,6 +15,7 @@ class MainWindowController(QtGui.QMainWindow, views.MainWindow):
         self.setupUi(self)
         self.setCentralWidget(ChessBoardController())
         self.show()
+
 
 class ChessBoardController(QtGui.QWidget, views.ChessBoard):
     """Controller for the chess board"""
@@ -37,7 +39,7 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
         """Handler for when table is clicked"""
         row = self.chess_board.currentRow()
         column = self.chess_board.currentColumn()
-        if not self.from_cell and column != -1 and row != -1: # Piece is selected
+        if not self.from_cell and column != -1 and row != -1:  # Piece is selected
             self.from_cell = [row, column]
             self.output_board(self.board.calculate_legal_moves(self.board.board[row][column]))
         elif self.from_cell and column != -1 and row != -1: # Piece is moved
@@ -85,9 +87,9 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
                         item.setSizeHint(QtCore.QSize(80, 80))
                         item.setIcon(QtGui.QIcon(":/pieces/{}".format(self.board.board[y][x].img_path)))
                         if (x+y) % 2 == 0:
-                            item.setBackground(QtGui.QBrush(QtGui.QColor(31, 177, 209))) # light
+                            item.setBackground(QtGui.QBrush(QtGui.QColor(31, 177, 209)))  # light
                         else:
-                            item.setBackground(QtGui.QBrush(QtGui.QColor(11, 129, 156))) # dark
+                            item.setBackground(QtGui.QBrush(QtGui.QColor(11, 129, 156)))  # dark
                         item.setFlags(QtCore.Qt.ItemIsEnabled)
                         self.chess_board.setItem(y, x, item)
                     elif self.board.turn == "White" and self.board.board[y][x].colour == "White":
@@ -95,9 +97,9 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
                         item.setSizeHint(QtCore.QSize(80, 80))
                         item.setIcon(QtGui.QIcon(":/pieces/{}".format(self.board.board[y][x].img_path)))
                         if (x+y) % 2 == 0:
-                            item.setBackground(QtGui.QBrush(QtGui.QColor(31, 177, 209))) # light
+                            item.setBackground(QtGui.QBrush(QtGui.QColor(31, 177, 209)))  # light
                         else:
-                            item.setBackground(QtGui.QBrush(QtGui.QColor(11, 129, 156))) # dark
+                            item.setBackground(QtGui.QBrush(QtGui.QColor(11, 129, 156)))  # dark
                         item.setFlags(QtCore.Qt.ItemIsEnabled)
                         self.chess_board.setItem(y, x, item)
                     else:
@@ -105,9 +107,9 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
                         item.setSizeHint(QtCore.QSize(80, 80))
                         item.setIcon(QtGui.QIcon(":/pieces/{}".format(self.board.board[y][x].img_path)))
                         if (x+y) % 2 == 0:
-                            item.setBackground(QtGui.QBrush(QtGui.QColor(31, 177, 209))) # light
+                            item.setBackground(QtGui.QBrush(QtGui.QColor(31, 177, 209)))  # light
                         else:
-                            item.setBackground(QtGui.QBrush(QtGui.QColor(11, 129, 156))) # dark
+                            item.setBackground(QtGui.QBrush(QtGui.QColor(11, 129, 156)))  # dark
                         if [y, x] in legal_moves:
                             item.setFlags(QtCore.Qt.ItemIsEnabled)
                         else:
