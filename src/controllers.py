@@ -222,8 +222,8 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
                             }
                             game['pieces']['pawns'].append(piece)
             if self.json_location:
-                not_saved = True
-                while not_saved:
+                saved = False
+                while not saved:
                     try:
                         data = None
                         with open(self.json_location) as json_file:    
@@ -237,39 +237,40 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
                                     if game['id'] == data['games'][x]['id']:
                                         data['games'][x] = game
                             else:
-                                game['id'] = id_list[-1] + 1
+                                #TODO This shouldn't happen at all, check if can remove.
+                                game['id'], self.board.id = id_list[-1] + 1
                                 data['games'].append(game)
                         else:
-                            game['id'] = id_list[-1] + 1
+                            game['id'], self.board.id = id_list[-1] + 1
                             data['games'].append(game)
                         with open(self.json_location, 'w') as jsonfile:
                             json.dump(data, jsonfile, indent=4, separators=(',', ':'))
-                        not_saved = False
+                        saved = True
                     #TODO Finish this whole section
                     except (IOError, FileNotFoundError) as e:
                         self.show_message("Error: File not found")
                         self.json_location = self.get_json_file()
             else:
                 self.json_location = self.get_json_file()
-                data = {'games': []}
-                game['id'] = 1
-                data['games'].append(game)
-                with open(self.json_location, 'w') as jsonfile:
-                    json.dump(data, jsonfile, indent=4, separators=(',', ':'))
+                if self.json_location:
+                    data = {'games': []}
+                    game['id'] = 1
+                    data['games'].append(game)
+                    with open(self.json_location, 'w') as jsonfile:
+                        json.dump(data, jsonfile, indent=4, separators=(',', ':'))
         else:
             self.show_message("Please fill in the player names")
     
     def get_json_file(self):
         """Gets the location of the file from the user"""
-        while True:
-            json_dir = QtGui.QFileDialog().getExistingDirectory()
-            json_name = QtGui.QInputDialog.getText(self, "JSON File Name Input", "JSON File Name:")
-            if json_dir and json_name[1]:
-                json_location = "{}\{}.json".format(json_dir, json_name[0])
-                self.settings.setValue("json_location", self.json_location)
-                return json_location
-            else:
-                self.show_message("Please fill in save directory and name")
+        json_dir = QtGui.QFileDialog().getExistingDirectory()
+        json_name = QtGui.QInputDialog.getText(self, "JSON File Name Input", "JSON File Name:")
+        if json_dir and json_name[1]:
+            json_location = "{}\{}.json".format(json_dir, json_name[0])
+            self.settings.setValue("json_location", json_location)
+            return json_location
+        else:
+            self.show_message("File not found: Please fill in save directory and name")
 
     def get_promotion_piece(self):
         """Gets the piece that needs to be promoted"""
