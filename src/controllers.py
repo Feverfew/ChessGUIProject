@@ -232,7 +232,7 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
                             data = json.load(json_file)
                         id_list = [x['id'] for x in data['games']]
 
-                        algorithms.quick_sort(id_list)
+                        algorithms.quick_sort(id_list,0, len(id_list)-1)
                         if game['id']:
                             if algorithms.binary_search(game['id'], id_list):
                                 for x in range(len(data['games'])):
@@ -243,7 +243,8 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
                                 game['id'], self.board.id = id_list[-1] + 1
                                 data['games'].append(game)
                         else:
-                            game['id'], self.board.id = id_list[-1] + 1
+                            game['id'] = id_list[-1] + 1
+                            self.board.id = id_list[-1] + 1
                             data['games'].append(game)
                         with open(self.json_location, 'w') as jsonfile:
                             json.dump(data, jsonfile, indent=4, separators=(',', ':'))
@@ -273,6 +274,7 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
             return json_location
         else:
             self.show_message("File not found: Please fill in save directory and name")
+            self.settings.setValue("json_location", "")
 
     def get_promotion_piece(self):
         """Gets the piece that needs to be promoted"""
