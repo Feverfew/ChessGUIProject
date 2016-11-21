@@ -135,16 +135,27 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
                     self.chess_board.setItem(y, x, item)
     
     def load_game(self):
-        game_loader = LoadDialogController()
-        game_loader.exec()
+        try:
+            data = None
+            with open(self.json_location) as json_file:
+                data = json.load(json_file)
+        except:
+            pass
+        if data:
+            game_loader = LoadDialogController(data)
+            game_loader.exec()
+        else:
+            self.show_message("Game file not found!")
+            self.get_json_file()
 
     def save_game(self):
         if self.player_one_edit.text() != "" and self.player_two_edit.text() != "":
             self.board.player_one = self.player_one_edit.text()
             self.board.player_two = self.player_two_edit.text()
+            date = datetime.date.now()
             game = {
                 'id': None,
-                'last_played': str(datetime.datetime.now()),
+                'last_played': str(datetime.date.now()),
                 'turn': self.board.turn,
                 'move_num': self.board.move_num,
                 'winner': self.board.winner,
@@ -291,10 +302,30 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
         msg_box.exec_()
 
 class LoadDialogController(QtGui.QDialog, views.LoadDialog):
-    def __init__(self, **kwargs):
+    def __init__(self, data):
         super(LoadDialogController, self).__init__()
         self.setupUi(self)
-        self.buttonBox.accepted.connect(self.get_game)
+        i = 0
+        for game in data['games']:
+            player_one = QtGui.QTableWidgetItem()
+            player_one.setText(game['player_one'])
+            player_two = QtGui.QTableWidgetItem()
+            player_two.setText(game['player_two'])
+            winner = QtGui.QTableWidgetItem()
+            winner.setText(game['winner'])
+            moves_made = QtGui.QTableWidgetItem()
+            moves_made.setText(str(game['move_num'] / 2))
+            last_played = QtGui.QTableWidgetItem()
+            last_played.setText(game['last_played'])
+            self.results_table.insertRow(i)
+            self.results_table.setItem(i, 0, player_one)
+            self.results_table.setItem(i, 1, player_two)
+            self.results_table.setItem(i, 2, winner)
+            self.results_table.setItem(i, 3, moves_made)
+            self.results_table.setItem(i, 4, last_played)
+            i += 1
+        self.results_table.setSelectionBehavior(QtGui.QAbstractItemView.SelectRows)
+        self.results_table.setSelectionMode(QtGui.QAbstractItemView.SingleSelection)
 
-    def get_game(self):
-        pass
+        def get_game(self):
+            pass
