@@ -5,7 +5,7 @@ from pieces import *
 import algorithms
 import json
 import datetime
-from builtins import IOError, FileNotFoundError
+from builtins import IOError, FileNotFoundError, TypeError
 
 
 class MainWindowController(QtGui.QMainWindow, views.MainWindow): 
@@ -139,12 +139,9 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
             data = None
             with open(self.json_location) as json_file:
                 data = json.load(json_file)
-        except:
-            pass
-        if data:
             game_loader = LoadDialogController(data)
             game_loader.exec()
-        else:
+        except (IOError, FileNotFoundError, TypeError):
             self.show_message("Game file not found!")
             self.get_json_file()
 
@@ -152,10 +149,17 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
         if self.player_one_edit.text() != "" and self.player_two_edit.text() != "":
             self.board.player_one = self.player_one_edit.text()
             self.board.player_two = self.player_two_edit.text()
-            date = datetime.date.now()
+            now = datetime.datetime.now()
+            year = str(now.year)
+            month = int(now.month)
+            day = int(now.day)
+            if month < 10:
+                month = "0" + str(month)
+            if day < 10:
+                day = "0" + str(day)
             game = {
                 'id': None,
-                'last_played': str(datetime.date.now()),
+                'last_played': str(year + "/" + month + "/" + day),
                 'turn': self.board.turn,
                 'move_num': self.board.move_num,
                 'winner': self.board.winner,
@@ -307,6 +311,7 @@ class LoadDialogController(QtGui.QDialog, views.LoadDialog):
         self.setupUi(self)
         i = 0
         for game in data['games']:
+            identifier = QtGui.QTableWidgetItem()
             player_one = QtGui.QTableWidgetItem()
             player_one.setText(game['player_one'])
             player_two = QtGui.QTableWidgetItem()
@@ -318,11 +323,12 @@ class LoadDialogController(QtGui.QDialog, views.LoadDialog):
             last_played = QtGui.QTableWidgetItem()
             last_played.setText(game['last_played'])
             self.results_table.insertRow(i)
-            self.results_table.setItem(i, 0, player_one)
-            self.results_table.setItem(i, 1, player_two)
-            self.results_table.setItem(i, 2, winner)
-            self.results_table.setItem(i, 3, moves_made)
-            self.results_table.setItem(i, 4, last_played)
+            self.results_table.setItem(i, 0, identifier)
+            self.results_table.setItem(i, 1, player_one)
+            self.results_table.setItem(i, 2, player_two)
+            self.results_table.setItem(i, 3, winner)
+            self.results_table.setItem(i, 4, moves_made)
+            self.results_table.setItem(i, 5, last_played)
             i += 1
         self.results_table.setSelectionBehavior(QtGui.QAbstractItemView.SelectRows)
         self.results_table.setSelectionMode(QtGui.QAbstractItemView.SingleSelection)

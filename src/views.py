@@ -203,6 +203,8 @@ class LoadDialog(object):
         self.results_table.setHorizontalHeaderItem(3, item)
         item = QtGui.QTableWidgetItem()
         self.results_table.setHorizontalHeaderItem(4, item)
+        item = QtGui.QTableWidgetItem()
+        self.results_table.setHorizontalHeaderItem(5, item)
         self.verticalLayout.addWidget(self.results_table)
         self.buttonBox = QtGui.QDialogButtonBox(self.verticalLayoutWidget)
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
@@ -235,14 +237,16 @@ class LoadDialog(object):
         self.pushButton.setText(QtGui.QApplication.translate("Dialog", "Sort", None, QtGui.QApplication.UnicodeUTF8))
         self.results_table.setSortingEnabled(False)
         self.results_table.horizontalHeaderItem(0).setText(
-            QtGui.QApplication.translate("Dialog", "Player 1", None, QtGui.QApplication.UnicodeUTF8))
+            QtGui.QApplication.translate("Dialog", "ID", None, QtGui.QApplication.UnicodeUTF8))
         self.results_table.horizontalHeaderItem(1).setText(
-            QtGui.QApplication.translate("Dialog", "Player 2", None, QtGui.QApplication.UnicodeUTF8))
+            QtGui.QApplication.translate("Dialog", "Player 1", None, QtGui.QApplication.UnicodeUTF8))
         self.results_table.horizontalHeaderItem(2).setText(
-            QtGui.QApplication.translate("Dialog", "Winner", None, QtGui.QApplication.UnicodeUTF8))
+            QtGui.QApplication.translate("Dialog", "Player 2", None, QtGui.QApplication.UnicodeUTF8))
         self.results_table.horizontalHeaderItem(3).setText(
-            QtGui.QApplication.translate("Dialog", "Moves Made", None, QtGui.QApplication.UnicodeUTF8))
+            QtGui.QApplication.translate("Dialog", "Winner", None, QtGui.QApplication.UnicodeUTF8))
         self.results_table.horizontalHeaderItem(4).setText(
+            QtGui.QApplication.translate("Dialog", "Moves Made", None, QtGui.QApplication.UnicodeUTF8))
+        self.results_table.horizontalHeaderItem(5).setText(
             QtGui.QApplication.translate("Dialog", "Last Played", None, QtGui.QApplication.UnicodeUTF8))
 
 
