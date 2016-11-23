@@ -154,9 +154,13 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
             month = int(now.month)
             day = int(now.day)
             if month < 10:
-                month = "0" + str(month)
+                month = str("0" + month)
+            else:
+                month = str(month)
             if day < 10:
-                day = "0" + str(day)
+                day = str("0" + day)
+            else:
+                day = str(day)
             game = {
                 'id': None,
                 'last_played': str(year + "/" + month + "/" + day),
@@ -239,35 +243,33 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
                             }
                             game['pieces']['pawns'].append(piece)
             if self.json_location:
-                saved = False
-                while not saved:
-                    try:
-                        data = None
-                        with open(self.json_location) as json_file:    
-                            data = json.load(json_file)
-                        id_list = [x['id'] for x in data['games']]
+                try:
+                    data = None
+                    with open(self.json_location) as json_file:
+                        data = json.load(json_file)
+                    id_list = [x['id'] for x in data['games']]
 
-                        algorithms.quick_sort(id_list,0, len(id_list)-1)
-                        if game['id']:
-                            if algorithms.binary_search(game['id'], id_list):
-                                for x in range(len(data['games'])):
-                                    if game['id'] == data['games'][x]['id']:
-                                        data['games'][x] = game
-                            else:
-                                #TODO This shouldn't happen at all, check if can remove.
-                                game['id'], self.board.id = id_list[-1] + 1
-                                data['games'].append(game)
+                    algorithms.quick_sort(id_list,0, len(id_list)-1)
+                    if game['id']:
+                        if algorithms.binary_search(game['id'], id_list):
+                            for x in range(len(data['games'])):
+                                if game['id'] == data['games'][x]['id']:
+                                    data['games'][x] = game
                         else:
-                            game['id'] = id_list[-1] + 1
-                            self.board.id = id_list[-1] + 1
+                            #TODO This shouldn't happen at all, check if can remove.
+                            game['id'], self.board.id = id_list[-1] + 1
                             data['games'].append(game)
-                        with open(self.json_location, 'w') as jsonfile:
-                            json.dump(data, jsonfile, indent=4, separators=(',', ':'))
-                        saved = True
-                    #TODO Finish this whole section
-                    except (IOError, FileNotFoundError) as e:
-                        self.show_message("Error: File not found")
-                        self.json_location = self.get_json_file()
+                    else:
+                        game['id'] = id_list[-1] + 1
+                        self.board.id = id_list[-1] + 1
+                        data['games'].append(game)
+                    with open(self.json_location, 'w') as jsonfile:
+                        json.dump(data, jsonfile, indent=4, separators=(',', ':'))
+                        self.show_message("Game saved at {}".format(self.json_location))
+                #TODO Finish this whole section
+                except (IOError, FileNotFoundError) as e:
+                    self.show_message("Error: File not found")
+                    self.json_location = self.get_json_file()
             else:
                 self.json_location = self.get_json_file()
                 if self.json_location:
@@ -276,6 +278,7 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
                     data['games'].append(game)
                     with open(self.json_location, 'w') as jsonfile:
                         json.dump(data, jsonfile, indent=4, separators=(',', ':'))
+                        self.show_message("Game saved at {}".format(self.json_location))
         else:
             self.show_message("Please fill in the player names")
     
@@ -312,6 +315,7 @@ class LoadDialogController(QtGui.QDialog, views.LoadDialog):
         i = 0
         for game in data['games']:
             identifier = QtGui.QTableWidgetItem()
+            identifier.setText(game['id'])
             player_one = QtGui.QTableWidgetItem()
             player_one.setText(game['player_one'])
             player_two = QtGui.QTableWidgetItem()
