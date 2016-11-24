@@ -257,7 +257,8 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
                                     data['games'][x] = game
                         else:
                             #TODO This shouldn't happen at all, check if can remove.
-                            game['id'], self.board.id = id_list[-1] + 1
+                            game['id'] = id_list[-1] + 1
+                            self.board.id = id_list[-1] + 1
                             data['games'].append(game)
                     else:
                         game['id'] = id_list[-1] + 1
