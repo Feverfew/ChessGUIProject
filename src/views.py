@@ -191,7 +191,7 @@ class LoadDialog(object):
         self.results_table.setWordWrap(True)
         self.results_table.setRowCount(0)
         self.results_table.setObjectName("results_table")
-        self.results_table.setColumnCount(5)
+        self.results_table.setColumnCount(6)
         self.results_table.setRowCount(0)
         item = QtGui.QTableWidgetItem()
         self.results_table.setHorizontalHeaderItem(0, item)

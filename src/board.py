@@ -205,9 +205,9 @@ class Board(object):
         if self.calculate_is_checkmate(self.turn, self.board):
             self.game_over = True
             if self.turn == "Black":
-                self.winner = "White"
+                self.winner = self.player_one
             else:
-                self.winner = "Black"
+                self.winner = self.player_two
             self.has_been_in_check[self.turn] = True
         elif self.is_in_check(self.turn, self.board):
             self.colour_in_check = self.turn

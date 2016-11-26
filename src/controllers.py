@@ -24,7 +24,6 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
         self.setupUi(self)
         self.board = Board()
         self.settings = QtCore.QSettings("ComputingProjectAlex", "Chess")
-        self.json_location = self.settings.value("json_location")
         self.from_cell = []
         self.chess_board.horizontalHeader().setResizeMode(QtGui.QHeaderView.Stretch)
         self.chess_board.verticalHeader().setResizeMode(QtGui.QHeaderView.Stretch)
@@ -137,7 +136,7 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
     def load_game(self):
         try:
             data = None
-            with open(self.json_location) as json_file:
+            with open(self.settings.value('json_location')) as json_file:
                 data = json.load(json_file)
             game_loader = LoadDialogController(data)
             game_loader.exec()
@@ -242,10 +241,10 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
                                 'first_moved': field.first_moved
                             }
                             game['pieces']['pawns'].append(piece)
-            if self.json_location:
+            if self.settings.value('json_location'):
                 try:
                     data = None
-                    with open(self.json_location) as json_file:
+                    with open(self.settings.value('json_location')) as json_file:
                         data = json.load(json_file)
                     id_list = [x['id'] for x in data['games']]
 
@@ -264,22 +263,22 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
                         game['id'] = id_list[-1] + 1
                         self.board.id = id_list[-1] + 1
                         data['games'].append(game)
-                    with open(self.json_location, 'w') as jsonfile:
+                    with open(self.settings.value('json_location'), 'w') as jsonfile:
                         json.dump(data, jsonfile, indent=4, separators=(',', ':'))
-                        self.show_message("Game saved at {}".format(self.json_location))
+                        self.show_message("Game saved at {}".format(self.settings.value('json_location')))
                 #TODO Finish this whole section
                 except (IOError, FileNotFoundError) as e:
                     self.show_message("Error: File not found")
-                    self.json_location = self.get_json_file()
+                    self.get_json_file()
             else:
-                self.json_location = self.get_json_file()
-                if self.json_location:
+                self.get_json_file()
+                if self.settings.value('json_location'):
                     data = {'games': []}
                     game['id'] = 1
                     data['games'].append(game)
-                    with open(self.json_location, 'w') as jsonfile:
+                    with open(self.settings.value('json_location'), 'w') as jsonfile:
                         json.dump(data, jsonfile, indent=4, separators=(',', ':'))
-                        self.show_message("Game saved at {}".format(self.json_location))
+                        self.show_message("Game saved at {}".format(self.settings.value('json_location')))
         else:
             self.show_message("Please fill in the player names")
     
@@ -290,7 +289,6 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
         if json_dir and json_name[1]:
             json_location = "{}\{}.json".format(json_dir, json_name[0])
             self.settings.setValue("json_location", json_location)
-            return json_location
         else:
             self.show_message("File not found: Please fill in save directory and name")
             self.settings.setValue("json_location", "")
@@ -310,13 +308,23 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
         msg_box.exec_()
 
 class LoadDialogController(QtGui.QDialog, views.LoadDialog):
+
     def __init__(self, data):
         super(LoadDialogController, self).__init__()
         self.setupUi(self)
+        self.data = data
+        self.output_table()
+        self.results_table.setSelectionBehavior(QtGui.QAbstractItemView.SelectRows)
+        self.results_table.setSelectionMode(QtGui.QAbstractItemView.SingleSelection)
+        self.pushButton.clicked.connect(self.sort)
+
+
+    def output_table(self):
+        self.results_table.setRowCount(0)
         i = 0
-        for game in data['games']:
+        for game in self.data['games']:
             identifier = QtGui.QTableWidgetItem()
-            identifier.setText(game['id'])
+            identifier.setText(str(game['id']))
             player_one = QtGui.QTableWidgetItem()
             player_one.setText(game['player_one'])
             player_two = QtGui.QTableWidgetItem()
@@ -324,7 +332,7 @@ class LoadDialogController(QtGui.QDialog, views.LoadDialog):
             winner = QtGui.QTableWidgetItem()
             winner.setText(game['winner'])
             moves_made = QtGui.QTableWidgetItem()
-            moves_made.setText(str(game['move_num'] / 2))
+            moves_made.setText(str((game['move_num'] / 2)-0.5))
             last_played = QtGui.QTableWidgetItem()
             last_played.setText(game['last_played'])
             self.results_table.insertRow(i)
@@ -335,8 +343,52 @@ class LoadDialogController(QtGui.QDialog, views.LoadDialog):
             self.results_table.setItem(i, 4, moves_made)
             self.results_table.setItem(i, 5, last_played)
             i += 1
-        self.results_table.setSelectionBehavior(QtGui.QAbstractItemView.SelectRows)
-        self.results_table.setSelectionMode(QtGui.QAbstractItemView.SingleSelection)
 
-        def get_game(self):
+    
+    def sort(self):
+        if self.comboBox.currentText() == "Ascending":
+            if self.comboBox_2.currentText() == "ID":
+                array = []
+                for x in range(self.results_table.rowCount()):
+                    array.append(int(self.results_table.item(x, 0).text()))
+                algorithms.quick_sort(array, 0, len(array)-1)
+                for i in range(len(array)):
+                    for j in range(len(self.data['games'])):
+                        if array[x] == self.data['games'][j]['id']:
+                            self.data['games'][x], self.data['games'][j] = self.data['games'][j], self.data['games'][x]
+                self.output_table()
+            elif self.comboBox_2.currentText() == "Player 1":
+                array = []
+                for x in range(self.results_table.rowCount()):
+                    array.append(self.results_table.item(x, 1).text())
+                algorithms.quick_sort(array, 0, len(array)-1)
+                for i in range(len(array)):
+                    for j in range(len(self.data['games'])):
+                        if array[x] == self.data['games'][j]['player_one']:
+                            self.data['games'][x], self.data['games'][j] = self.data['games'][j], self.data['games'][x]
+                self.output_table()
+            elif self.comboBox_2.currentText() == "Player 2":
+                array = []
+                for x in range(self.results_table.rowCount()):
+                    array.append(self.results_table.item(x, 1).text())
+                algorithms.quick_sort(array, 0, len(array)-1)
+                for i in range(len(array)):
+                    for j in range(len(self.data['games'])):
+                        if array[x] == self.data['games'][j]['player_two']:
+                            self.data['games'][x], self.data['games'][j] = self.data['games'][j], self.data['games'][x]
+                self.output_table()
+            array = []
+                for x in range(self.results_table.rowCount()):
+                    array.append(self.results_table.item(x, 1).text())
+                algorithms.quick_sort(array, 0, len(array)-1)
+                for i in range(len(array)):
+                    for j in range(len(self.data['games'])):
+                        if array[x] == self.data['games'][j]['player_one']:
+                            self.data['games'][x], self.data['games'][j] = self.data['games'][j], self.data['games'][x]
+                self.output_table()
+        else:
             pass
+
+
+    def get_game(self):
+        pass
