@@ -4,7 +4,7 @@ import resources_rc
 class MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(660, 800)
+        MainWindow.resize(660, 742)
         self.centralwidget = QtGui.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         MainWindow.setCentralWidget(self.centralwidget)
@@ -25,7 +25,7 @@ class MainWindow(object):
 class ChessBoard(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
-        Form.resize(660, 800)
+        Form.resize(661, 728)
         self.horizontalLayoutWidget = QtGui.QWidget(Form)
         self.horizontalLayoutWidget.setGeometry(QtCore.QRect(9, 10, 641, 31))
         self.horizontalLayoutWidget.setObjectName("horizontalLayoutWidget")
@@ -47,11 +47,14 @@ class ChessBoard(object):
         self.player_two_edit.setObjectName("player_two_edit")
         self.horizontalLayout.addWidget(self.player_two_edit)
         self.horizontalLayoutWidget_2 = QtGui.QWidget(Form)
-        self.horizontalLayoutWidget_2.setGeometry(QtCore.QRect(10, 700, 641, 41))
+        self.horizontalLayoutWidget_2.setGeometry(QtCore.QRect(10, 690, 641, 41))
         self.horizontalLayoutWidget_2.setObjectName("horizontalLayoutWidget_2")
         self.horizontalLayout_2 = QtGui.QHBoxLayout(self.horizontalLayoutWidget_2)
         self.horizontalLayout_2.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
+        self.new_btn = QtGui.QPushButton(self.horizontalLayoutWidget_2)
+        self.new_btn.setObjectName("new_btn")
+        self.horizontalLayout_2.addWidget(self.new_btn)
         self.load_btn = QtGui.QPushButton(self.horizontalLayoutWidget_2)
         self.load_btn.setObjectName("load_btn")
         self.horizontalLayout_2.addWidget(self.load_btn)
@@ -126,6 +129,7 @@ class ChessBoard(object):
         Form.setWindowTitle(QtGui.QApplication.translate("Form", "Form", None, QtGui.QApplication.UnicodeUTF8))
         self.player_one_label.setText(QtGui.QApplication.translate("Form", "Player 1:", None, QtGui.QApplication.UnicodeUTF8))
         self.player_two_label.setText(QtGui.QApplication.translate("Form", "Player 2:", None, QtGui.QApplication.UnicodeUTF8))
+        self.new_btn.setText(QtGui.QApplication.translate("Form", "New Game", None, QtGui.QApplication.UnicodeUTF8))
         self.load_btn.setText(QtGui.QApplication.translate("Form", "Load Game", None, QtGui.QApplication.UnicodeUTF8))
         self.save_btn.setText(QtGui.QApplication.translate("Form", "Save Game", None, QtGui.QApplication.UnicodeUTF8))
         self.chess_board.verticalHeaderItem(0).setText(QtGui.QApplication.translate("Form", "New Row", None, QtGui.QApplication.UnicodeUTF8))
@@ -154,9 +158,10 @@ class LoadDialog(object):
         self.verticalLayoutWidget.setObjectName("verticalLayoutWidget")
         self.verticalLayout = QtGui.QVBoxLayout(self.verticalLayoutWidget)
         self.verticalLayout.setSizeConstraint(QtGui.QLayout.SetNoConstraint)
-        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout.setContentsMargins(-1, -1, -1, 4)
         self.verticalLayout.setObjectName("verticalLayout")
         self.horizontalLayout = QtGui.QHBoxLayout()
+        self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.label = QtGui.QLabel(self.verticalLayoutWidget)
         self.label.setObjectName("label")
@@ -169,11 +174,11 @@ class LoadDialog(object):
         self.comboBox_2.addItem("")
         self.comboBox_2.addItem("")
         self.horizontalLayout.addWidget(self.comboBox_2)
-        self.comboBox = QtGui.QComboBox(self.verticalLayoutWidget)
-        self.comboBox.setObjectName("comboBox")
-        self.comboBox.addItem("")
-        self.comboBox.addItem("")
-        self.horizontalLayout.addWidget(self.comboBox)
+        self.sortby_box = QtGui.QComboBox(self.verticalLayoutWidget)
+        self.sortby_box.setObjectName("sortby_box")
+        self.sortby_box.addItem("")
+        self.sortby_box.addItem("")
+        self.horizontalLayout.addWidget(self.sortby_box)
         self.pushButton = QtGui.QPushButton(self.verticalLayoutWidget)
         self.pushButton.setObjectName("pushButton")
         self.horizontalLayout.addWidget(self.pushButton)
@@ -191,7 +196,7 @@ class LoadDialog(object):
         self.results_table.setWordWrap(True)
         self.results_table.setRowCount(0)
         self.results_table.setObjectName("results_table")
-        self.results_table.setColumnCount(6)
+        self.results_table.setColumnCount(5)
         self.results_table.setRowCount(0)
         item = QtGui.QTableWidgetItem()
         self.results_table.setHorizontalHeaderItem(0, item)
@@ -203,12 +208,10 @@ class LoadDialog(object):
         self.results_table.setHorizontalHeaderItem(3, item)
         item = QtGui.QTableWidgetItem()
         self.results_table.setHorizontalHeaderItem(4, item)
-        item = QtGui.QTableWidgetItem()
-        self.results_table.setHorizontalHeaderItem(5, item)
         self.verticalLayout.addWidget(self.results_table)
         self.buttonBox = QtGui.QDialogButtonBox(self.verticalLayoutWidget)
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel | QtGui.QDialogButtonBox.Open)
+        self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Open)
         self.buttonBox.setObjectName("buttonBox")
         self.verticalLayout.addWidget(self.buttonBox)
 
@@ -220,34 +223,20 @@ class LoadDialog(object):
     def retranslateUi(self, Dialog):
         Dialog.setWindowTitle(QtGui.QApplication.translate("Dialog", "Dialog", None, QtGui.QApplication.UnicodeUTF8))
         self.label.setText(QtGui.QApplication.translate("Dialog", "Sort By:", None, QtGui.QApplication.UnicodeUTF8))
-        self.comboBox_2.setItemText(0, QtGui.QApplication.translate("Dialog", "Player 1", None,
-                                                                    QtGui.QApplication.UnicodeUTF8))
-        self.comboBox_2.setItemText(1, QtGui.QApplication.translate("Dialog", "Player2", None,
-                                                                    QtGui.QApplication.UnicodeUTF8))
-        self.comboBox_2.setItemText(2, QtGui.QApplication.translate("Dialog", "Winner", None,
-                                                                    QtGui.QApplication.UnicodeUTF8))
-        self.comboBox_2.setItemText(3, QtGui.QApplication.translate("Dialog", "Moves Made", None,
-                                                                    QtGui.QApplication.UnicodeUTF8))
-        self.comboBox_2.setItemText(4, QtGui.QApplication.translate("Dialog", "Last Played", None,
-                                                                    QtGui.QApplication.UnicodeUTF8))
-        self.comboBox.setItemText(0, QtGui.QApplication.translate("Dialog", "Ascending", None,
-                                                                  QtGui.QApplication.UnicodeUTF8))
-        self.comboBox.setItemText(1, QtGui.QApplication.translate("Dialog", "Descending", None,
-                                                                  QtGui.QApplication.UnicodeUTF8))
+        self.comboBox_2.setItemText(0, QtGui.QApplication.translate("Dialog", "Player 1", None, QtGui.QApplication.UnicodeUTF8))
+        self.comboBox_2.setItemText(1, QtGui.QApplication.translate("Dialog", "Player2", None, QtGui.QApplication.UnicodeUTF8))
+        self.comboBox_2.setItemText(2, QtGui.QApplication.translate("Dialog", "Winner", None, QtGui.QApplication.UnicodeUTF8))
+        self.comboBox_2.setItemText(3, QtGui.QApplication.translate("Dialog", "Moves Made", None, QtGui.QApplication.UnicodeUTF8))
+        self.comboBox_2.setItemText(4, QtGui.QApplication.translate("Dialog", "Last Played", None, QtGui.QApplication.UnicodeUTF8))
+        self.sortby_box.setItemText(0, QtGui.QApplication.translate("Dialog", "Ascending", None, QtGui.QApplication.UnicodeUTF8))
+        self.sortby_box.setItemText(1, QtGui.QApplication.translate("Dialog", "Descending", None, QtGui.QApplication.UnicodeUTF8))
         self.pushButton.setText(QtGui.QApplication.translate("Dialog", "Sort", None, QtGui.QApplication.UnicodeUTF8))
         self.results_table.setSortingEnabled(False)
-        self.results_table.horizontalHeaderItem(0).setText(
-            QtGui.QApplication.translate("Dialog", "ID", None, QtGui.QApplication.UnicodeUTF8))
-        self.results_table.horizontalHeaderItem(1).setText(
-            QtGui.QApplication.translate("Dialog", "Player 1", None, QtGui.QApplication.UnicodeUTF8))
-        self.results_table.horizontalHeaderItem(2).setText(
-            QtGui.QApplication.translate("Dialog", "Player 2", None, QtGui.QApplication.UnicodeUTF8))
-        self.results_table.horizontalHeaderItem(3).setText(
-            QtGui.QApplication.translate("Dialog", "Winner", None, QtGui.QApplication.UnicodeUTF8))
-        self.results_table.horizontalHeaderItem(4).setText(
-            QtGui.QApplication.translate("Dialog", "Moves Made", None, QtGui.QApplication.UnicodeUTF8))
-        self.results_table.horizontalHeaderItem(5).setText(
-            QtGui.QApplication.translate("Dialog", "Last Played", None, QtGui.QApplication.UnicodeUTF8))
+        self.results_table.horizontalHeaderItem(0).setText(QtGui.QApplication.translate("Dialog", "Player 1", None, QtGui.QApplication.UnicodeUTF8))
+        self.results_table.horizontalHeaderItem(1).setText(QtGui.QApplication.translate("Dialog", "Player 2", None, QtGui.QApplication.UnicodeUTF8))
+        self.results_table.horizontalHeaderItem(2).setText(QtGui.QApplication.translate("Dialog", "Winner", None, QtGui.QApplication.UnicodeUTF8))
+        self.results_table.horizontalHeaderItem(3).setText(QtGui.QApplication.translate("Dialog", "Moves Made", None, QtGui.QApplication.UnicodeUTF8))
+        self.results_table.horizontalHeaderItem(4).setText(QtGui.QApplication.translate("Dialog", "Last Played", None, QtGui.QApplication.UnicodeUTF8))
 
 
 

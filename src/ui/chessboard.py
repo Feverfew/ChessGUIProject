@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'chessboard.ui'
 #
-# Created: Sat Mar 19 21:38:19 2016
+# Created: Sun Nov 27 22:08:28 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PySide import QtCore, QtGui
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
-        Form.resize(660, 800)
+        Form.resize(661, 728)
         self.horizontalLayoutWidget = QtGui.QWidget(Form)
         self.horizontalLayoutWidget.setGeometry(QtCore.QRect(9, 10, 641, 31))
         self.horizontalLayoutWidget.setObjectName("horizontalLayoutWidget")
@@ -34,11 +34,14 @@ class Ui_Form(object):
         self.player_two_edit.setObjectName("player_two_edit")
         self.horizontalLayout.addWidget(self.player_two_edit)
         self.horizontalLayoutWidget_2 = QtGui.QWidget(Form)
-        self.horizontalLayoutWidget_2.setGeometry(QtCore.QRect(10, 700, 641, 41))
+        self.horizontalLayoutWidget_2.setGeometry(QtCore.QRect(10, 690, 641, 41))
         self.horizontalLayoutWidget_2.setObjectName("horizontalLayoutWidget_2")
         self.horizontalLayout_2 = QtGui.QHBoxLayout(self.horizontalLayoutWidget_2)
         self.horizontalLayout_2.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
+        self.new_btn = QtGui.QPushButton(self.horizontalLayoutWidget_2)
+        self.new_btn.setObjectName("new_btn")
+        self.horizontalLayout_2.addWidget(self.new_btn)
         self.load_btn = QtGui.QPushButton(self.horizontalLayoutWidget_2)
         self.load_btn.setObjectName("load_btn")
         self.horizontalLayout_2.addWidget(self.load_btn)
@@ -113,6 +116,7 @@ class Ui_Form(object):
         Form.setWindowTitle(QtGui.QApplication.translate("Form", "Form", None, QtGui.QApplication.UnicodeUTF8))
         self.player_one_label.setText(QtGui.QApplication.translate("Form", "Player 1:", None, QtGui.QApplication.UnicodeUTF8))
         self.player_two_label.setText(QtGui.QApplication.translate("Form", "Player 2:", None, QtGui.QApplication.UnicodeUTF8))
+        self.new_btn.setText(QtGui.QApplication.translate("Form", "New Game", None, QtGui.QApplication.UnicodeUTF8))
         self.load_btn.setText(QtGui.QApplication.translate("Form", "Load Game", None, QtGui.QApplication.UnicodeUTF8))
         self.save_btn.setText(QtGui.QApplication.translate("Form", "Save Game", None, QtGui.QApplication.UnicodeUTF8))
         self.chess_board.verticalHeaderItem(0).setText(QtGui.QApplication.translate("Form", "New Row", None, QtGui.QApplication.UnicodeUTF8))
