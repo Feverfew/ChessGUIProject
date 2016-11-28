@@ -22,21 +22,17 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
     def __init__(self):
         super(ChessBoardController, self).__init__()
         self.setupUi(self)
+        self.board = Board()
         self.settings = QtCore.QSettings("ComputingProjectAlex", "Chess")
         self.from_cell = []
         self.chess_board.horizontalHeader().setResizeMode(QtGui.QHeaderView.Stretch)
         self.chess_board.verticalHeader().setResizeMode(QtGui.QHeaderView.Stretch)
         self.chess_board.horizontalHeader().hide()
         self.chess_board.verticalHeader().hide()
+        self.output_board()
         self.chess_board.itemClicked.connect(self.table_clicked)
         self.save_btn.clicked.connect(self.save_game)
         self.load_btn.clicked.connect(self.load_game)
-        self.new_btn.clicked.connect(self.new_game)
-        self.new_game()
-
-    def new_game(self):
-        self.board = Board()
-        self.output_board()
 
     def table_clicked(self):
         """Handler for when table is clicked"""
@@ -322,6 +318,7 @@ class LoadDialogController(QtGui.QDialog, views.LoadDialog):
         self.results_table.setSelectionMode(QtGui.QAbstractItemView.SingleSelection)
         self.pushButton.clicked.connect(self.sort)
 
+
     def output_table(self):
         self.results_table.setRowCount(0)
         i = 0
@@ -355,44 +352,135 @@ class LoadDialogController(QtGui.QDialog, views.LoadDialog):
                 for x in range(self.results_table.rowCount()):
                     array.append(int(self.results_table.item(x, 0).text()))
                 algorithms.quick_sort(array, 0, len(array)-1)
+                sorted_games = [None] * len(array)
                 for i in range(len(array)):
                     for j in range(len(self.data['games'])):
-                        if array[x] == self.data['games'][j]['id']:
-                            self.data['games'][x], self.data['games'][j] = self.data['games'][j], self.data['games'][x]
-                self.output_table()
+                        if array[i] == self.data['games'][j]['id']:
+                            sorted_games[i], self.data['games'][j]['id'] = self.data['games'][j], None
+                            break
             elif self.comboBox_2.currentText() == "Player 1":
                 array = []
                 for x in range(self.results_table.rowCount()):
                     array.append(self.results_table.item(x, 1).text())
                 algorithms.quick_sort(array, 0, len(array)-1)
+                sorted_games = [None] * len(array)
                 for i in range(len(array)):
                     for j in range(len(self.data['games'])):
-                        if array[x] == self.data['games'][j]['player_one']:
-                            self.data['games'][x], self.data['games'][j] = self.data['games'][j], self.data['games'][x]
-                self.output_table()
+                        if array[i] == self.data['games'][j]['player_one']:
+                            sorted_games[i], self.data['games'][j]['player_one'] = self.data['games'][j], None
+                            break
             elif self.comboBox_2.currentText() == "Player 2":
                 array = []
                 for x in range(self.results_table.rowCount()):
-                    array.append(self.results_table.item(x, 2).text())
+                    array.append(self.results_table.item(x, 1).text())
                 algorithms.quick_sort(array, 0, len(array)-1)
+                sorted_games = [None] * len(array)
                 for i in range(len(array)):
                     for j in range(len(self.data['games'])):
-                        if array[x] == self.data['games'][j]['player_two']:
-                            self.data['games'][x], self.data['games'][j] = self.data['games'][j], self.data['games'][x]
-                self.output_table()
+                        if array[i] == self.data['games'][j]['player_two']:
+                            sorted_games[i], self.data['games'][j]['player_two'] = self.data['games'][j], None
+                            break
             elif self.comboBox_2.currentText() == "Winner":
                 array = []
                 for x in range(self.results_table.rowCount()):
                     array.append(self.results_table.item(x, 1).text())
                 algorithms.quick_sort(array, 0, len(array)-1)
+                sorted_games = [None] * len(array)
                 for i in range(len(array)):
                     for j in range(len(self.data['games'])):
-                        if array[x] == self.data['games'][j]['player_one']:
-                            self.data['games'][x], self.data['games'][j] = self.data['games'][j], self.data['games'][x]
-                self.output_table()
+                        if array[i] == self.data['games'][j]['winner']:
+                            sorted_games[i], self.data['games'][j]['winner'] = self.data['games'][j], None
+                            break
+            elif self.comboBox_2.currentText() == "Moves Made":
+                array = []
+                for x in range(self.results_table.rowCount()):
+                    array.append(self.results_table.item(x, 1).text())
+                algorithms.quick_sort(array, 0, len(array)-1)
+                sorted_games = [None] * len(array)
+                for i in range(len(array)):
+                    for j in range(len(self.data['games'])):
+                        if array[i] == self.data['games'][j]['move_num']:
+                            sorted_games[i], self.data['games'][j]['move_num'] = self.data['games'][j], None
+                            break
+            elif self.comboBox_2.currentText() == "Last Played":
+                array = []
+                for x in range(self.results_table.rowCount()):
+                    array.append(self.results_table.item(x, 1).text())
+                algorithms.quick_sort(array, 0, len(array)-1)
+                sorted_games = [None] * len(array)
+                for i in range(len(array)):
+                    for j in range(len(self.data['games'])):
+                        if array[i] == self.data['games'][j]['last_played']:
+                            sorted_games[i], self.data['games'][j]['last_played'] = self.data['games'][j], None
+                            break
         else:
-            pass
-
+            if self.comboBox_2.currentText() == "ID":
+                array = []
+                for x in range(self.results_table.rowCount()):
+                    array.append(int(self.results_table.item(x, 0).text()))
+                algorithms.quick_sort(array, 0, len(array)-1)
+                sorted_games = [None] * len(array)
+                for i in range(len(array)):
+                    for j in range(len(self.data['games'])):
+                        if array[i] == self.data['games'][j]['id']:
+                            sorted_games[i], self.data['games'][j]['id'] = self.data['games'][j], None
+                            break
+            elif self.comboBox_2.currentText() == "Player 1":
+                array = []
+                for x in range(self.results_table.rowCount()):
+                    array.append(self.results_table.item(x, 1).text())
+                algorithms.quick_sort(array, 0, len(array)-1)
+                sorted_games = [None] * len(array)
+                for i in range(len(array)):
+                    for j in range(len(self.data['games'])):
+                        if array[i] == self.data['games'][j]['player_one']:
+                            sorted_games[i], self.data['games'][j]['player_one'] = self.data['games'][j], None
+                            break
+            elif self.comboBox_2.currentText() == "Player 2":
+                array = []
+                for x in range(self.results_table.rowCount()):
+                    array.append(self.results_table.item(x, 1).text())
+                algorithms.quick_sort(array, 0, len(array)-1)
+                sorted_games = [None] * len(array)
+                for i in range(len(array)):
+                    for j in range(len(self.data['games'])):
+                        if array[i] == self.data['games'][j]['player_two']:
+                            sorted_games[i], self.data['games'][j]['player_two'] = self.data['games'][j], None
+                            break
+            elif self.comboBox_2.currentText() == "Winner":
+                array = []
+                for x in range(self.results_table.rowCount()):
+                    array.append(self.results_table.item(x, 1).text())
+                algorithms.quick_sort(array, 0, len(array)-1)
+                sorted_games = [None] * len(array)
+                for i in range(len(array)):
+                    for j in range(len(self.data['games'])):
+                        if array[i] == self.data['games'][j]['winner']:
+                            sorted_games[i], self.data['games'][j]['winner'] = self.data['games'][j], None
+                            break
+            elif self.comboBox_2.currentText() == "Moves Made":
+                array = []
+                for x in range(self.results_table.rowCount()):
+                    array.append(self.results_table.item(x, 1).text())
+                algorithms.quick_sort(array, 0, len(array)-1)
+                sorted_games = [None] * len(array)
+                for i in range(len(array)):
+                    for j in range(len(self.data['games'])):
+                        if array[i] == self.data['games'][j]['move_num']:
+                            sorted_games[i], self.data['games'][j]['move_num'] = self.data['games'][j], None
+                            break
+            elif self.comboBox_2.currentText() == "Last Played":
+                array = []
+                for x in range(self.results_table.rowCount()):
+                    array.append(self.results_table.item(x, 1).text())
+                algorithms.quick_sort(array, 0, len(array)-1)
+                sorted_games = [None] * len(array)
+                for i in range(len(array)):
+                    for j in range(len(self.data['games'])):
+                        if array[i] == self.data['games'][j]['last_played']:
+                            sorted_games[i], self.data['games'][j]['last_played'] = self.data['games'][j], None
+                            break
+        self.output_table()
 
     def get_game(self):
         pass
