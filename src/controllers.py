@@ -522,4 +522,4 @@ class LoadDialogController(QtGui.QDialog, views.LoadDialog):
         self.output_table()
 
     def get_game(self):
-        self.chosen_game_id = int(self.results_table.itemAt(int(self.results_table.currentRow()), 0).text())
+        self.chosen_game_id = int(self.results_table.item(self.results_table.currentRow(), 0).text())

@@ -37,17 +37,17 @@ class Board(object):
             self.player_two = game['player_two']
             self.board = [[0] * 8] * 8
             for piece in game['pieces']['queens']:
-                self.board[queen.position[0]][queen.position[1]] = Queen(queen.position, queen.colour)
+                self.board[piece['position'][0]][piece['position'][1]] = Queen(piece['position'], piece['colour'])
             for piece in game['pieces']['knights']:
-                self.board[piece.position[0]][piece.position[1]] = Knight(piece.position, piece.colour)
+                self.board[piece['position'][0]][piece['position'][1]] = Knight(piece['position'], piece['colour'])
             for piece in game['pieces']['bishops']:
-                self.board[piece.position[0]][piece.position[1]] = Bishop(piece.position, piece.colour)
+                self.board[piece['position'][0]][piece['position'][1]] = Bishop(piece['position'], piece['colour'])
             for piece in game['pieces']['kings']:
-                self.board[piece.position[0]][piece.position[1]] = King(piece.position, piece.colour, piece.has_moved, piece.castling_moves)
+                self.board[piece['position'][0]][piece['position'][1]] = King(piece['position'], piece['colour'], piece['has_moved'], piece['castling_moves'])
             for piece in game['pieces']['pawns']:
-                self.board[piece.position[0]][piece.position[1]] = Pawn(piece.position, piece.colour, piece.first_moved)
+                self.board[piece['position'][0]][piece['position'][1]] = Pawn(piece['position'], piece['colour'], piece['first_moved'])
             for piece in game['pieces']['rooks']:
-                self.board[piece.position[0]][piece.position[1]] = Rook(piece.position, piece.colour, piece.has_moved)
+                self.board[piece['position'][0]][piece['position'][1]] = Rook(piece['position'], piece['colour'], piece['has_moved'])
         else:
             self.id = None
             self.last_played = None
