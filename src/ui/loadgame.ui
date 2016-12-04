@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>541</width>
-    <height>451</height>
+    <width>616</width>
+    <height>454</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,7 +18,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>541</width>
+     <width>611</width>
      <height>451</height>
     </rect>
    </property>
@@ -39,7 +39,12 @@
        </widget>
       </item>
       <item>
-       <widget class="QComboBox" name="comboBox_2">
+       <widget class="QComboBox" name="sort_type">
+        <item>
+         <property name="text">
+          <string>ID</string>
+         </property>
+        </item>
         <item>
          <property name="text">
           <string>Player 1</string>
@@ -47,7 +52,7 @@
         </item>
         <item>
          <property name="text">
-          <string>Player2</string>
+          <string>Player 2</string>
          </property>
         </item>
         <item>
@@ -82,7 +87,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="pushButton">
+       <widget class="QPushButton" name="sort_btn">
         <property name="text">
          <string>Sort</string>
         </property>
@@ -119,6 +124,11 @@
       <property name="rowCount">
        <number>0</number>
       </property>
+      <column>
+       <property name="text">
+        <string>ID</string>
+       </property>
+      </column>
       <column>
        <property name="text">
         <string>Player 1</string>

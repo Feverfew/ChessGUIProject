@@ -30,7 +30,7 @@ class Piece(object):
 class Rook(Piece):
     """Class for a Rook"""
 
-    def __init__(self, position, colour, has_moved = False):
+    def __init__(self, position, colour, has_moved=False):
         super().__init__(position, colour)
         self.img_path = "{}_rook.png".format(self.colour.lower())
         self.has_moved = has_moved
@@ -235,10 +235,10 @@ class King(Piece):
 
 class Pawn(Piece):
     """Class for a Pawn"""
-    def __init__(self, position, colour):
+    def __init__(self, position, colour, first_moved=0):
         super().__init__(position, colour)
         self.img_path = "{}_pawn.png".format(self.colour.lower())
-        self.first_moved = 0
+        self.first_moved = first_moved
 
     def calculate_possible_moves(self):
         self.possible_moves.clear()

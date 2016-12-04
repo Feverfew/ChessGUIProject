@@ -152,9 +152,9 @@ class ChessBoard(object):
 class LoadDialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
-        Dialog.resize(541, 451)
+        Dialog.resize(616, 454)
         self.verticalLayoutWidget = QtGui.QWidget(Dialog)
-        self.verticalLayoutWidget.setGeometry(QtCore.QRect(0, 0, 541, 451))
+        self.verticalLayoutWidget.setGeometry(QtCore.QRect(0, 0, 611, 451))
         self.verticalLayoutWidget.setObjectName("verticalLayoutWidget")
         self.verticalLayout = QtGui.QVBoxLayout(self.verticalLayoutWidget)
         self.verticalLayout.setSizeConstraint(QtGui.QLayout.SetNoConstraint)
@@ -166,22 +166,23 @@ class LoadDialog(object):
         self.label = QtGui.QLabel(self.verticalLayoutWidget)
         self.label.setObjectName("label")
         self.horizontalLayout.addWidget(self.label)
-        self.comboBox_2 = QtGui.QComboBox(self.verticalLayoutWidget)
-        self.comboBox_2.setObjectName("comboBox_2")
-        self.comboBox_2.addItem("")
-        self.comboBox_2.addItem("")
-        self.comboBox_2.addItem("")
-        self.comboBox_2.addItem("")
-        self.comboBox_2.addItem("")
-        self.horizontalLayout.addWidget(self.comboBox_2)
+        self.sort_type = QtGui.QComboBox(self.verticalLayoutWidget)
+        self.sort_type.setObjectName("sort_type")
+        self.sort_type.addItem("")
+        self.sort_type.addItem("")
+        self.sort_type.addItem("")
+        self.sort_type.addItem("")
+        self.sort_type.addItem("")
+        self.sort_type.addItem("")
+        self.horizontalLayout.addWidget(self.sort_type)
         self.sortby_box = QtGui.QComboBox(self.verticalLayoutWidget)
         self.sortby_box.setObjectName("sortby_box")
         self.sortby_box.addItem("")
         self.sortby_box.addItem("")
         self.horizontalLayout.addWidget(self.sortby_box)
-        self.pushButton = QtGui.QPushButton(self.verticalLayoutWidget)
-        self.pushButton.setObjectName("pushButton")
-        self.horizontalLayout.addWidget(self.pushButton)
+        self.sort_btn = QtGui.QPushButton(self.verticalLayoutWidget)
+        self.sort_btn.setObjectName("sort_btn")
+        self.horizontalLayout.addWidget(self.sort_btn)
         self.verticalLayout.addLayout(self.horizontalLayout)
         self.results_table = QtGui.QTableWidget(self.verticalLayoutWidget)
         self.results_table.setEnabled(True)
@@ -196,7 +197,7 @@ class LoadDialog(object):
         self.results_table.setWordWrap(True)
         self.results_table.setRowCount(0)
         self.results_table.setObjectName("results_table")
-        self.results_table.setColumnCount(5)
+        self.results_table.setColumnCount(6)
         self.results_table.setRowCount(0)
         item = QtGui.QTableWidgetItem()
         self.results_table.setHorizontalHeaderItem(0, item)
@@ -208,10 +209,12 @@ class LoadDialog(object):
         self.results_table.setHorizontalHeaderItem(3, item)
         item = QtGui.QTableWidgetItem()
         self.results_table.setHorizontalHeaderItem(4, item)
+        item = QtGui.QTableWidgetItem()
+        self.results_table.setHorizontalHeaderItem(5, item)
         self.verticalLayout.addWidget(self.results_table)
         self.buttonBox = QtGui.QDialogButtonBox(self.verticalLayoutWidget)
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Open)
+        self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel | QtGui.QDialogButtonBox.Open)
         self.buttonBox.setObjectName("buttonBox")
         self.verticalLayout.addWidget(self.buttonBox)
 
@@ -223,20 +226,36 @@ class LoadDialog(object):
     def retranslateUi(self, Dialog):
         Dialog.setWindowTitle(QtGui.QApplication.translate("Dialog", "Dialog", None, QtGui.QApplication.UnicodeUTF8))
         self.label.setText(QtGui.QApplication.translate("Dialog", "Sort By:", None, QtGui.QApplication.UnicodeUTF8))
-        self.comboBox_2.setItemText(0, QtGui.QApplication.translate("Dialog", "Player 1", None, QtGui.QApplication.UnicodeUTF8))
-        self.comboBox_2.setItemText(1, QtGui.QApplication.translate("Dialog", "Player2", None, QtGui.QApplication.UnicodeUTF8))
-        self.comboBox_2.setItemText(2, QtGui.QApplication.translate("Dialog", "Winner", None, QtGui.QApplication.UnicodeUTF8))
-        self.comboBox_2.setItemText(3, QtGui.QApplication.translate("Dialog", "Moves Made", None, QtGui.QApplication.UnicodeUTF8))
-        self.comboBox_2.setItemText(4, QtGui.QApplication.translate("Dialog", "Last Played", None, QtGui.QApplication.UnicodeUTF8))
-        self.sortby_box.setItemText(0, QtGui.QApplication.translate("Dialog", "Ascending", None, QtGui.QApplication.UnicodeUTF8))
-        self.sortby_box.setItemText(1, QtGui.QApplication.translate("Dialog", "Descending", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButton.setText(QtGui.QApplication.translate("Dialog", "Sort", None, QtGui.QApplication.UnicodeUTF8))
+        self.sort_type.setItemText(0,
+                                   QtGui.QApplication.translate("Dialog", "ID", None, QtGui.QApplication.UnicodeUTF8))
+        self.sort_type.setItemText(1, QtGui.QApplication.translate("Dialog", "Player 1", None,
+                                                                   QtGui.QApplication.UnicodeUTF8))
+        self.sort_type.setItemText(2, QtGui.QApplication.translate("Dialog", "Player 2", None,
+                                                                   QtGui.QApplication.UnicodeUTF8))
+        self.sort_type.setItemText(3, QtGui.QApplication.translate("Dialog", "Winner", None,
+                                                                   QtGui.QApplication.UnicodeUTF8))
+        self.sort_type.setItemText(4, QtGui.QApplication.translate("Dialog", "Moves Made", None,
+                                                                   QtGui.QApplication.UnicodeUTF8))
+        self.sort_type.setItemText(5, QtGui.QApplication.translate("Dialog", "Last Played", None,
+                                                                   QtGui.QApplication.UnicodeUTF8))
+        self.sortby_box.setItemText(0, QtGui.QApplication.translate("Dialog", "Ascending", None,
+                                                                    QtGui.QApplication.UnicodeUTF8))
+        self.sortby_box.setItemText(1, QtGui.QApplication.translate("Dialog", "Descending", None,
+                                                                    QtGui.QApplication.UnicodeUTF8))
+        self.sort_btn.setText(QtGui.QApplication.translate("Dialog", "Sort", None, QtGui.QApplication.UnicodeUTF8))
         self.results_table.setSortingEnabled(False)
-        self.results_table.horizontalHeaderItem(0).setText(QtGui.QApplication.translate("Dialog", "Player 1", None, QtGui.QApplication.UnicodeUTF8))
-        self.results_table.horizontalHeaderItem(1).setText(QtGui.QApplication.translate("Dialog", "Player 2", None, QtGui.QApplication.UnicodeUTF8))
-        self.results_table.horizontalHeaderItem(2).setText(QtGui.QApplication.translate("Dialog", "Winner", None, QtGui.QApplication.UnicodeUTF8))
-        self.results_table.horizontalHeaderItem(3).setText(QtGui.QApplication.translate("Dialog", "Moves Made", None, QtGui.QApplication.UnicodeUTF8))
-        self.results_table.horizontalHeaderItem(4).setText(QtGui.QApplication.translate("Dialog", "Last Played", None, QtGui.QApplication.UnicodeUTF8))
+        self.results_table.horizontalHeaderItem(0).setText(
+            QtGui.QApplication.translate("Dialog", "ID", None, QtGui.QApplication.UnicodeUTF8))
+        self.results_table.horizontalHeaderItem(1).setText(
+            QtGui.QApplication.translate("Dialog", "Player 1", None, QtGui.QApplication.UnicodeUTF8))
+        self.results_table.horizontalHeaderItem(2).setText(
+            QtGui.QApplication.translate("Dialog", "Player 2", None, QtGui.QApplication.UnicodeUTF8))
+        self.results_table.horizontalHeaderItem(3).setText(
+            QtGui.QApplication.translate("Dialog", "Winner", None, QtGui.QApplication.UnicodeUTF8))
+        self.results_table.horizontalHeaderItem(4).setText(
+            QtGui.QApplication.translate("Dialog", "Moves Made", None, QtGui.QApplication.UnicodeUTF8))
+        self.results_table.horizontalHeaderItem(5).setText(
+            QtGui.QApplication.translate("Dialog", "Last Played", None, QtGui.QApplication.UnicodeUTF8))
 
 
 

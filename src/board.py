@@ -5,36 +5,79 @@ __author__ = "Alexander Saoutkin"
 class Board(object):
     """Class which manages the pieces on the board."""
 
-    def __init__(self, player_one="", player_two=""):
-        self.id = None
-        self.last_played = None
-        self.turn = "White"
-        self.move_num = 1
-        self.winner = ""
-        self.colour_in_check = ""
-        self.is_stalemate = False
-        self.game_over = False
-        self.must_promote = False
-        self.has_been_in_check = {
-            'Black': False,
-            'White': False
-        }
-        self.enpassent_possible = {
-            'Black': True,
-            'White': True
+    def __init__(self, game=None):
+        if game is not None:
+            self.id = game['id']
+            self.last_played = game['last_played']
+            self.turn = game['turn']
+            self.move_num = game['move_num']
+            self.winner = game['winner']
+            self.colour_in_check = game['colour_in_check']
+            self.is_stalemate = game['is_stalemate']
+            self.game_over = game['game_over']
+            self.must_promote = game['must_promote']
+            self.has_been_in_check = {
+                'Black': game['has_been_in_check']['Black'],
+                'White': game['has_been_in_check']['White']
             }
-        self.can_castle = {
-            'Black': True,
-            'White': True
+            self.enpassent_possible = {
+                'Black': game['enpassent_possible']['Black'],
+                'White': game['enpassent_possible']['White']
             }
-        self.enpassent_move = {
-            'from': [],
-            'to': [],
-            'taken': []
+            self.can_castle = {
+                'Black': game['can_castle']['Black'],
+                'White': game['can_castle']['White']
             }
-        self.player_one = player_one
-        self.player_two = player_two
-        self.new_board()
+            self.enpassent_move = {
+                'from': game['enpassent_move']['from'],
+                'to': game['enpassent_move']['to'],
+                'taken': game['enpassent_move']['taken']
+            }
+            self.player_one = game['player_one']
+            self.player_two = game['player_two']
+            self.board = [[0] * 8] * 8
+            for piece in game['pieces']['queens']:
+                self.board[queen.position[0]][queen.position[1]] = Queen(queen.position, queen.colour)
+            for piece in game['pieces']['knights']:
+                self.board[piece.position[0]][piece.position[1]] = Knight(piece.position, piece.colour)
+            for piece in game['pieces']['bishops']:
+                self.board[piece.position[0]][piece.position[1]] = Bishop(piece.position, piece.colour)
+            for piece in game['pieces']['kings']:
+                self.board[piece.position[0]][piece.position[1]] = King(piece.position, piece.colour, piece.has_moved, piece.castling_moves)
+            for piece in game['pieces']['pawns']:
+                self.board[piece.position[0]][piece.position[1]] = Pawn(piece.position, piece.colour, piece.first_moved)
+            for piece in game['pieces']['rooks']:
+                self.board[piece.position[0]][piece.position[1]] = Rook(piece.position, piece.colour, piece.has_moved)
+        else:
+            self.id = None
+            self.last_played = None
+            self.turn = "White"
+            self.move_num = 1
+            self.winner = ""
+            self.colour_in_check = ""
+            self.is_stalemate = False
+            self.game_over = False
+            self.must_promote = False
+            self.has_been_in_check = {
+                'Black': False,
+                'White': False
+            }
+            self.enpassent_possible = {
+                'Black': True,
+                'White': True
+                }
+            self.can_castle = {
+                'Black': True,
+                'White': True
+                }
+            self.enpassent_move = {
+                'from': [],
+                'to': [],
+                'taken': []
+                }
+            self.player_one = ""
+            self.player_two = ""
+            self.new_board()
 
     def new_board(self):
         """Creates a new fresh board"""
