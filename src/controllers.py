@@ -45,7 +45,7 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
         if not self.from_cell and column != -1 and row != -1:  # Piece is selected
             self.from_cell = [row, column]
             self.output_board(self.board.calculate_legal_moves(self.board.board[row][column]))
-        elif self.from_cell and column != -1 and row != -1: # Piece is moved
+        elif self.from_cell and column != -1 and row != -1:  # Piece is moved
             if self.board.board[row][column]:
                 if self.board.board[self.from_cell[0]][self.from_cell[1]].colour == self.board.board[row][column].colour:
                     self.from_cell = [row, column]
@@ -57,7 +57,7 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
                     self.board.check_game_state()
                     self.output_board()
                     self.from_cell = []
-                    if  self.board.game_over and self.board.is_stalemate:
+                    if self.board.game_over and self.board.is_stalemate:
                         self.show_message("Game is a draw. No one wins")
                     elif self.board.game_over:
                         self.show_message("{} is the winner".format(self.board.winner))
@@ -122,18 +122,18 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
                     item = QtGui.QTableWidgetItem()
                     item.setSizeHint(QtCore.QSize(80, 80))
                     if (x+y) % 2 == 0:
-                        item.setBackground(QtGui.QBrush(QtGui.QColor(31, 177, 209))) # light
+                        item.setBackground(QtGui.QBrush(QtGui.QColor(31, 177, 209)))  # light
                     else:
-                        item.setBackground(QtGui.QBrush(QtGui.QColor(11, 129, 156))) # dark
+                        item.setBackground(QtGui.QBrush(QtGui.QColor(11, 129, 156)))  # dark
                     item.setFlags(QtCore.Qt.ItemIsEnabled)
                     self.chess_board.setItem(y, x, item)
                 else:
                     item = QtGui.QTableWidgetItem()
                     item.setSizeHint(QtCore.QSize(80, 80))
                     if (x+y) % 2 == 0:
-                        item.setBackground(QtGui.QBrush(QtGui.QColor(31, 177, 209))) # light
+                        item.setBackground(QtGui.QBrush(QtGui.QColor(31, 177, 209)))  # light
                     else:
-                        item.setBackground(QtGui.QBrush(QtGui.QColor(11, 129, 156))) # dark
+                        item.setBackground(QtGui.QBrush(QtGui.QColor(11, 129, 156)))  # dark
                     item.setFlags(QtCore.Qt.NoItemFlags)
                     self.chess_board.setItem(y, x, item)
 
@@ -151,15 +151,22 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
             game_loader = LoadDialogController(data)
             game_loader.exec()
             game = []
-            for temp_game in data['games']:
-                if game_loader.chosen_game_id == temp_game['id']:
-                    game = temp_game
-                    break
-            self.board = Board(game)
-            self.player_one_edit.setText(game['player_one'])
-            self.player_two_edit.setText(game['player_two'])
-            self.board.check_game_state()
-            self.output_board()
+            if game_loader.chosen_game_id != 0:
+                for temp_game in data['games']:
+                    if game_loader.chosen_game_id == temp_game['id']:
+                        game = temp_game
+                        break
+                self.board = Board(game)
+                self.player_one_edit.setText(game['player_one'])
+                self.player_two_edit.setText(game['player_two'])
+                self.board.check_game_state()
+                self.output_board()
+                if self.board.game_over and self.board.is_stalemate:
+                    self.show_message("Game is a draw. No one wins")
+                elif self.board.game_over:
+                    self.show_message("{} is the winner".format(self.board.winner))
+                elif self.board.colour_in_check:
+                    self.show_message("{} is in check".format(self.board.colour_in_check))
         except (IOError, FileNotFoundError, TypeError):
             self.show_message("Game file not found!")
             self.get_json_file()
@@ -269,14 +276,13 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
                         data = json.load(json_file)
                     id_list = [x['id'] for x in data['games']]
 
-                    algorithms.quick_sort(id_list,0, len(id_list)-1)
+                    algorithms.quick_sort(id_list, 0, len(id_list)-1)
                     if game['id']:
                         if algorithms.binary_search(game['id'], id_list):
                             for x in range(len(data['games'])):
                                 if game['id'] == data['games'][x]['id']:
                                     data['games'][x] = game
                         else:
-                            #TODO This shouldn't happen at all, check if can remove.
                             game['id'] = id_list[-1] + 1
                             self.board.id = id_list[-1] + 1
                             data['games'].append(game)
@@ -287,8 +293,7 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
                     with open(self.settings.value('json_location'), 'w') as jsonfile:
                         json.dump(data, jsonfile, indent=4, separators=(',', ':'))
                         self.show_message("Game saved at {}".format(self.settings.value('json_location')))
-                #TODO Finish this whole section
-                except (IOError, FileNotFoundError) as e:
+                except (IOError, FileNotFoundError):
                     self.show_message("Error: File not found")
                     self.get_json_file()
             else:
@@ -328,6 +333,7 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
         msg_box.setText(msg)
         msg_box.exec_()
 
+
 class LoadDialogController(QtGui.QDialog, views.LoadDialog):
 
     def __init__(self, data):
@@ -339,7 +345,6 @@ class LoadDialogController(QtGui.QDialog, views.LoadDialog):
         self.results_table.setSelectionBehavior(QtGui.QAbstractItemView.SelectRows)
         self.results_table.setSelectionMode(QtGui.QAbstractItemView.SingleSelection)
         self.sort_btn.clicked.connect(self.sort)
-
 
     def output_table(self):
         self.results_table.setRowCount(0)
@@ -367,7 +372,6 @@ class LoadDialogController(QtGui.QDialog, views.LoadDialog):
             self.results_table.setItem(i, 5, last_played)
             i += 1
 
-    
     def sort(self):
         sorted_games = []
         if self.sortby_box.currentText() == "Ascending":

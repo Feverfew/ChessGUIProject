@@ -2,6 +2,7 @@ from pieces import *
 import copy
 __author__ = "Alexander Saoutkin"
 
+
 class Board(object):
     """Class which manages the pieces on the board."""
 
@@ -43,11 +44,15 @@ class Board(object):
             for piece in game['pieces']['bishops']:
                 self.board[piece['position'][0]][piece['position'][1]] = Bishop(piece['position'], piece['colour'])
             for piece in game['pieces']['kings']:
-                self.board[piece['position'][0]][piece['position'][1]] = King(piece['position'], piece['colour'], piece['has_moved'], piece['castling_moves'])
+                self.board[piece['position'][0]][piece['position'][1]] = King(piece['position'], piece['colour'],
+                                                                              piece['has_moved'],
+                                                                              ['castling_moves'])
             for piece in game['pieces']['pawns']:
-                self.board[piece['position'][0]][piece['position'][1]] = Pawn(piece['position'], piece['colour'], piece['first_moved'])
+                self.board[piece['position'][0]][piece['position'][1]] = Pawn(piece['position'], piece['colour'],
+                                                                              piece['first_moved'])
             for piece in game['pieces']['rooks']:
-                self.board[piece['position'][0]][piece['position'][1]] = Rook(piece['position'], piece['colour'], piece['has_moved'])
+                self.board[piece['position'][0]][piece['position'][1]] = Rook(piece['position'], piece['colour'],
+                                                                              piece['has_moved'])
         else:
             self.id = None
             self.last_played = None
@@ -84,25 +89,25 @@ class Board(object):
         self.board = []
         # Black side of the board
         row = [
-            Rook([0,0], "Black"),
-            Knight([0,1], "Black"),
-            Bishop([0,2], "Black"),
-            Queen([0,3], "Black"),
-            King([0,4], "Black"),
-            Bishop([0,5], "Black"),
-            Knight([0,6], "Black"),
-            Rook([0,7], "Black")
+            Rook([0, 0], "Black"),
+            Knight([0, 1], "Black"),
+            Bishop([0, 2], "Black"),
+            Queen([0, 3], "Black"),
+            King([0, 4], "Black"),
+            Bishop([0, 5], "Black"),
+            Knight([0, 6], "Black"),
+            Rook([0, 7], "Black")
         ]
         self.board.append(row)
         row = [
-            Pawn([1,0], "Black"),
-            Pawn([1,1], "Black"),
-            Pawn([1,2], "Black"),
-            Pawn([1,3], "Black"),
-            Pawn([1,4], "Black"),
-            Pawn([1,5], "Black"),
-            Pawn([1,6], "Black"),
-            Pawn([1,7], "Black")
+            Pawn([1, 0], "Black"),
+            Pawn([1, 1], "Black"),
+            Pawn([1, 2], "Black"),
+            Pawn([1, 3], "Black"),
+            Pawn([1, 4], "Black"),
+            Pawn([1, 5], "Black"),
+            Pawn([1, 6], "Black"),
+            Pawn([1, 7], "Black")
         ]
         self.board.append(row)
         # Add empty space
@@ -111,25 +116,25 @@ class Board(object):
             self.board.append(row)
         # Add white pieces
         row = [
-            Pawn([6,0], "White"),
-            Pawn([6,1], "White"),
-            Pawn([6,2], "White"),
-            Pawn([6,3], "White"),
-            Pawn([6,4], "White"),
-            Pawn([6,5], "White"),
-            Pawn([6,6], "White"),
-            Pawn([6,7], "White")
+            Pawn([6, 0], "White"),
+            Pawn([6, 1], "White"),
+            Pawn([6, 2], "White"),
+            Pawn([6, 3], "White"),
+            Pawn([6, 4], "White"),
+            Pawn([6, 5], "White"),
+            Pawn([6, 6], "White"),
+            Pawn([6, 7], "White")
         ]
         self.board.append(row)
         row = [
-            Rook([7,0], "White"),
-            Knight([7,1], "White"),
-            Bishop([7,2], "White"),
-            Queen([7,3], "White"),
-            King([7,4], "White"),
-            Bishop([7,5], "White"),
-            Knight([7,6], "White"),
-            Rook([7,7], "White")
+            Rook([7, 0], "White"),
+            Knight([7, 1], "White"),
+            Bishop([7, 2], "White"),
+            Queen([7, 3], "White"),
+            King([7, 4], "White"),
+            Bishop([7, 5], "White"),
+            Knight([7, 6], "White"),
+            Rook([7, 7], "White")
         ]
         self.board.append(row)
      
