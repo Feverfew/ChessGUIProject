@@ -35,7 +35,7 @@ class Board(object):
             }
             self.player_one = game['player_one']
             self.player_two = game['player_two']
-            self.board = [[0] * 8] * 8
+            self.board = [[0 for x in range(8)] for y in range(8)]
             for piece in game['pieces']['queens']:
                 self.board[piece['position'][0]][piece['position'][1]] = Queen(piece['position'], piece['colour'])
             for piece in game['pieces']['knights']:

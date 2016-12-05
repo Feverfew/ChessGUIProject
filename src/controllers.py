@@ -1,15 +1,17 @@
+import copy
+import datetime
+import json
+from builtins import IOError, FileNotFoundError, TypeError
+
 from PySide import QtGui, QtCore
+
+import algorithms
 import views
 from board import Board
 from pieces import *
-import algorithms
-import json
-import datetime
-import copy
-from builtins import IOError, FileNotFoundError, TypeError
 
 
-class MainWindowController(QtGui.QMainWindow, views.MainWindow): 
+class MainWindowController(QtGui.QMainWindow, views.MainWindow):
     """Controller for the main window of the application"""
     def __init__(self):
         super(MainWindowController, self).__init__()
@@ -154,6 +156,8 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
                     game = temp_game
                     break
             self.board = Board(game)
+            self.player_one_edit.setText(game['player_one'])
+            self.player_two_edit.setText(game['player_two'])
             self.board.check_game_state()
             self.output_board()
         except (IOError, FileNotFoundError, TypeError):
