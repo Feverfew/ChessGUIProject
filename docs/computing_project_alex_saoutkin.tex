@@ -1,4 +1,6 @@
 \documentclass[]{report}
+
+\usepackage{minted}
 % Margin settings
 \usepackage[a4paper, portrait, margin=1in]{geometry}
 %Table of Contents settings
@@ -33,7 +35,7 @@ It consists of a visual representation of a chess board which is held in a table
  
 Loading a game opens the JSON file from the location path that is saved as a setting and scans the array of games, showing them as a table in a dialog, so that the user can choose which game to open. If the location of the file does not exist, then the user is given the option of locating a different pre-existing JSON file to open from if it exists.
 
-As already mentioned, the JSON file holds an array of games. A game contains the data needed to load a game: pieces and their positions, total moves, state of the game and other variables that are used to determine whether certain moves are possible, such as castling. Each game has a unique ID which allows users to load game that haven’t been finished and to carry them on. For the program’s loading and saving feature to be most useful for the school’s chess club, it is best to store the JSON file in the school’s shared area such that all games can be loaded and saved from any computer that has this program installed.
+As already mentioned, the JSON file holds an array of games. A game contains the data needed to load a game: pieces and their positions, total moves, state of the game and other variables that are used to determine whether certain moves are possible, such as castling. Each game has a unique ID which allows users to load game that haven't been finished and to carry them on. For the program's loading and saving feature to be most useful for the school's chess club, it is best to store the JSON file in the school's shared area such that all games can be loaded and saved from any computer that has this program installed.
 
 \section{Rules of Chess}
 As with any game, there are rules that have to be adhered to for a valid game to be played. For me to have a viable solution to the problem identified, the program I create must follow the rules of chess. Thus in this section I will discuss what these rules are.
@@ -41,7 +43,7 @@ As with any game, there are rules that have to be adhered to for a valid game to
 \begin{center}
 	\includegraphics[width=0.4\textwidth]{images/boards/initial_board}
 \end{center}
-The initial starting position of the board contains all the types of pieces in the game: pawn, king, queen, bishop, knight and rook. From this point onwards, white is the first to move. Once white has completed a legal move it is then black’s turn to do the same and the game continues until the game has reached the state of checkmate and stalemate, which will be explained in detail later. Only one piece can occupy a square on the board, thus a piece cannot take one of its own pieces but can capture opposing pieces as long as it isn’t a king.
+The initial starting position of the board contains all the types of pieces in the game: pawn, king, queen, bishop, knight and rook. From this point onwards, white is the first to move. Once white has completed a legal move it is then black's turn to do the same and the game continues until the game has reached the state of checkmate and stalemate, which will be explained in detail later. Only one piece can occupy a square on the board, thus a piece cannot take one of its own pieces but can capture opposing pieces as long as it isn't a king.
 
 \paragraph{Note:}when the types of moves that a certain type of piece can make are discussed below, it is assumed that when moved, it does not put the player who is moving the piece into check. In addition, it will be assumed that the move does not mean that the moving piece is in the same place. If this is the case then the move is illegal.
 \subsection{Pawns}
@@ -58,7 +60,7 @@ When a pawn reaches the other side of the board the pawn must be changed to an a
 \begin{center}
 	\includegraphics[width=0.3\textwidth]{images/boards/en_passant}
 \end{center}
-As can be seen above, if a pawn is moved two spaces forward such that it is horizontally adjacent to an opposing pawn once it is moved, the opposing pawn has an opportunity to capture the pawn and move to the ‘x’ marked on the diagram. When this opportunity occurs, whether it is taken or not, it cannot be done again by that player for the rest of the game.
+As can be seen above, if a pawn is moved two spaces forward such that it is horizontally adjacent to an opposing pawn once it is moved, the opposing pawn has an opportunity to capture the pawn and move to the ‘x' marked on the diagram. When this opportunity occurs, whether it is taken or not, it cannot be done again by that player for the rest of the game.
 \subsection{Kings}
 \begin{center}
 	\includegraphics[width=0.3\textwidth]{images/boards/king_movement}
@@ -100,14 +102,14 @@ Check occurs when a piece moves such that it is attacking the opposing king. An 
 \begin{center}
 	\includegraphics[width=0.3\textwidth]{images/boards/checkmate_example}
 \end{center}
-Checkmate occurs when a player is put into check and cannot make a move that brings themselves out of check. The person who is in check is the loser of the game and thus the opposing player is the winner. A well-known example is the scholar’s mate which can be seen above. The queen cannot be taken by any piece and the king has nowhere to move without still being in check. In addition, the king cannot take the queen as it will put itself in check to the bishop. Thus black concedes the game as it is in a state of checkmate.
+Checkmate occurs when a player is put into check and cannot make a move that brings themselves out of check. The person who is in check is the loser of the game and thus the opposing player is the winner. A well-known example is the scholar's mate which can be seen above. The queen cannot be taken by any piece and the king has nowhere to move without still being in check. In addition, the king cannot take the queen as it will put itself in check to the bishop. Thus black concedes the game as it is in a state of checkmate.
 \subsubsection{Stalemate}
 \begin{center}
 	\includegraphics[width=0.3\textwidth]{images/boards/stalemate_example}
 \end{center}
-Stalemate occurs when a player who is not in check cannot make any legal moves and thus the game cannot continue. Above is an example of a stalemate. It is black’s turn to move but it has no legal moves to make. Any movements are either not available to make or expose the king to being in check to either the far-right pawn or the queen. When a stalemate occurs the game is declared as drawn and there are no winners or losers.
+Stalemate occurs when a player who is not in check cannot make any legal moves and thus the game cannot continue. Above is an example of a stalemate. It is black's turn to move but it has no legal moves to make. Any movements are either not available to make or expose the king to being in check to either the far-right pawn or the queen. When a stalemate occurs the game is declared as drawn and there are no winners or losers.
 \section{Setting}
-The program was designed for the school’s Chess club and is open for students from year 7 to 13. Chess club currently runs weekly at lunchtimes and is run by a physics teacher – Dr De Silva. Every year a primarily student run inter-house chess competition, with each house having a team of avid chess players, takes place to determine which house has the best chess players. As a member of chess club I identified and researched problems with the current system that the club uses. I also consulted with Dr De Silva about any problems that he has noted in the current system and have used this information to aid me in determining the objectives that I plan for the new system to implement.
+The program was designed for the school's Chess club and is open for students from year 7 to 13. Chess club currently runs weekly at lunchtimes and is run by a physics teacher – Dr De Silva. Every year a primarily student run inter-house chess competition, with each house having a team of avid chess players, takes place to determine which house has the best chess players. As a member of chess club I identified and researched problems with the current system that the club uses. I also consulted with Dr De Silva about any problems that he has noted in the current system and have used this information to aid me in determining the objectives that I plan for the new system to implement.
 \section{Users}
 The primary users are those students who partake in the chess club and actively play chess amongst one another. It can also be used by the teacher that runs the club to record the results of games, which is paramount when there are competitions taking place. There is an additional benefit in that it can be played at any time and on any computer in the school area that has the program installed. This may be of good use to those who would like to play chess but are unable to go to the club due to other extra-curricular activities.
 \section{System}
@@ -132,7 +134,7 @@ The objectives of the new system are as follows:
 	\item The showing of an interactive chess board allowing movement of pieces by users which adheres to all chess rules.
 	\begin{enumerate}
 		\item When program loads, show default chess starting position (a new game).
-		\item Ensure only pieces of the moving player’s corresponding colour are clickable.
+		\item Ensure only pieces of the moving player's corresponding colour are clickable.
 		\item When a piece is clicked calculate all of its legal moves.
 		\begin{enumerate}
 			\item For each type of piece calculate where it could possibly go assuming there are no other pieces on the board (i.e. bishops diagonally, rooks horizontally/vertically etc.).
@@ -147,12 +149,12 @@ The objectives of the new system are as follows:
 		\item After a piece is moved perform a check of the game state. If the state has changed (i.e. if a player has been put into check or the game has ended) then inform the user of this via a dialog.
 		\item If the pawn has successfully reached the other side of the board, then open a dialog to let the user decide to what piece the pawn should be converted to.
 	\end{enumerate}
-	\item Allow the editing of player’s names via textboxes.
+	\item Allow the editing of player's names via textboxes.
 	\item Allow a game that is currently in play to be saved.
 	\begin{enumerate}
 		\item If there is no file path to save the game to, prompt the user for a path and filename to save a new JSON file to.
 		\item If there is a file path and the JSON file is found, then save the game to the file.
-		\item If there is a file path and the JSON isn’t found, then prompt the user for a path and filename to save a new JSON file to.
+		\item If there is a file path and the JSON isn't found, then prompt the user for a path and filename to save a new JSON file to.
 		\item If a game has been successfully saved, convey this information to the user via a dialog.
 		\item If the player names have not been filled in, then do not save the game and inform the user that they have to fill in the names in the form of a dialog.
 		\item If the game has an ID then save it by replacing the element of the games array with the same name by searching for the appropriate ID with a binary search.
@@ -170,13 +172,13 @@ The objectives of the new system are as follows:
 \chapter{Design}
 \section{Overall System Design}
 \subsection{Input}
-The first type of input is selecting a piece on the board by clicking on a cell in the 8*8 table that contains a piece corresponding to the player’s colour. At this point processing occurs and moves that are legal are added as cells that can be clicked on the table. After this, if a cell is clicked that is not a player’s piece then the last clicked piece is moved to that location. If a cell is clicked that is a player’s piece the process described above is repeated.
+The first type of input is selecting a piece on the board by clicking on a cell in the 8*8 table that contains a piece corresponding to the player's colour. At this point processing occurs and moves that are legal are added as cells that can be clicked on the table. After this, if a cell is clicked that is not a player's piece then the last clicked piece is moved to that location. If a cell is clicked that is a player's piece the process described above is repeated.
 
-The second type of input is the player name’s that must be inputted if the game is to be saved. Both names can be edited via 2 separate GUI TextEdit components. 
+The second type of input is the player name's that must be inputted if the game is to be saved. Both names can be edited via 2 separate GUI TextEdit components. 
 
-The third type of input is to do with saving and loading games. A dialog asking for the location of a JSON file (or where to save it) allows the user to select the game file for the program. When the ‘Load Button’ game is pressed a dialog is shown where the user can choose a game to play from the file via a table.
+The third type of input is to do with saving and loading games. A dialog asking for the location of a JSON file (or where to save it) allows the user to select the game file for the program. When the ‘Load Button' game is pressed a dialog is shown where the user can choose a game to play from the file via a table.
 \subsection{Processing}
-The amount element of processing occurs when pieces are moved on the board. Once a user has used the GUI interface to declare what piece to move and to where it should be moved the main element of processing occurs. When this is done the program calculates all the possible legal moves for the opposing player’s pieces. Then the GUI edits the table (which represents the chess board) such that the opponent can only select a cell in the table which represents a piece and its respective legal moves. In addition the program checks the game state and sees whether a player has won, or whether they are in check or if the game has ended in stalemate. If the game state has changed the user is informed through a dialog. 
+The amount element of processing occurs when pieces are moved on the board. Once a user has used the GUI interface to declare what piece to move and to where it should be moved the main element of processing occurs. When this is done the program calculates all the possible legal moves for the opposing player's pieces. Then the GUI edits the table (which represents the chess board) such that the opponent can only select a cell in the table which represents a piece and its respective legal moves. In addition the program checks the game state and sees whether a player has won, or whether they are in check or if the game has ended in stalemate. If the game state has changed the user is informed through a dialog. 
 \subsection{Storage}
 All data that is required to load and save games is stored in public attributes of the Board class. When a game is saved these attributes are collated into a dictionary which is added to an array of games as a JSON file. When a game is loaded a new Board class I created where all the attributes of the loaded game are put into the class from the JSON dictionary.
 \subsection{Output}
@@ -211,6 +213,6 @@ The piece class is designed as the base class for which all other types of piece
 \paragraph{colour} This attribute holds a string value of "Black" or "White". This denotes the colour of the piece.
 \paragraph{possible{\_}moves} This attribute is a python list. Each element of the list contains a list of positions denoting all the valid moves the piece can make \textbf{assuming that there are no other pieces on the board}.
 \paragraph{calculate{\_}possible{\_}moves} This function is declared in the piece class and raises a NotImplementedError. This exception is raised so that to make sure that all subclasses of the Piece class implement this method and change it appropriately 
-
+% example of code: \inputminted{python}{../src/pieces.py}
 
 \end{document}          
