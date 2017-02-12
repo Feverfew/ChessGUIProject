@@ -1,12 +1,17 @@
 __author__ = "Alexander Saoutkin"
 
 class Piece(object):
-    """Base class for chess pieces"""
+    """Base class for all chess pieces"""
 
     def __init__(self, position, colour):
-        """"
-        :param coords: Coordinates on the board
-        :type coords: list (with only two elements)
+        """
+        This constructor initialises the class variables and also calculates all possible moves
+        by calling :func:pieces.Piece.calculate_possible_moves'.
+
+        :param position: Coordinates on the board
+        :type position: list
+        :param colour: Colour of the piece, either "White" or "Black".
+        :type colour: str
         """
         self.position = position
         self.colour = colour
@@ -19,6 +24,11 @@ class Piece(object):
         
         @position.setter
         def position(self, value):
+            """
+            This setter is designed such that when the
+            :
+            :param value:
+            """
             self.position = value
             self.calculate_possible_moves()
 
@@ -58,6 +68,9 @@ class Knight(Piece):
         self.img_path = "{}_knight.png".format(self.colour.lower())
 
     def calculate_possible_moves(self):
+        """
+
+        """
         self.possible_moves = []
         potential_moves = []
         potential_moves.append([self.position[0]+2, self.position[1]+1])
