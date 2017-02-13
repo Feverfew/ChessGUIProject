@@ -21,7 +21,14 @@ class MainWindowController(QtGui.QMainWindow, views.MainWindow):
 
 
 class ChessBoardController(QtGui.QWidget, views.ChessBoard):
-    """Controller for the chess board"""
+    """Controller for the chess board
+
+    Attributes:
+        board (Board): instance of the Board class which serves as the model for the controller.
+        settings (QSettings): a class used to store settings on the host computer.
+        from_cell (list): stores the coordinates of the cell that was chosen to move from.
+
+    """
     def __init__(self):
         super(ChessBoardController, self).__init__()
         self.setupUi(self)
@@ -115,16 +122,14 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
                             item.setBackground(QtGui.QBrush(QtGui.QColor(11, 129, 156)))  # dark
                         if [y, x] in legal_moves:
                             item.setFlags(QtCore.Qt.ItemIsEnabled)
+                            item.setBackground(QtGui.QBrush(QtGui.QColor(227, 209, 16))) # highlight legal moves
                         else:
                             item.setFlags(QtCore.Qt.NoItemFlags)
                         self.chess_board.setItem(y, x, item)
                 elif [y, x] in legal_moves:
                     item = QtGui.QTableWidgetItem()
                     item.setSizeHint(QtCore.QSize(80, 80))
-                    if (x+y) % 2 == 0:
-                        item.setBackground(QtGui.QBrush(QtGui.QColor(31, 177, 209)))  # light
-                    else:
-                        item.setBackground(QtGui.QBrush(QtGui.QColor(11, 129, 156)))  # dark
+                    item.setBackground(QtGui.QBrush(QtGui.QColor(227, 209, 16))) # highlight legal moves
                     item.setFlags(QtCore.Qt.ItemIsEnabled)
                     self.chess_board.setItem(y, x, item)
                 else:
