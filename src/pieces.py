@@ -1,18 +1,15 @@
 __author__ = "Alexander Saoutkin"
 
+
 class Piece(object):
-    """Base class for all chess pieces"""
+    """Base class for all chess pieces
+    Attributes:
+        position (list): coordinates on the board in the form [x, y]
+        colour (str): Colour of the piece, either "White" or "Black"
+    """
 
     def __init__(self, position, colour):
-        """
-        This constructor initialises the class variables and also calculates all possible moves
-        by calling :func:pieces.Piece.calculate_possible_moves'.
-
-        :param position: Coordinates on the board
-        :type position: list
-        :param colour: Colour of the piece, either "White" or "Black".
-        :type colour: str
-        """
+        """This constructor initialises the class variables and also calculates all possible moves for the piece."""
         self.position = position
         self.colour = colour
         self.possible_moves = []
@@ -24,53 +21,71 @@ class Piece(object):
         
         @position.setter
         def position(self, value):
-            """
-            This setter is designed such that when the
-            :
-            :param value:
+            """ This setter calculates the new possible moves once the position has changed.
+
+            Args:
+                value (list): coordinates on the board in the form [x, y]
             """
             self.position = value
             self.calculate_possible_moves()
 
     def calculate_possible_moves(self):
-        """Shows us the coords it can go to assuming that there are no other pieces on the board"""
+        """Shows us the coords it can go to assuming that there are no other pieces on the board
+
+        Raises:
+            NotImplementedError: Method not overridden in subclass.
+        """
         raise NotImplementedError
 
 
 class Rook(Piece):
-    """Class for a Rook"""
+    """Class for a Rook
+
+    Attributes:
+        position (list): coordinates on the board in the form [x, y]
+        colour (str): colour of the piece, either "White" or "Black"
+        img_path (str): path to the image of the piece
+        has_moved (bool): Denotes whether the piece has moved before.
+    """
 
     def __init__(self, position, colour, has_moved=False):
+        """
+        This constructor initialises the class variables and also calculates all possible moves for the piece.
+        In addition the image path is added.
+        """
         super().__init__(position, colour)
         self.img_path = "{}_rook.png".format(self.colour.lower())
         self.has_moved = has_moved
 
     def calculate_possible_moves(self):
+        """Calculates all the possible moves for a rook in a certain position."""
         self.possible_moves = []
         for i in range(8):
             if self.position[1] != i:
                 self.possible_moves.append([self.position[0], i])
             if self.position[0] != i:
                 self.possible_moves.append([i, self.position[1]])
-        
-
-    def __str__(self):
-        if self.colour == "White":
-            return 'WR'
-        else:
-            return 'BR'
 
 
 class Knight(Piece):
-    """Class for a Knight"""
+    """Class for a Knight
+
+    Attributes:
+        position (list): coordinates on the board in the form [x, y]
+        colour (str): colour of the piece, either "White" or "Black"
+        img_path (str): path to the image of the piece
+    """
+
     def __init__(self, position, colour):
+        """
+        This constructor initialises the class variables and also calculates all possible moves for the piece.
+        In addition the image path is added as an attribute self.img_path.
+        """
         super().__init__(position, colour)
         self.img_path = "{}_knight.png".format(self.colour.lower())
 
     def calculate_possible_moves(self):
-        """
-
-        """
+        """Calculates all the possible moves for a knight in a certain position."""
         self.possible_moves = []
         potential_moves = []
         potential_moves.append([self.position[0]+2, self.position[1]+1])
@@ -85,20 +100,25 @@ class Knight(Piece):
             if move[0] <= 7 and move [0] >= 0 and move[1] <= 7 and move[1] >= 0:
                 self.possible_moves.append(move)
 
-    def __str__(self):
-        if self.colour == "White":
-            return 'WN'
-        else:
-            return 'BN'
-
 
 class Bishop(Piece):
-    """Class for a Bishop"""
+    """Class for a Bishop
+
+    Attributes:
+        position (list): coordinates on the board in the form [x, y]
+        colour (str): colour of the piece, either "White" or "Black"
+        img_path (str): path to the image of the piece
+    """
     def __init__(self, position, colour):
+        """
+        This constructor initialises the class variables and also calculates all possible moves for the piece.
+        In addition the image path is added as an attribute self.img_path.
+        """
         super().__init__(position, colour)
         self.img_path = "{}_bishop.png".format(self.colour.lower())
 
     def calculate_possible_moves(self):
+        """Calculates all the possible moves for a bishop in a certain position."""
         self.possible_moves = []
         on_edge = False
         counter = 0
@@ -141,22 +161,27 @@ class Bishop(Piece):
             counter +=1
             self.possible_moves.append([self.position[0]+counter, self.position[1]-counter])
             if self.position[0]+counter is 7 or self.position[1]-counter is 0:
-                on_edge = True                
-    
-    def __str__(self):
-        if self.colour == "White":
-            return 'WB'
-        else:
-            return 'BB'
+                on_edge = True
 
 
 class Queen(Piece):
-    """Class for a Queen"""
+    """Class for a Queen
+
+    Attributes:
+        position (list): coordinates on the board in the form [x, y]
+        colour (str): colour of the piece, either "White" or "Black"
+        img_path (str): path to the image of the piece
+    """
     def __init__(self, position, colour):
+        """
+        This constructor initialises the class variables and also calculates all possible moves for the piece.
+        In addition the image path is added as an attribute self.img_path.
+        """
         super().__init__(position, colour)
         self.img_path = "{}_queen.png".format(self.colour.lower())
 
     def calculate_possible_moves(self):
+        """Calculates all the possible moves for a queen in a certain position."""
         self.possible_moves = []
         on_edge = False
         counter = 0
@@ -205,23 +230,30 @@ class Queen(Piece):
                 self.possible_moves.append([self.position[0], i])
             if self.position[0] != i:
                 self.possible_moves.append([i, self.position[1]])
-    
-    def __str__(self):
-        if self.colour == "White":
-            return 'WQ'
-        else:
-            return 'BQ'
 
 
 class King(Piece):
-    """Class for a King"""
+    """Class for a King
+
+    Attributes:
+        position (list): coordinates on the board in the form [x, y].
+        colour (str): colour of the piece, either "White" or "Black".
+        img_path (str): path to the image of the piece.
+        has_moved (bool): denotes whether piece has moved or not.
+        castling_moves (list): list of all castling moves possible.
+    """
     def __init__(self, position, colour, has_moved=False, castling_moves=[]):
+        """
+        This constructor initialises the class variables and also calculates all possible moves for the piece.
+        In addition the image path is added as an attribute self.img_path.
+        """
         super().__init__(position, colour)
         self.img_path = "{}_king.png".format(self.colour.lower())
         self.has_moved = has_moved
         self.castling_moves = castling_moves
 
     def calculate_possible_moves(self):
+        """Calculates all the possible moves for a king in a certain position."""
         self.possible_moves.clear()
         potential_moves = []
         potential_moves.append([self.position[0]+1, self.position[1]+1])
@@ -236,18 +268,16 @@ class King(Piece):
             if move[0] <= 7 and move [0] >= 0 and move[1] <= 7 and move[1] >= 0:
                 self.possible_moves.append(move)
 
-    def can_castle(self):
-        pass
-        
-    def __str__(self):
-        if self.colour == "White":
-            return 'WK'
-        else:
-            return 'BK'
-
 
 class Pawn(Piece):
-    """Class for a Pawn"""
+    """Class for a Pawn
+
+    Attributes:
+        position (list): coordinates on the board in the form [x, y]
+        colour (str): colour of the piece, either "White" or "Black"
+        img_path (str): path to the image of the piece
+        first_moved (int): denotes at what stage (move) in the game the the piece was first moved.
+    """
     def __init__(self, position, colour, first_moved=0):
         super().__init__(position, colour)
         self.img_path = "{}_pawn.png".format(self.colour.lower())
@@ -259,11 +289,3 @@ class Pawn(Piece):
             self.possible_moves.append([self.position[0]-1, self.position[1]])
         else:
             self.possible_moves.append([self.position[0]+1, self.position[1]])
-
-        
-    
-    def __str__(self):
-        if self.colour == "White":
-            return 'WP'
-        else:
-            return 'BP'
