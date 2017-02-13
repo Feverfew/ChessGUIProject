@@ -209,10 +209,14 @@ The third category is the load dialog. The load dialog greets the user with list
 \subsection{Description of Classes}
 \subsubsection{Piece}
 The piece class is designed as the base class for which all other types of pieces inherits its attributes from. 
-\paragraph{position} This attribute will be represented by a python list with two elements, where the first element representing the piece's $x$ coordinate and the second element representing its $y$ coordinate. 
+
+This attribute will be represented by a python list with two elements, where the first element representing the piece's $x$ coordinate and the second element representing its $y$ coordinate. 
 \paragraph{colour} This attribute holds a string value of "Black" or "White". This denotes the colour of the piece.
 \paragraph{possible{\_}moves} This attribute is a python list. Each element of the list contains a list of positions denoting all the valid moves the piece can make \textbf{assuming that there are no other pieces on the board}.
-\paragraph{calculate{\_}possible{\_}moves} This function is declared in the piece class and raises a NotImplementedError. This exception is raised so that to make sure that all subclasses of the Piece class implement this method and change it appropriately 
+\begin{minted}{python}
+def calculate_possible_moves(self):
+\end{minted}
+This function is declared in the piece class and raises a NotImplementedError. This exception is raised so that to make sure that all subclasses of the Piece class implement this method and change it appropriately 
 % example of code: \inputminted{python}{../src/pieces.py}
 
 \end{document}          

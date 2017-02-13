@@ -87,17 +87,12 @@ class Knight(Piece):
     def calculate_possible_moves(self):
         """Calculates all the possible moves for a knight in a certain position."""
         self.possible_moves = []
-        potential_moves = []
-        potential_moves.append([self.position[0]+2, self.position[1]+1])
-        potential_moves.append([self.position[0]+2, self.position[1]-1])
-        potential_moves.append([self.position[0]-2, self.position[1]+1])
-        potential_moves.append([self.position[0]-2, self.position[1]-1])
-        potential_moves.append([self.position[0]+1, self.position[1]+2])
-        potential_moves.append([self.position[0]+1, self.position[1]-2])
-        potential_moves.append([self.position[0]-1, self.position[1]+2])
-        potential_moves.append([self.position[0]-1, self.position[1]-2])
+        potential_moves = [[self.position[0] + 2, self.position[1] + 1], [self.position[0] + 2, self.position[1] - 1],
+                           [self.position[0] - 2, self.position[1] + 1], [self.position[0] - 2, self.position[1] - 1],
+                           [self.position[0] + 1, self.position[1] + 2], [self.position[0] + 1, self.position[1] - 2],
+                           [self.position[0] - 1, self.position[1] + 2], [self.position[0] - 1, self.position[1] - 2]]
         for move in potential_moves:
-            if move[0] <= 7 and move [0] >= 0 and move[1] <= 7 and move[1] >= 0:
+            if move[0] <= 7 and move[0] >= 0 and move[1] <= 7 and move[1] >= 0:
                 self.possible_moves.append(move)
 
 

@@ -21,15 +21,18 @@ class MainWindowController(QtGui.QMainWindow, views.MainWindow):
 
 
 class ChessBoardController(QtGui.QWidget, views.ChessBoard):
-    """Controller for the chess board
+    """Controller for the chess board.
+    Attributes pertaining to the views.ChessBoard class are not listed here as there are too many
+    and they merely refer to Qt GUI Objects.
 
     Attributes:
         board (Board): instance of the Board class which serves as the model for the controller.
-        settings (QSettings): a class used to store settings on the host computer.
+        settings (QtCore.QSettings): a class used to store settings (namely file path) on the host computer.
         from_cell (list): stores the coordinates of the cell that was chosen to move from.
 
     """
     def __init__(self):
+        """Initialises necessary variables, connects click events to methods and presents a new game to the user."""
         super(ChessBoardController, self).__init__()
         self.setupUi(self)
         self.board = Board()
@@ -46,7 +49,14 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
         self.load_btn.clicked.connect(self.load_game)
 
     def table_clicked(self):
-        """Handler for when table is clicked"""
+        """Handler for when table is clicked.
+
+        When a piece has been selected to move then its legal moves are calculated.
+        These moves are then made clickable and highlighted yellow.
+        If a user selects any of the highlighted colours then the piece is transferred to that position
+        and a check of the game state occurs where any changes are shown in a msg box.
+        Promotions, if necessary, are called in this method.
+        """
         row = self.chess_board.currentRow()
         column = self.chess_board.currentColumn()
         if not self.from_cell and column != -1 and row != -1:  # Piece is selected
@@ -85,7 +95,15 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
                     self.show_message("{} is in check".format(self.board.colour_in_check))
 
     def output_board(self, legal_moves=[]):
-        """Output the board onto the GUI"""
+        """Output the board onto the GUI
+
+        Uses the Board.board (2D list) to help populate the QTableWidget table.
+        All pieces of the moving player are made clickable on the table.
+        In addition, if there are legal moves specified they are all made clickable.
+
+        Args:
+            legal_moves (list): list of the legal moves a piece can make.
+        """
         self.chess_board.clear()
         self.chess_board.setRowCount(8)
         self.chess_board.setColumnCount(8)
@@ -143,12 +161,12 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
                     self.chess_board.setItem(y, x, item)
 
     def new_game(self):
+        """Creates a new game with initial board setup."""
         self.board = Board()
-        self.player_one_edit.setText("")
-        self.player_two_edit.setText("")
         self.output_board()
     
     def load_game(self):
+        """Loads a game from a JSON file. If there is no JSON file the user is prompted for one."""
         try:
             data = None
             with open(self.settings.value('json_location')) as json_file:
@@ -177,6 +195,7 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
             self.get_json_file()
 
     def save_game(self):
+        """Saves a currently played game, either in an existing JSON file or a new one."""
         if self.player_one_edit.text() != "" and self.player_two_edit.text() != "":
             self.board.player_one = self.player_one_edit.text()
             self.board.player_two = self.player_two_edit.text()
@@ -314,7 +333,7 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
             self.show_message("Please fill in the player names")
     
     def get_json_file(self):
-        """Gets the location of the file from the user"""
+        """Gets the location of the JSON file from the user"""
         json_dir = QtGui.QFileDialog().getExistingDirectory()
         json_name = QtGui.QInputDialog.getText(self, "JSON File Name Input", "JSON File Name:")
         if json_dir and json_name[1]:
@@ -332,7 +351,11 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
         return choice[0]
         
     def show_message(self, msg):
-        """If there are errors show them in a message box."""
+        """If there are errors, they are shown in a message box.
+
+        Args:
+            msg (str): message for the user to be shown.
+            """
         msg_box = QtGui.QMessageBox()
         msg_box.setWindowTitle("Game State")
         msg_box.setText(msg)
@@ -340,8 +363,18 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
 
 
 class LoadDialogController(QtGui.QDialog, views.LoadDialog):
+    """Controller for the load dialog
+
+    When 'Load Game' is pressed the user is shown this dialog if a JSON file is found and has been loaded.
+    The user is shown a table where they can sort the games and can also choose which game to load.
+
+    Attributes:
+        chosen_game_id (int): id of the game that was chosen
+        data (dict): List of games.
+    """
 
     def __init__(self, data):
+        """Necessary variables are initialised and table is shown to the user."""
         super(LoadDialogController, self).__init__()
         self.setupUi(self)
         self.chosen_game_id = 0
@@ -352,6 +385,7 @@ class LoadDialogController(QtGui.QDialog, views.LoadDialog):
         self.sort_btn.clicked.connect(self.sort)
 
     def output_table(self):
+        """List of games is shown to the user with this method."""
         self.results_table.setRowCount(0)
         self.buttonBox.accepted.connect(self.get_game)
         i = 0
@@ -378,6 +412,7 @@ class LoadDialogController(QtGui.QDialog, views.LoadDialog):
             i += 1
 
     def sort(self):
+        """Sorts the list of games"""
         sorted_games = []
         if self.sortby_box.currentText() == "Ascending":
             if self.sort_type.currentText() == "ID":
@@ -535,4 +570,5 @@ class LoadDialogController(QtGui.QDialog, views.LoadDialog):
         self.output_table()
 
     def get_game(self):
+        """When game is chosen the ID is then found."""
         self.chosen_game_id = int(self.results_table.item(self.results_table.currentRow(), 0).text())
