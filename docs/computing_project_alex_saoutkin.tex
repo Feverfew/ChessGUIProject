@@ -120,6 +120,8 @@ All the results of games to do with a competition are recorded in a notebook and
 Processing in the current system is fairly simple. Once a player has chosen where to move a piece, they pick it up and move it to the appropriate position on the board. If it is illegal it is assumed that the opponent will notice as it is in their best interest to not allow such a move. If that is the case then the piece is simply moved back to its place. The player who moves a piece also notes mentally if the piece that they have moved has resulted in a change in the state of the game.
 \section{Output}
 Output is simply where the player moves their piece on the board, which is visible to both players and any people watching. In addition, when a player moves a piece which results in the changing of the game state they must state this change openly to the opposing player.
+\section{Volumetrics}
+In this particular application it is hard to estimate the memory needed to store
 \section{Problems with the Current System}
 The current system consists of chess boards with pieces and paper if results want to be recorded. The main problem that was noticed was that as the club was only hosted on a single lunchtime a week, many games overran past lunchtime and so had to be stopped with no clear winner as the game had not finished. As the game was played on a physical board with pieces and the room that was used for the club is used for lessons as well, the current state of the game is not saved which resulted in the game effectively being cut short. This is incredibly frustrating, especially for higher-level players as their games tend to take longer to finish. 
 
@@ -169,7 +171,7 @@ The objectives of the new system are as follows:
 		\end{enumerate}
 	\end{enumerate}
 \end{enumerate}
-\chapter{Design}
+\chapter{Documented Design}
 \section{Overall System Design}
 \subsection{Input}
 The first type of input is selecting a piece on the board by clicking on a cell in the 8*8 table that contains a piece corresponding to the player's colour. At this point processing occurs and moves that are legal are added as cells that can be clicked on the table. After this, if a cell is clicked that is not a player's piece then the last clicked piece is moved to that location. If a cell is clicked that is a player's piece the process described above is repeated.

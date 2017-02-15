@@ -4,7 +4,20 @@ __author__ = "Alexander Saoutkin"
 
 
 class Board(object):
-    """Class which manages the pieces on the board."""
+    """Class which manages the pieces on the board.
+
+    This is the model for the ChessBoardController class.
+    The primary function of this class is to allow the controller to determine
+    the legal moves a piece can make and to move pieces on the board, whilst
+    performing checks in the game state.
+
+    Attributes:
+        id (int): the unique identifier for a particular game.
+        last_played (str): The date at which the game was last saved.
+        turn (str): The colour of the current player's turn.
+        move_num (int):
+
+    """
 
     def __init__(self, game=None):
         if game is not None:
