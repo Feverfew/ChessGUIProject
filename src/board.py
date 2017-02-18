@@ -21,7 +21,6 @@ class Board(object):
         is_stalemate (bool): shows if game is in stalemate or not.
         game_over (bool): shows if game is over or not.
         must_promote (bool): true if a player must promote their pawn, false otherwise.
-        has_been_in_check (dict): shows if black and white have been in check before.
         enpassant_possible (dict): shows if black and white can complete an en passant move.
 
 
@@ -38,10 +37,6 @@ class Board(object):
             self.is_stalemate = game['is_stalemate']
             self.game_over = game['game_over']
             self.must_promote = game['must_promote']
-            self.has_been_in_check = {
-                'Black': game['has_been_in_check']['Black'],
-                'White': game['has_been_in_check']['White']
-            }
             self.enpassant_possible = {
                 'Black': game['enpassant_possible']['Black'],
                 'White': game['enpassant_possible']['White']
@@ -84,10 +79,6 @@ class Board(object):
             self.is_stalemate = False
             self.game_over = False
             self.must_promote = False
-            self.has_been_in_check = {
-                'Black': False,
-                'White': False
-            }
             self.enpassant_possible = {
                 'Black': True,
                 'White': True
@@ -277,10 +268,8 @@ class Board(object):
                 self.winner = self.player_one
             else:
                 self.winner = self.player_two
-            self.has_been_in_check[self.turn] = True
         elif self.is_in_check(self.turn, self.board):
             self.colour_in_check = self.turn
-            self.has_been_in_check[self.turn] = True
         elif self.calculate_is_stalemate(self.turn, self.board):
             self.is_stalemate = True
             self.game_over = True
@@ -551,7 +540,7 @@ class Board(object):
     
     def get_castling_moves(self, king, original_board):
         king.castling_moves = []
-        if not king.has_moved and not self.has_been_in_check[king.colour] and not self.is_in_check(king.colour, self.board):
+        if not king.has_moved and not self.is_in_check(king.colour, self.board):
             if king.colour == "Black":
                 if isinstance(original_board[0][0], Rook):
                     if original_board[0][0].colour == "Black" and not original_board[0][0].has_moved and not(original_board[0][2] or original_board[0][3]):

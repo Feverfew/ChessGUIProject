@@ -225,10 +225,6 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
                 'is_stalemate': self.board.is_stalemate,
                 'game_over': self.board.game_over,
                 'must_promote': self.board.must_promote,
-                'has_been_in_check': {
-                    'Black': self.board.has_been_in_check['Black'],
-                    'White': self.board.has_been_in_check['White']
-                    },
                 'enpassant_possible': {
                     'Black': self.board.enpassant_possible['Black'],
                     'White': self.board.enpassant_possible['White']
