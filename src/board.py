@@ -8,14 +8,22 @@ class Board(object):
 
     This is the model for the ChessBoardController class.
     The primary function of this class is to allow the controller to determine
-    the legal moves a piece can make and to move pieces on the board, whilst
-    performing checks in the game state.
+    the legal moves a given piece can make and to move pieces on the board, whilst
+    performing checks of the game state after every move.
 
     Attributes:
         id (int): the unique identifier for a particular game.
         last_played (str): The date at which the game was last saved.
         turn (str): The colour of the current player's turn.
-        move_num (int):
+        move_num (int): how many moves have been made in the game.
+        winner (str): The name of the winner.
+        colour_in_check (str): if a player is in check, their colour is held in this variable
+        is_stalemate (bool): shows if game is in stalemate or not.
+        game_over (bool): shows if game is over or not.
+        must_promote (bool): true if a player must promote their pawn, false otherwise.
+        has_been_in_check (dict): shows if black and white have been in check before.
+        enpassant_possible (dict): shows if black and white can complete an en passant move.
+
 
     """
 
@@ -34,18 +42,18 @@ class Board(object):
                 'Black': game['has_been_in_check']['Black'],
                 'White': game['has_been_in_check']['White']
             }
-            self.enpassent_possible = {
-                'Black': game['enpassent_possible']['Black'],
-                'White': game['enpassent_possible']['White']
+            self.enpassant_possible = {
+                'Black': game['enpassant_possible']['Black'],
+                'White': game['enpassant_possible']['White']
             }
             self.can_castle = {
                 'Black': game['can_castle']['Black'],
                 'White': game['can_castle']['White']
             }
-            self.enpassent_move = {
-                'from': game['enpassent_move']['from'],
-                'to': game['enpassent_move']['to'],
-                'taken': game['enpassent_move']['taken']
+            self.enpassant_move = {
+                'from': game['enpassant_move']['from'],
+                'to': game['enpassant_move']['to'],
+                'taken': game['enpassant_move']['taken']
             }
             self.player_one = game['player_one']
             self.player_two = game['player_two']
@@ -80,7 +88,7 @@ class Board(object):
                 'Black': False,
                 'White': False
             }
-            self.enpassent_possible = {
+            self.enpassant_possible = {
                 'Black': True,
                 'White': True
                 }
@@ -88,7 +96,7 @@ class Board(object):
                 'Black': True,
                 'White': True
                 }
-            self.enpassent_move = {
+            self.enpassant_move = {
                 'from': [],
                 'to': [],
                 'taken': []
@@ -160,8 +168,8 @@ class Board(object):
             chess_board[new_coords[0]][new_coords[1]].calculate_possible_moves()
         return chess_board
 
-    def preliminary_enpassent(self, chess_board, old_coords, new_coords, removed_coords):
-        """Will perform enpassent on a chess board and return that board."""
+    def preliminary_enpassant(self, chess_board, old_coords, new_coords, removed_coords):
+        """Will perform enpassant on a chess board and return that board."""
         chess_board[new_coords[0]][new_coords[1]] = copy.deepcopy(chess_board[old_coords[0]][old_coords[1]])
         chess_board[old_coords[0]][old_coords[1]] = 0
         chess_board[removed_coords[0]][removed_coords[1]] = 0
@@ -174,18 +182,18 @@ class Board(object):
         """Moves a piece on the board permanently. 
         It will also check for change in game state (checkmate, check, stalemate)."""
         if not self.game_over:
-            # Performs enpassent if conditions are met.
-            if old_coords == self.enpassent_move['from'] and new_coords == self.enpassent_move['to'] and self.enpassent_possible[self.turn]:
-                chess_board[self.enpassent_move['to'][0]][self.enpassent_move['to'][1]] = copy.deepcopy(chess_board[old_coords[0]][old_coords[1]])
+            # Performs enpassant if conditions are met.
+            if old_coords == self.enpassant_move['from'] and new_coords == self.enpassant_move['to'] and self.enpassant_possible[self.turn]:
+                chess_board[self.enpassant_move['to'][0]][self.enpassant_move['to'][1]] = copy.deepcopy(chess_board[old_coords[0]][old_coords[1]])
                 chess_board[old_coords[0]][old_coords[1]] = 0
-                chess_board[self.enpassent_move['taken'][0]][self.enpassent_move['taken'][1]] = 0
+                chess_board[self.enpassant_move['taken'][0]][self.enpassant_move['taken'][1]] = 0
                 if isinstance(chess_board[new_coords[0]][new_coords[1]], Piece):
                     chess_board[new_coords[0]][new_coords[1]].position = [new_coords[0], new_coords[1]]
                     chess_board[new_coords[0]][new_coords[1]].calculate_possible_moves()
-                self.enpassent_possible[self.turn] = False
-                self.enpassent_move['from'] = []
-                self.enpassent_move['to'] = []
-                self.enpassent_move['taken'] = []
+                self.enpassant_possible[self.turn] = False
+                self.enpassant_move['from'] = []
+                self.enpassant_move['to'] = []
+                self.enpassant_move['taken'] = []
             elif isinstance(chess_board[old_coords[0]][old_coords[1]], King):
                 chess_board[new_coords[0]][new_coords[1]] = copy.deepcopy(self.board[old_coords[0]][old_coords[1]])
                 chess_board[old_coords[0]][old_coords[1]] = 0
@@ -214,12 +222,12 @@ class Board(object):
                             chess_board[7][5].calculate_possible_moves()
                             chess_board[7][7] = 0
             else:
-                # if enpassent possible but not done, then can never be done again.
-                if self.enpassent_move['from'] and self.enpassent_move['to']:
-                    self.enpassent_possible[self.turn] = False
-                    self.enpassent_move['from'] = []
-                    self.enpassent_move['to'] = []
-                    self.enpassent_move['taken'] = []
+                # if enpassant possible but not done, then can never be done again.
+                if self.enpassant_move['from'] and self.enpassant_move['to']:
+                    self.enpassant_possible[self.turn] = False
+                    self.enpassant_move['from'] = []
+                    self.enpassant_move['to'] = []
+                    self.enpassant_move['taken'] = []
                 chess_board[new_coords[0]][new_coords[1]] = copy.deepcopy(self.board[old_coords[0]][old_coords[1]])
                 chess_board[old_coords[0]][old_coords[1]] = 0
             if isinstance(chess_board[new_coords[0]][new_coords[1]], Pawn):
@@ -339,10 +347,10 @@ class Board(object):
                     possible_board = self.preliminary_move_piece(original_board, piece.position, move)
                     if not self.is_in_check(piece.colour, possible_board):
                         legal_moves.append(move)
-            # If enpassent is possible, adds as a possible move.
-            self.can_enpassent(piece, original_board)
-            if self.enpassent_move['to']:
-                    legal_moves.append(self.enpassent_move['to'])
+            # If enpassant is possible, adds as a possible move.
+            self.can_enpassant(piece, original_board)
+            if self.enpassant_move['to']:
+                    legal_moves.append(self.enpassant_move['to'])
         return legal_moves
 
     def get_attacking_moves(self, piece, board):
@@ -583,29 +591,29 @@ class Board(object):
                             if not self.is_in_check(king.colour, possible_board):
                                 king.castling_moves.append([king.position[0], king.position[1]+2])
 
-    def can_enpassent(self, piece, possible_board):
-        """Checks if enpassent is possible, and assigns the enpassent move."""
-        if self.enpassent_possible[piece.colour] and ((piece.position[0] == 4 and piece.colour == "Black") or (piece.position[0] == 3 and piece.colour == "White")):
+    def can_enpassant(self, piece, possible_board):
+        """Checks if enpassant is possible, and assigns the enpassant move."""
+        if self.enpassant_possible[piece.colour] and ((piece.position[0] == 4 and piece.colour == "Black") or (piece.position[0] == 3 and piece.colour == "White")):
             try:
                 if isinstance(possible_board[piece.position[0]][piece.position[1]-1], Pawn):
                     if possible_board[piece.position[0]][piece.position[1]-1].first_moved == self.move_num - 1:
                         if piece.colour == "Black":
-                            temp_board = self.preliminary_enpassent(possible_board, piece.position, [piece.position[0]+1, piece.position[1]-1], [piece.position[0], piece.position[1]-1])
+                            temp_board = self.preliminary_enpassant(possible_board, piece.position, [piece.position[0] + 1, piece.position[1] - 1], [piece.position[0], piece.position[1] - 1])
                             if self.is_in_check("Black", temp_board):
                                 return False
                             else:
-                                self.enpassent_move['from'] = piece.position
-                                self.enpassent_move['to'] = [piece.position[0]+1, piece.position[1]-1]
-                                self.enpassent_move['taken'] = [piece.position[0], piece.position[1]-1]
+                                self.enpassant_move['from'] = piece.position
+                                self.enpassant_move['to'] = [piece.position[0] + 1, piece.position[1] - 1]
+                                self.enpassant_move['taken'] = [piece.position[0], piece.position[1] - 1]
                                 return True
                         else:
-                            temp_board = self.preliminary_enpassent(possible_board, piece.position, [piece.position[0]-1, piece.position[1]-1], [piece.position[0], piece.position[1]-1])
+                            temp_board = self.preliminary_enpassant(possible_board, piece.position, [piece.position[0] - 1, piece.position[1] - 1], [piece.position[0], piece.position[1] - 1])
                             if self.is_in_check("White", temp_board):
                                 return False
                             else:
-                                self.enpassent_move['from'] = piece.position
-                                self.enpassent_move['to'] = [piece.position[0]-1, piece.position[1]-1]
-                                self.enpassent_move['taken'] = [piece.position[0], piece.position[1]-1]
+                                self.enpassant_move['from'] = piece.position
+                                self.enpassant_move['to'] = [piece.position[0] - 1, piece.position[1] - 1]
+                                self.enpassant_move['taken'] = [piece.position[0], piece.position[1] - 1]
                                 return True
                     else:
                         return False
@@ -615,22 +623,22 @@ class Board(object):
                 if isinstance(possible_board[piece.position[0]][piece.position[1]+1], Pawn):
                     if possible_board[piece.position[0]][piece.position[1]+1].first_moved == self.move_num - 1:
                         if piece.colour == "Black":
-                            temp_board = self.preliminary_enpassent(possible_board, piece.position, [piece.position[0]+1, piece.position[1]+1], [piece.position[0], piece.position[1]+1])
+                            temp_board = self.preliminary_enpassant(possible_board, piece.position, [piece.position[0] + 1, piece.position[1] + 1], [piece.position[0], piece.position[1] + 1])
                             if self.is_in_check("Black", temp_board):
                                 return False
                             else:
-                                self.enpassent_move['from'] = piece.position
-                                self.enpassent_move['to'] = [piece.position[0]+1, piece.position[1]+1]
-                                self.enpassent_move['taken'] = [piece.position[0], piece.position[1]+1]
+                                self.enpassant_move['from'] = piece.position
+                                self.enpassant_move['to'] = [piece.position[0] + 1, piece.position[1] + 1]
+                                self.enpassant_move['taken'] = [piece.position[0], piece.position[1] + 1]
                                 return True
                         else:
-                            temp_board = self.preliminary_enpassent(possible_board, piece.position, [piece.position[0]-1, piece.position[1]+1], [piece.position[0], piece.position[1]+1])
+                            temp_board = self.preliminary_enpassant(possible_board, piece.position, [piece.position[0] - 1, piece.position[1] + 1], [piece.position[0], piece.position[1] + 1])
                             if self.is_in_check("White", temp_board):
                                 return False
                             else:
-                                self.enpassent_move['from'] = piece.position
-                                self.enpassent_move['to'] = [piece.position[0]-1, piece.position[1]+1]
-                                self.enpassent_move['taken'] = [piece.position[0], piece.position[1]+1]
+                                self.enpassant_move['from'] = piece.position
+                                self.enpassant_move['to'] = [piece.position[0] - 1, piece.position[1] + 1]
+                                self.enpassant_move['taken'] = [piece.position[0], piece.position[1] + 1]
                                 return True
                     else:
                         return False

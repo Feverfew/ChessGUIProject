@@ -36,6 +36,9 @@ def binary_search(search_term, array):
     Args:
         search_term: term to be searched for in the list.
         array (list): list to be searched.
+
+    Returns:
+         True if found, False otherwise.
     """
     half_array = int(len(array)/2)
     if search_term == array[half_array]:

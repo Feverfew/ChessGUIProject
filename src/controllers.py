@@ -193,6 +193,9 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
         except (IOError, FileNotFoundError, TypeError):
             self.show_message("Game file not found!")
             self.get_json_file()
+        except (KeyError):
+            self.show_message("Data file is corrupt. Please choose another file")
+            self.get_json_file()
 
     def save_game(self):
         """Saves a currently played game, either in an existing JSON file or a new one."""
@@ -226,14 +229,14 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
                     'Black': self.board.has_been_in_check['Black'],
                     'White': self.board.has_been_in_check['White']
                     },
-                'enpassent_possible': {
-                    'Black': self.board.enpassent_possible['Black'],
-                    'White': self.board.enpassent_possible['White']
+                'enpassant_possible': {
+                    'Black': self.board.enpassant_possible['Black'],
+                    'White': self.board.enpassant_possible['White']
                     },
-                'enpassent_move': {
-                    'from': self.board.enpassent_move['from'],
-                    'to': self.board.enpassent_move['to'],
-                    'taken': self.board.enpassent_move['taken']
+                'enpassant_move': {
+                    'from': self.board.enpassant_move['from'],
+                    'to': self.board.enpassant_move['to'],
+                    'taken': self.board.enpassant_move['taken']
                     },
                 'can_castle': {
                     'Black': self.board.can_castle['Black'],
