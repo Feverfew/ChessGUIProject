@@ -234,10 +234,6 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
                     'to': self.board.enpassant_move['to'],
                     'taken': self.board.enpassant_move['taken']
                     },
-                'can_castle': {
-                    'Black': self.board.can_castle['Black'],
-                    'White': self.board.can_castle['White']
-                },
                 'player_one': self.board.player_one,
                 'player_two': self.board.player_two,
                 'pieces': {

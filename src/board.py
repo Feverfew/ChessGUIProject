@@ -22,8 +22,6 @@ class Board(object):
         game_over (bool): shows if game is over or not.
         must_promote (bool): true if a player must promote their pawn, false otherwise.
         enpassant_possible (dict): shows if black and white can complete an en passant move.
-
-
     """
 
     def __init__(self, game=None):
@@ -40,10 +38,6 @@ class Board(object):
             self.enpassant_possible = {
                 'Black': game['enpassant_possible']['Black'],
                 'White': game['enpassant_possible']['White']
-            }
-            self.can_castle = {
-                'Black': game['can_castle']['Black'],
-                'White': game['can_castle']['White']
             }
             self.enpassant_move = {
                 'from': game['enpassant_move']['from'],
@@ -80,10 +74,6 @@ class Board(object):
             self.game_over = False
             self.must_promote = False
             self.enpassant_possible = {
-                'Black': True,
-                'White': True
-                }
-            self.can_castle = {
                 'Black': True,
                 'White': True
                 }
