@@ -314,7 +314,8 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
                         self.show_message("Game saved at {}".format(self.settings.value('json_location')))
                 except (IOError, FileNotFoundError):
                     self.show_message("Error: File not found")
-                    self.get_json_file()
+                    self.settings.setValue("json_location", "")
+                    self.save_game()
             else:
                 self.get_json_file()
                 if self.settings.value('json_location'):
@@ -325,6 +326,8 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
                     with open(self.settings.value('json_location'), 'w') as jsonfile:
                         json.dump(data, jsonfile, indent=4, separators=(',', ':'))
                         self.show_message("Game saved at {}".format(self.settings.value('json_location')))
+                else:
+                    self.show_message("File not saved")
         else:
             self.show_message("Please fill in the player names")
     
