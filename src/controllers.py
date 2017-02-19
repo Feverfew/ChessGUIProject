@@ -252,7 +252,7 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
                             piece = {
                                 'position': field.position,
                                 'colour': field.colour
-                            }
+                             }
                             game['pieces']['queens'].append(piece)
                         elif isinstance(field, Bishop):
                             piece = {
@@ -320,6 +320,7 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
                 if self.settings.value('json_location'):
                     data = {'games': []}
                     game['id'] = 1
+                    self.board.id = 1
                     data['games'].append(game)
                     with open(self.settings.value('json_location'), 'w') as jsonfile:
                         json.dump(data, jsonfile, indent=4, separators=(',', ':'))

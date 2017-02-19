@@ -22,9 +22,18 @@ class Board(object):
         game_over (bool): shows if game is over or not.
         must_promote (bool): true if a player must promote their pawn, false otherwise.
         enpassant_possible (dict): shows if black and white can complete an en passant move.
+        enpassant_move (dict): stores the en passant move for both colours if they exist.
+        player_one (str): stores the name of the first player (white).
+        player_two (str): stores the name of the second player (black).
+        board (list): an 8*8 2D list which maps to pieces on the board.
     """
 
     def __init__(self, game=None):
+        """Loads a game if given one, otherwises intialises a new game.
+
+        Args:
+            game (dict):
+        """
         if game is not None:
             self.id = game['id']
             self.last_played = game['last_played']
