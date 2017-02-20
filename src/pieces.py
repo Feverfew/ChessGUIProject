@@ -3,6 +3,7 @@ __author__ = "Alexander Saoutkin"
 
 class Piece(object):
     """Base class for all chess pieces
+
     Attributes:
         position (list): coordinates on the board in the form [x, y]
         colour (str): Colour of the piece, either "White" or "Black"

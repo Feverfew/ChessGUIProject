@@ -17,7 +17,7 @@ class Board(object):
         turn (str): The colour of the current player's turn.
         move_num (int): how many moves have been made in the game.
         winner (str): The name of the winner.
-        colour_in_check (str): if a player is in check, their colour is held in this variable
+        colour_in_check (str): if a player is in check, their colour is held in this variable.
         is_stalemate (bool): shows if game is in stalemate or not.
         game_over (bool): shows if game is over or not.
         must_promote (bool): true if a player must promote their pawn, false otherwise.
@@ -29,10 +29,10 @@ class Board(object):
     """
 
     def __init__(self, game=None):
-        """Loads a game if given one, otherwises intialises a new game.
+        """Loads a game if given one, otherwise intialises a new game.
 
         Args:
-            game (dict):
+            game (dict): contains all data needed to load a game into a Board object.
         """
         if game is not None:
             self.id = game['id']
@@ -96,7 +96,7 @@ class Board(object):
             self.new_board()
 
     def new_board(self):
-        """Creates a new fresh board"""
+        """Creates a new board."""
         self.board = []
         # Black side of the board
         row = [
@@ -150,7 +150,16 @@ class Board(object):
         self.board.append(row)
      
     def preliminary_move_piece(self, chess_board, old_coords, new_coords):
-        """"Will move a piece temporarily. e.g. used to see if piece puts itself in check."""
+        """"Will move a piece temporarily. e.g. used to see if piece puts itself in check.
+
+        Args:
+            chess_board (list): the board to be used to move the piece.
+            old_coords (list): coordinates of the piece to be moved.
+            new_coords (list): coordinates of where the piece will be moved to.
+
+        Returns:
+            list: returns a chess board with the piece moved.
+        """
         chess_board[new_coords[0]][new_coords[1]] = copy.deepcopy(chess_board[old_coords[0]][old_coords[1]])
         chess_board[old_coords[0]][old_coords[1]] = 0
         if isinstance(chess_board[new_coords[0]][new_coords[1]], Piece):
@@ -159,7 +168,17 @@ class Board(object):
         return chess_board
 
     def preliminary_enpassant(self, chess_board, old_coords, new_coords, removed_coords):
-        """Will perform enpassant on a chess board and return that board."""
+        """Will perform enpassant temporarily e.g. used to see if piece puts itself in check.
+
+        Args:
+            chess_board (list): the board to be used to move the piece.
+            old_coords (list): coordinates of the piece to be moved.
+            new_coords (list): coordinates of where the piece will be moved to.
+            removed_coords (list): coordinates of the piece to be taken.
+
+        Returns:
+            list: returns a chess board with the piece moved.
+        """
         chess_board[new_coords[0]][new_coords[1]] = copy.deepcopy(chess_board[old_coords[0]][old_coords[1]])
         chess_board[old_coords[0]][old_coords[1]] = 0
         chess_board[removed_coords[0]][removed_coords[1]] = 0
@@ -169,8 +188,18 @@ class Board(object):
         return chess_board
 
     def permanently_move_piece(self, chess_board, old_coords, new_coords):
-        """Moves a piece on the board permanently. 
-        It will also check for change in game state (checkmate, check, stalemate)."""
+        """
+        Moves a piece on the board permanently.
+        It will also check for change in game state (checkmate, check, stalemate).
+
+        Args:
+            chess_board (list): the board to be used to move the piece.
+            old_coords (list): coordinates of the piece to be moved.
+            new_coords (list): coordinates of where the piece will be moved to.
+
+        Returns:
+            list: returns a chess board with the piece moved.
+        """
         if not self.game_over:
             # Performs enpassant if conditions are met.
             if old_coords == self.enpassant_move['from'] and new_coords == self.enpassant_move['to'] and self.enpassant_possible[self.turn]:
@@ -241,6 +270,12 @@ class Board(object):
             return chess_board
 
     def permanently_promote_piece(self, type, coords):
+        """Promotes a pawn to a piece of a certain type.
+
+        Args:
+            type (str): Name of the type of piece to promote to.
+            coords (list): coordinates of the pawn to be promoted.
+        """
         colour = self.board[coords[0]][coords[1]].colour
         if type == "Queen":
             self.board[coords[0]][coords[1]] = Queen(coords, colour)
@@ -261,6 +296,7 @@ class Board(object):
         self.must_promote = False
 
     def check_game_state(self):
+        """Completes a check of the state of the game."""
         if self.calculate_is_checkmate(self.turn, self.board):
             self.game_over = True
             if self.turn == "Black":
@@ -269,7 +305,7 @@ class Board(object):
                 self.winner = self.player_two
         elif self.is_in_check(self.turn, self.board):
             self.colour_in_check = self.turn
-        elif self.calculate_is_stalemate(self.turn, self.board):
+        elif self.calculate_is_stalemate(self.board):
             self.is_stalemate = True
             self.game_over = True
         else:
@@ -277,14 +313,29 @@ class Board(object):
 
 
     def get_king_coords(self, colour, board):
-        """Finds the coords of the king depending on its colour"""
+        """Finds the coords of the king depending on its colour.
+
+        Args:
+            colour (str): color of the king to find.
+            board (list): the board to find the kind from.
+
+        Returns:
+            list: coordinates of the king in the form [x,y] (0-based).
+        """
         for x in range(8):
             for y in range(8):
                 if isinstance(board[x][y], King) and board[x][y].colour == colour:
                     return [x, y]
 
     def calculate_legal_moves(self, piece):
-        """Get all the legal moves of a piece and returns them"""
+        """Gets all the legal moves of a piece and returns them.
+
+        Args:
+            piece (Piece): The piece to calculate the legal moves for.
+
+        Returns:
+            list: A list of all the legal moves a piece can make.
+        """
         legal_moves = []
         original_board = copy.deepcopy(self.board) # fixed the moving bug.
         possible_legal_moves = self.get_attacking_moves(piece, original_board)
@@ -344,9 +395,16 @@ class Board(object):
     def get_attacking_moves(self, piece, board):
         """
         Get all the attacking moves of a piece and return them.
-        The difference between this function and get_legal_moves is that
+        The difference between this function and get_legal_moves() is that
         this shows you what pieces can force a check while the other functions
         tells you whether the piece can move there.
+
+        Args:
+            piece (Piece): The piece to calculate the legal moves for.
+            board (board): board used to determine attacking moves.
+
+        Returns:
+            list: A list of all attacking moves a piece can make.
         """
         legal_moves = []
         illegal_moves = []
@@ -504,7 +562,15 @@ class Board(object):
             return legal_moves
         
     def calculate_is_checkmate(self, colour, board):
-        """Finds out if the a player has been checkmated"""
+        """Finds out if a player is in checkmate.
+
+        Args:
+            colour (str): Colour that we are checking for if they are in checkmate.
+            board (list): the board of the game being played.
+
+        Returns:
+            bool: True if the game is in a state of checkmate, False otherwise.
+        """
         if self.is_in_check(colour, board):
             for row in board:
                 for piece in row:
@@ -515,8 +581,15 @@ class Board(object):
         else:
             return False
 
-    def calculate_is_stalemate(self, colour, board):
-        """Finds out if the game is in stalemate"""
+    def calculate_is_stalemate(self, board):
+        """Finds out if a game is in stalemate.
+
+        Args:
+            board (list): the board of the game being played.
+
+        Returns:
+            bool: True if the game is in a state of stalemate, False otherwise.
+        """
         if not self.is_in_check("White", board) and not self.is_in_check("Black", board):
             for row in board:
                 for piece in row:
@@ -528,7 +601,15 @@ class Board(object):
             return False
 
     def is_in_check(self, colour, possible_board):
-        """Checks if the king of the corresponding colour is in check."""
+        """Checks if the king of the corresponding colour is in check.
+
+        Args:
+            colour (str): colour that we are checking if they are in check.
+            possible_board (list): the board of the game being played.
+
+        Returns:
+            bool: True if the player is in check, False otherwise.
+        """
         king_coords = self.get_king_coords(colour, possible_board)
         for x in range(8):
             for y in range(8):
@@ -538,6 +619,12 @@ class Board(object):
         return False
     
     def get_castling_moves(self, king, original_board):
+        """Finds castling moves, if they exist, for a given king.
+
+        Args:
+            king (King): the king that we are finding castling moves for.
+            original_board (list): the board of the game being played.
+        """
         king.castling_moves = []
         if not king.has_moved and not self.is_in_check(king.colour, self.board):
             if king.colour == "Black":
@@ -579,54 +666,62 @@ class Board(object):
                             if not self.is_in_check(king.colour, possible_board):
                                 king.castling_moves.append([king.position[0], king.position[1]+2])
 
-    def can_enpassant(self, piece, possible_board):
-        """Checks if enpassant is possible, and assigns the enpassant move."""
-        if self.enpassant_possible[piece.colour] and ((piece.position[0] == 4 and piece.colour == "Black") or (piece.position[0] == 3 and piece.colour == "White")):
+    def can_enpassant(self, pawn, possible_board):
+        """Checks if en passant is possible, and assigns the en passant move if so.
+
+        Args:
+            pawn (Pawn): the pawn that we are determining if it can perform en passant.
+            possible_board (list): the board of the game being played.
+
+        Raises:
+            IndexError: raised when index is -1 or 8 as these indices do not exist in possible_board.
+        """
+        if self.enpassant_possible[pawn.colour] and ((pawn.position[0] == 4 and pawn.colour == "Black") or (pawn.position[0] == 3 and pawn.colour == "White")):
             try:
-                if isinstance(possible_board[piece.position[0]][piece.position[1]-1], Pawn):
-                    if possible_board[piece.position[0]][piece.position[1]-1].first_moved == self.move_num - 1:
-                        if piece.colour == "Black":
-                            temp_board = self.preliminary_enpassant(possible_board, piece.position, [piece.position[0] + 1, piece.position[1] - 1], [piece.position[0], piece.position[1] - 1])
+                if isinstance(possible_board[pawn.position[0]][pawn.position[1]-1], Pawn):
+                    if possible_board[pawn.position[0]][pawn.position[1]-1].first_moved == self.move_num - 1:
+                        if pawn.colour == "Black":
+                            temp_board = self.preliminary_enpassant(possible_board, pawn.position, [pawn.position[0] + 1, pawn.position[1] - 1], [pawn.position[0], pawn.position[1] - 1])
                             if self.is_in_check("Black", temp_board):
                                 return False
                             else:
-                                self.enpassant_move['from'] = piece.position
-                                self.enpassant_move['to'] = [piece.position[0] + 1, piece.position[1] - 1]
-                                self.enpassant_move['taken'] = [piece.position[0], piece.position[1] - 1]
+                                self.enpassant_move['from'] = pawn.position
+                                self.enpassant_move['to'] = [pawn.position[0] + 1, pawn.position[1] - 1]
+                                self.enpassant_move['taken'] = [pawn.position[0], pawn.position[1] - 1]
                                 return True
                         else:
-                            temp_board = self.preliminary_enpassant(possible_board, piece.position, [piece.position[0] - 1, piece.position[1] - 1], [piece.position[0], piece.position[1] - 1])
+                            temp_board = self.preliminary_enpassant(possible_board, pawn.position, [pawn.position[0] - 1, pawn.position[1] - 1], [pawn.position[0], pawn.position[1] - 1])
                             if self.is_in_check("White", temp_board):
                                 return False
                             else:
-                                self.enpassant_move['from'] = piece.position
-                                self.enpassant_move['to'] = [piece.position[0] - 1, piece.position[1] - 1]
-                                self.enpassant_move['taken'] = [piece.position[0], piece.position[1] - 1]
+                                self.enpassant_move['from'] = pawn.position
+                                self.enpassant_move['to'] = [pawn.position[0] - 1, pawn.position[1] - 1]
+                                self.enpassant_move['taken'] = [pawn.position[0], pawn.position[1] - 1]
                                 return True
                     else:
                         return False
             except IndexError:
                 pass
             try:
-                if isinstance(possible_board[piece.position[0]][piece.position[1]+1], Pawn):
-                    if possible_board[piece.position[0]][piece.position[1]+1].first_moved == self.move_num - 1:
-                        if piece.colour == "Black":
-                            temp_board = self.preliminary_enpassant(possible_board, piece.position, [piece.position[0] + 1, piece.position[1] + 1], [piece.position[0], piece.position[1] + 1])
+                if isinstance(possible_board[pawn.position[0]][pawn.position[1]+1], Pawn):
+                    if possible_board[pawn.position[0]][pawn.position[1]+1].first_moved == self.move_num - 1:
+                        if pawn.colour == "Black":
+                            temp_board = self.preliminary_enpassant(possible_board, pawn.position, [pawn.position[0] + 1, pawn.position[1] + 1], [pawn.position[0], pawn.position[1] + 1])
                             if self.is_in_check("Black", temp_board):
                                 return False
                             else:
-                                self.enpassant_move['from'] = piece.position
-                                self.enpassant_move['to'] = [piece.position[0] + 1, piece.position[1] + 1]
-                                self.enpassant_move['taken'] = [piece.position[0], piece.position[1] + 1]
+                                self.enpassant_move['from'] = pawn.position
+                                self.enpassant_move['to'] = [pawn.position[0] + 1, pawn.position[1] + 1]
+                                self.enpassant_move['taken'] = [pawn.position[0], pawn.position[1] + 1]
                                 return True
                         else:
-                            temp_board = self.preliminary_enpassant(possible_board, piece.position, [piece.position[0] - 1, piece.position[1] + 1], [piece.position[0], piece.position[1] + 1])
+                            temp_board = self.preliminary_enpassant(possible_board, pawn.position, [pawn.position[0] - 1, pawn.position[1] + 1], [pawn.position[0], pawn.position[1] + 1])
                             if self.is_in_check("White", temp_board):
                                 return False
                             else:
-                                self.enpassant_move['from'] = piece.position
-                                self.enpassant_move['to'] = [piece.position[0] - 1, piece.position[1] + 1]
-                                self.enpassant_move['taken'] = [piece.position[0], piece.position[1] + 1]
+                                self.enpassant_move['from'] = pawn.position
+                                self.enpassant_move['to'] = [pawn.position[0] - 1, pawn.position[1] + 1]
+                                self.enpassant_move['taken'] = [pawn.position[0], pawn.position[1] + 1]
                                 return True
                     else:
                         return False

@@ -3,15 +3,15 @@ def quick_sort(array, low, high):
 
     Args:
         array (list): the list to be sorted.
-        low (int): index of lowest item to be sorted
+        low (int): index of lowest item to be sorted.
         high (int): index of highest item to be sorted.
     """
     def partition(array, low, high):
-        """Partition array using a pivot value
+        """Partitions array using a pivot value.
 
         Args:
             array (list): the list to be sorted.
-            low (int): index of lowest item to be sorted
+            low (int): index of lowest item to be sorted.
             high (int): index of highest item to be sorted.
 
         Returns:
@@ -34,7 +34,7 @@ def binary_search(search_term, array):
     """Searches for an item in an already sorted list.
 
     Args:
-        search_term: term to be searched for in the list.
+        search_term (str): term to be searched for in the list.
         array (list): list to be searched.
 
     Returns:

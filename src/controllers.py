@@ -166,7 +166,14 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
         self.output_board()
     
     def load_game(self):
-        """Loads a game from a JSON file. If there is no JSON file the user is prompted for one."""
+        """Loads a game from a JSON file. If there is no JSON file the user is prompted for one.
+
+        Raises:
+            IOError: raised when there is an error loading a file.
+            FileNotFoundError: raised when a file is not found.
+            TypeError: raised when there is an error loading a file.
+            KeyError: raised when there is corruption in the JSON file.
+        """
         try:
             data = None
             with open(self.settings.value('json_location')) as json_file:
@@ -198,7 +205,12 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
             self.get_json_file()
 
     def save_game(self):
-        """Saves a currently played game, either in an existing JSON file or a new one."""
+        """Saves a currently played game, either in an existing JSON file or a new one.
+
+        Raises:
+            IOError: raised when there is an error loading a file.
+            FileNotFoundError: raised when a file is not found.
+        """
         if self.player_one_edit.text() != "" and self.player_two_edit.text() != "":
             self.board.player_one = self.player_one_edit.text()
             self.board.player_two = self.player_two_edit.text()
