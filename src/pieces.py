@@ -275,11 +275,16 @@ class Pawn(Piece):
         first_moved (int): denotes at what stage (move) in the game the the piece was first moved.
     """
     def __init__(self, position, colour, first_moved=0):
+        """
+        This constructor initialises the class variables and also calculates all possible moves for the piece.
+        In addition the image path is added as an attribute self.img_path.
+        """
         super().__init__(position, colour)
         self.img_path = "{}_pawn.png".format(self.colour.lower())
         self.first_moved = first_moved
 
     def calculate_possible_moves(self):
+        """Calculates all the possible moves for a pawn in a certain position."""
         self.possible_moves.clear()
         if self.colour == "White":
             self.possible_moves.append([self.position[0]-1, self.position[1]])

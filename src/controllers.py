@@ -27,7 +27,7 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
 
     Attributes:
         board (Board): instance of the Board class which serves as the model for the controller.
-        settings (QtCore.QSettings): a class used to store settings (namely file path) on the host computer.
+        settings (QSettings): a class used to store settings (namely file path) on the host computer.
         from_cell (list): stores the coordinates of the cell that was chosen to move from.
 
     """
