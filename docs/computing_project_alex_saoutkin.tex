@@ -15,6 +15,9 @@
 \linespread{1.6} % Double line-spacing
 % Images
 \usepackage{graphicx}
+% Directory Tree
+\usepackage{dirtree}
+
 
 % Title Page
 \title{Chess for students; written in Python}
@@ -121,7 +124,7 @@ Processing in the current system is fairly simple. Once a player has chosen wher
 \section{Output}
 Output is simply where the player moves their piece on the board, which is visible to both players and any people watching. In addition, when a player moves a piece which results in the changing of the game state they must state this change openly to the opposing player.
 \section{Volumetrics}
-In this particular application it is hard to estimate the memory needed to store
+In this particular application it is hard to estimate the memory needed to store the data needed to play a game. Likewise, it is hard to calculate the memory usage of the program without using a profiler. However, we can make some assumptions about the game and use this to estimate the memory required. Firstly the game is stored in a 
 \section{Problems with the Current System}
 The current system consists of chess boards with pieces and paper if results want to be recorded. The main problem that was noticed was that as the club was only hosted on a single lunchtime a week, many games overran past lunchtime and so had to be stopped with no clear winner as the game had not finished. As the game was played on a physical board with pieces and the room that was used for the club is used for lessons as well, the current state of the game is not saved which resulted in the game effectively being cut short. This is incredibly frustrating, especially for higher-level players as their games tend to take longer to finish. 
 
@@ -201,24 +204,488 @@ The third category is the load dialog. The load dialog greets the user with list
 \begin{center}
 	\includegraphics[width=1.0\textwidth]{images/design-charts/filehandling_level}
 \end{center}
-\section{Class Diagrams}
+\section{Code Design}
+\subsection{Class Diagrams}
 \begin{center}
 	\includegraphics[width=1.0\textwidth]{images/class-diagrams/pieces}
 \end{center}
 \begin{center}
 	\includegraphics[width=0.9\textwidth]{images/class-diagrams/board}
 \end{center}
-\subsection{Description of Classes}
-\subsubsection{Piece}
-The piece class is designed as the base class for which all other types of pieces inherits its attributes from. 
+\subsection{File and Code Structure}
+As the program is in the form of a Graphical User Interface (GUI) I thought it would be appropriate to design my code around the Model-View-Controller (MVC) framework. The view of the MVC architecture is the definition of the GUI. The model is the logic of the game board and the controller is what accepts inputs and interactions with the view, which converts them to commands to the model. The results of the model processing this data is then given back to the view by the controller. The .ui file type is the file that the Qt framework generates after editing of a GUI occurs in the Qt Designer application. These are then converted to .py by a command line utility pyside-uic. I then collated these files and put them into the views.py file.
 
-This attribute will be represented by a python list with two elements, where the first element representing the piece's $x$ coordinate and the second element representing its $y$ coordinate. 
-\paragraph{colour} This attribute holds a string value of "Black" or "White". This denotes the colour of the piece.
-\paragraph{possible{\_}moves} This attribute is a python list. Each element of the list contains a list of positions denoting all the valid moves the piece can make \textbf{assuming that there are no other pieces on the board}.
-\begin{minted}{python}
-def calculate_possible_moves(self):
+\dirtree{%
+.1 /.
+.2 src.
+.3 ui\DTcomment{Contains all the UI files }.
+.4 chessboard.ui.
+.4 loadgame.ui.
+.4 mainwindow.ui.
+.4 promotion.ui.
+.3 algorithms.py\DTcomment{Binary search and quicksort.}.
+.3 board.py\DTcomment{Contains Board class: model for the controller.}.
+.3 Chess.py\DTcomment{Starts the program when run.}.
+.3 controllers.py\DTcomment{Contains all the controllers.}.
+.3 pieces.py\DTcomment{Contains Piece class and its subclasses, used by Board class.}.
+.3 views.py\DTcomment{Contains all the views: these are generated from the .ui files.}.
+.3 resources{\_}rc.py\DTcomment{Contains image data.}.
+.3 requirements.txt\DTcomment{Contains list of all python packages that the program requires to run.}.
+}
+\subsection{Required Software}
+For this program to run via running the Chess.py file it is required that Python 3 up until 3.4 is installed on the computer that the program will be run from, anything higher is not supported. This is because the program relies on PySide being installed and it does not support versions newer than 3.4. 
+\subsection{Code Documentation}
+In this section the comments to all the classes and functions in the program are shown. Views.py is not commented as it is simply a compilation of .ui files that have been compiled to Python classes and Chess.py is also not commented as it is simply boilerplate code to get the GUI to run. Similarly, resources{\_}qrc.py just contains image data of the chess pieces.
+\subsubsection{algorithms.py}
+\begin{minted}[breaklines, breakanywhere, tabsize=4, baselinestretch=1.0]{python}
+def quick_sort(array, low, high):
+	"""Sorts a list recursively.
+
+	Args:
+		array (list): the list to be sorted.
+		low (int): index of lowest item to be sorted.
+		high (int): index of highest item to be sorted.
+	"""
+	def partition(array, low, high):
+	"""Partitions array using a pivot value.
+	
+	Args:
+		array (list): the list to be sorted.
+		low (int): index of lowest item to be sorted.
+		high (int): index of highest item to be sorted.
+	
+	Returns:
+		The value of the pivot.
+	"""
+
+def binary_search(search_term, array):
+	"""Searches for an item in an already sorted list.
+
+	Args:
+		search_term (str): term to be searched for in the list.
+		array (list): list to be searched.
+	
+	Returns:
+		True if found, False otherwise.
+	"""
 \end{minted}
-This function is declared in the piece class and raises a NotImplementedError. This exception is raised so that to make sure that all subclasses of the Piece class implement this method and change it appropriately 
-% example of code: \inputminted{python}{../src/pieces.py}
+\subsubsection{board.py}
+\begin{minted}[breaklines, breakanywhere, tabsize=4, baselinestretch=1.0]{python}
+class Board(object):
+    """Class which manages the pieces on the board.
 
+	This is the model for the ChessBoardController class.
+	The primary function of this class is to allow the controller to determine
+	the legal moves a given piece can make and to move pieces on the board, whilst
+	performing checks of the game state after every move.
+	
+	Attributes:
+		id (int): the unique identifier for a particular game.
+		last_played (str): The date at which the game was last saved.
+		turn (str): The colour of the current player's turn.
+		move_num (int): how many moves have been made in the game.
+		winner (str): The name of the winner.
+		colour_in_check (str): if a player is in check, their colour is held in this variable.
+		is_stalemate (bool): shows if game is in stalemate or not.
+		game_over (bool): shows if game is over or not.
+		must_promote (bool): true if a player must promote their pawn, false otherwise.
+		enpassant_possible (dict): shows if black and white can complete an en passant move.
+		enpassant_move (dict): stores the en passant move for both colours if they exist.
+		player_one (str): stores the name of the first player (white).
+		player_two (str): stores the name of the second player (black).
+		board (list): an 8*8 2D list which maps to pieces on the board.
+	"""
+	
+	def __init__(self, game=None):
+		"""Loads a game if given one, otherwise intialises a new game.
+	
+		Args:
+			game (dict): contains all data needed to load a game into a Board object.
+		"""
+		
+    def new_board(self):
+		"""Creates a new board."""
+		
+	def preliminary_move_piece(self, chess_board, old_coords, new_coords):
+		""""Will move a piece temporarily. e.g. used to see if piece puts itself in check.
+	
+		Args:
+			chess_board (list): the board to be used to move the piece.
+			old_coords (list): coordinates of the piece to be moved.
+			new_coords (list): coordinates of where the piece will be moved to.
+		
+		Returns:
+			list: returns a chess board with the piece moved.
+		"""
+		
+    def preliminary_enpassant(self, chess_board, old_coords, new_coords, removed_coords):
+		"""Will perform enpassant temporarily e.g. used to see if piece puts itself in check.
+
+		Args:
+			chess_board (list): the board to be used to move the piece.
+			old_coords (list): coordinates of the piece to be moved.
+			new_coords (list): coordinates of where the piece will be moved to.
+			removed_coords (list): coordinates of the piece to be taken.
+		
+		Returns:
+			list: returns a chess board with the piece moved.
+		"""
+
+    def permanently_move_piece(self, chess_board, old_coords, new_coords):
+		"""
+		Moves a piece on the board permanently.
+		It will also check for change in game state (checkmate, check, stalemate).
+		
+		Args:
+			chess_board (list): the board to be used to move the piece.
+			old_coords (list): coordinates of the piece to be moved.
+			new_coords (list): coordinates of where the piece will be moved to.
+		
+		Returns:
+			list: returns a chess board with the piece moved.
+		"""
+	
+	def permanently_promote_piece(self, type, coords):
+		"""Promotes a pawn to a piece of a certain type.
+	
+		Args:
+			type (str): Name of the type of piece to promote to.
+			coords (list): coordinates of the pawn to be promoted.
+		"""
+
+	def check_game_state(self):
+		"""Completes a check of the state of the game."""
+		
+ 	def get_king_coords(self, colour, board):
+		"""Finds the coords of the king depending on its colour.
+		
+		Args:
+			colour (str): color of the king to find.
+			board (list): the board to find the kind from.
+		
+		Returns:
+			list: coordinates of the king in the form [x,y] (0-based).
+		"""
+		
+ 	def calculate_legal_moves(self, piece):
+		"""Gets all the legal moves of a piece and returns them.
+	
+		Args:
+			piece (Piece): The piece to calculate the legal moves for.
+	
+		Returns:
+			list: A list of all the legal moves a piece can make.
+		"""
+	
+ 	def get_attacking_moves(self, piece, board):
+		"""
+		Get all the attacking moves of a piece and return them.
+		The difference between this function and get_legal_moves() is that
+		this shows you what pieces can force a check while the other functions
+		tells you whether the piece can move there.
+		
+		Args:
+			piece (Piece): The piece to calculate the legal moves for.
+			board (board): board used to determine attacking moves.
+		
+		Returns:
+			list: A list of all attacking moves a piece can make.
+		"""
+	
+ 	def calculate_is_checkmate(self, colour, board):
+		"""Finds out if a player is in checkmate.
+	
+		Args:
+			colour (str): Colour that we are checking for if they are in checkmate.
+			board (list): the board of the game being played.
+		
+		Returns:
+			bool: True if the game is in a state of checkmate, False otherwise.
+		"""
+	
+ 	def calculate_is_stalemate(self, board):
+		"""Finds out if a game is in stalemate.
+	
+		Args:
+			board (list): the board of the game being played.
+	
+		Returns:
+			bool: True if the game is in a state of stalemate, False otherwise.
+		"""
+	
+ 	def is_in_check(self, colour, possible_board):
+		"""Checks if the king of the corresponding colour is in check.
+	
+		Args:
+			colour (str): colour that we are checking if they are in check.
+			possible_board (list): the board of the game being played.
+	
+		Returns:
+			bool: True if the player is in check, False otherwise.
+		"""
+	
+ 	def get_castling_moves(self, king, original_board):
+		"""Finds castling moves, if they exist, for a given king.
+	
+		Args:
+			king (King): the king that we are finding castling moves for.
+			original_board (list): the board of the game being played.
+		"""
+	
+ 	def can_enpassant(self, pawn, possible_board):
+		"""Checks if en passant is possible, and assigns the en passant move if so.
+	
+		Args:
+			pawn (Pawn): the pawn that we are determining if it can perform en passant.
+			possible_board (list): the board of the game being played.
+	
+		Raises:
+			IndexError: raised when index is -1 or 8 as these indices do not exist in possible_board.
+		"""
+\end{minted}
+\subsubsection{controllers.py}
+\begin{minted}[breaklines, breakanywhere, tabsize=4, baselinestretch=1.0]{python}
+class MainWindowController(QtGui.QMainWindow, views.MainWindow):
+	"""Controller for the main window of the application"""
+
+
+class ChessBoardController(QtGui.QWidget, views.ChessBoard):
+	"""Controller for the chess board.
+	Attributes pertaining to the views.ChessBoard class are not listed here as there are too many
+	and they merely refer to Qt GUI Objects.
+
+	Attributes:
+		board (Board): instance of the Board class which serves as the model for the controller.
+		settings (QSettings): a class used to store settings (namely file path) on the host computer.
+		from_cell (list): stores the coordinates of the cell that was chosen to move from.
+	"""
+	
+	def __init__(self):
+		"""Initialises necessary variables, connects click events to methods and presents a new game to the user."""
+		
+	def table_clicked(self):
+		"""Handler for when table is clicked.
+	
+		When a piece has been selected to move then its legal moves are calculated.
+		These moves are then made clickable and highlighted yellow.
+		If a user selects any of the highlighted colours then the piece is transferred to that position
+		and a check of the game state occurs where any changes are shown in a msg box.
+		Promotions, if necessary, are called in this method.
+		"""
+		
+ 	def output_board(self, legal_moves=[]):
+		"""Output the board onto the GUI
+	
+		Uses the Board.board (2D list) to help populate the QTableWidget table.
+		All pieces of the moving player are made clickable on the table.
+		In addition, if there are legal moves specified they are all made clickable.
+
+		Args:
+			legal_moves (list): list of the legal moves a piece can make.
+		"""
+	
+ 	def new_game(self):
+		"""Creates a new game with initial board setup."""
+	
+ 	def load_game(self):
+		"""Loads a game from a JSON file. If there is no JSON file the user is prompted for one.
+	
+		Raises:
+			IOError: raised when there is an error loading a file.
+			FileNotFoundError: raised when a file is not found.
+			TypeError: raised when there is an error loading a file.
+			KeyError: raised when there is corruption in the JSON file.
+		"""
+	
+ 	def save_game(self):
+		"""Saves a currently played game, either in an existing JSON file or a new one.
+	
+		Raises:
+			IOError: raised when there is an error loading a file.
+			FileNotFoundError: raised when a file is not found.
+		"""
+		
+ 	def get_json_file(self):
+		"""Gets the location of the JSON file from the user"""
+	
+ 	def get_promotion_piece(self):
+		"""Gets the piece that needs to be promoted"""
+	
+ 	def show_message(self, msg):
+		"""If there are errors, they are shown in a message box.
+	
+		Args:
+			msg (str): message for the user to be shown.
+		"""
+		
+
+class LoadDialogController(QtGui.QDialog, views.LoadDialog):
+	"""Controller for the load dialog
+
+	When 'Load Game' is pressed the user is shown this dialog if a JSON file is found and has been loaded.
+	The user is shown a table where they can sort the games and can also choose which game to load.
+
+	Attributes:
+		chosen_game_id (int): id of the game that was chosen
+		data (dict): List of games.
+	"""
+	
+ 	def __init__(self, data):
+		"""Necessary variables are initialised and table is shown to the user."""
+	
+ 	def output_table(self):
+		"""List of games is shown to the user with this method."""
+	
+ 	def sort(self):
+		"""Sorts the list of games"""
+	
+ 	def get_game(self):
+		"""When game is chosen the ID is then found."""
+\end{minted}
+\subsubsection{pieces.py}
+\begin{minted}[breaklines, breakanywhere, tabsize=4, baselinestretch=1.0]{python}
+class Piece(object):
+	"""Base class for all chess pieces
+
+	Attributes:
+		position (list): coordinates on the board in the form [x, y]
+		colour (str): Colour of the piece, either "White" or "Black"
+	"""
+	
+ 	def __init__(self, position, colour):
+		"""This constructor initialises the class variables and also calculates all possible moves for the piece."""
+		
+		@position.setter
+		def position(self, value):
+			""" This setter calculates the new possible moves once the position has changed.
+		
+			Args:
+				value (list): coordinates on the board in the form [x, y]
+			"""
+	
+ 	def calculate_possible_moves(self):
+		"""Shows us the coords it can go to assuming that there are no other pieces on the board
+	
+		Raises:
+			NotImplementedError: Method not overridden in subclass.
+		"""
+		
+
+class Rook(Piece):
+	"""Class for a Rook
+
+	Attributes:
+		position (list): coordinates on the board in the form [x, y]
+		colour (str): colour of the piece, either "White" or "Black"
+		img_path (str): path to the image of the piece
+		has_moved (bool): Denotes whether the piece has moved before.
+	"""
+
+    def __init__(self, position, colour, has_moved=False):
+	"""
+	This constructor initialises the class variables and also calculates all possible moves for the piece.
+	In addition the image path is added.
+	"""
+	
+ 	def calculate_possible_moves(self):
+		"""Calculates all the possible moves for a rook in a certain position."""
+		
+
+class Knight(Piece):
+	"""Class for a Knight
+
+	Attributes:
+		position (list): coordinates on the board in the form [x, y]
+		colour (str): colour of the piece, either "White" or "Black"
+		img_path (str): path to the image of the piece
+	"""
+
+ 	def __init__(self, position, colour):
+		"""
+		This constructor initialises the class variables and also calculates all possible moves for the piece.
+		In addition the image path is added as an attribute self.img_path.
+		"""
+	
+ 	def calculate_possible_moves(self):
+		"""Calculates all the possible moves for a knight in a certain position."""
+	
+
+class Bishop(Piece):
+	"""Class for a Bishop
+
+	Attributes:
+		position (list): coordinates on the board in the form [x, y]
+	colour (str): colour of the piece, either "White" or "Black"
+	img_path (str): path to the image of the piece
+	"""
+	
+	def __init__(self, position, colour):
+	"""
+	This constructor initialises the class variables and also calculates all possible moves for the piece.
+	In addition the image path is added as an attribute self.img_path.
+	"""
+	
+ 	def calculate_possible_moves(self):
+		"""Calculates all the possible moves for a bishop in a certain position."""
+	
+
+class Queen(Piece):
+	"""Class for a Queen
+
+	Attributes:
+		position (list): coordinates on the board in the form [x, y]
+		colour (str): colour of the piece, either "White" or "Black"
+		img_path (str): path to the image of the piece
+	"""
+
+	def __init__(self, position, colour):
+		"""
+		This constructor initialises the class variables and also calculates all possible moves for the piece.
+		In addition the image path is added as an attribute self.img_path.
+		"""
+	
+ 	def calculate_possible_moves(self):
+		"""Calculates all the possible moves for a queen in a certain position."""
+		
+
+class King(Piece):
+	"""Class for a King
+
+	Attributes:
+		position (list): coordinates on the board in the form [x, y].
+		colour (str): colour of the piece, either "White" or "Black".
+		img_path (str): path to the image of the piece.
+		has_moved (bool): denotes whether piece has moved or not.
+		castling_moves (list): list of all castling moves possible.
+	"""
+
+	def __init__(self, position, colour, has_moved=False, castling_moves=[]):
+		"""
+		This constructor initialises the class variables and also calculates all possible moves for the piece.
+		In addition the image path is added as an attribute self.img_path.
+		"""
+	
+ 	def calculate_possible_moves(self):
+		"""Calculates all the possible moves for a king in a certain position."""
+
+	
+class Pawn(Piece):
+	"""Class for a Pawn
+
+	Attributes:
+		position (list): coordinates on the board in the form [x, y]
+		colour (str): colour of the piece, either "White" or "Black"
+		img_path (str): path to the image of the piece
+		first_moved (int): denotes at what stage (move) in the game the the piece was first moved.
+	"""
+
+	def __init__(self, position, colour, first_moved=0):
+		"""
+		This constructor initialises the class variables and also calculates all possible moves for the piece.
+		In addition the image path is added as an attribute self.img_path.
+		"""
+	
+ 	def calculate_possible_moves(self):
+		"""Calculates all the possible moves for a pawn in a certain position."""
+\end{minted}
 \end{document}          
