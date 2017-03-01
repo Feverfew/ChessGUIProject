@@ -166,6 +166,7 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
     def new_game(self):
         """Creates a new game with initial board setup."""
         self.board = Board()
+        self.from_cell = []
         self.output_board()
     
     def load_game(self):
