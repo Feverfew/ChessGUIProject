@@ -1,6 +1,7 @@
 import copy
 import datetime
 import json
+import re
 from builtins import IOError, FileNotFoundError, TypeError
 
 from PySide import QtGui, QtCore
@@ -339,9 +340,13 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
                     game['id'] = 1
                     self.board.id = 1
                     data['games'].append(game)
-                    with open(self.settings.value('json_location'), 'w') as jsonfile:
-                        json.dump(data, jsonfile, indent=4, separators=(',', ':'))
-                        self.show_message("Game saved at {}".format(self.settings.value('json_location')))
+                    try:
+                        with open(self.settings.value('json_location'), 'w') as jsonfile:
+                            json.dump(data, jsonfile, indent=4, separators=(',', ':'))
+                            self.show_message("Game saved at {}".format(self.settings.value('json_location')))
+                    except (FileNotFoundError, OSError):
+                        self.show_message("File not saved. Invalid file name.")
+                        self.settings.setValue("json_location", "")
                 else:
                     self.show_message("File not saved")
         else:
@@ -351,11 +356,11 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
         """Gets the location of the JSON file from the user"""
         json_dir = QtGui.QFileDialog().getExistingDirectory()
         json_name = QtGui.QInputDialog.getText(self, "JSON File Name Input", "JSON File Name:")
-        if json_dir and json_name[1]:
+        if json_dir and json_name[1] and re.match(r"^[a-zA-Z0-9._-]+$", json_name[0]):
             json_location = "{}\{}.json".format(json_dir, json_name[0])
             self.settings.setValue("json_location", json_location)
         else:
-            self.show_message("File not found: Please fill in save directory and name")
+            self.show_message("File not found: Please fill in save directory and name correctly.")
             self.settings.setValue("json_location", "")
 
     def get_promotion_piece(self):
@@ -586,4 +591,7 @@ class LoadDialogController(QtGui.QDialog, views.LoadDialog):
 
     def get_game(self):
         """When game is chosen the ID is then found."""
-        self.chosen_game_id = int(self.results_table.item(self.results_table.currentRow(), 0).text())
+        if self.results_table.currentRow() != -1:
+            self.chosen_game_id = int(self.results_table.item(self.results_table.currentRow(), 0).text())
+        else: # if no game selected
+            self.chosen_game_id = 0 # Will not attempt to load game if it is 0.

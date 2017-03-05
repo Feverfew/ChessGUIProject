@@ -25,6 +25,7 @@ def quick_sort(array, low, high):
                 i += 1
         array[low], array[i-1] = array[i-1], array[low]
         return i - 1
+
     if low < high:
         pivot = partition(array, low, high)
         quick_sort(array, low, pivot-1)
