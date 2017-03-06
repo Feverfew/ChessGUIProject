@@ -1,5 +1,5 @@
 \documentclass[twoside, 12pt]{report}
-
+\usepackage{float}
 \usepackage{minted}
 % Margin settings
 \usepackage[a4paper, portrait, margin=1in]{geometry}
@@ -15,14 +15,25 @@
 \linespread{1.6} % Double line-spacing
 % Images
 \usepackage{graphicx}
+\usepackage{tikz}
+\newcommand*\annotatedFigureBoxCustom[8]{\draw[#5,thick,rounded corners] (#1) rectangle (#2);\node at (#4) [fill=#6,thick,shape=circle,draw=#7,inner sep=2pt,font=\sffamily,text=#8] {\textbf{#3}};}
+%\annotatedFigureBox{bottom-left}{top-right}{label}{label-position}
+\newcommand*\annotatedFigureBox[4]{\annotatedFigureBoxCustom{#1}{#2}{#3}{#4}{black}{white}{black}{black}}
+\newcommand*\annotatedFigureText[4]{\node[draw=none, anchor=south west, text=#2, inner sep=0, text width=#3\linewidth,font=\sffamily] at (#1){#4};}
+\newenvironment {annotatedFigure}[1]{\centering\begin{tikzpicture}
+	\node[anchor=south west,inner sep=0] (image) at (0,0) { #1};\begin{scope}[x={(image.south east)},y={(image.north west)}]}{\end{scope}\end{tikzpicture}}
+
 % Directory Tree
 \usepackage{dirtree}
+% Lists
+\usepackage{enumitem}
 % Header & Footer Style
 \usepackage{fancyhdr}
 \pagestyle{fancy}
 % \renewcommand{\chaptermark}[1]{\markboth{#1}{}}
 \renewcommand{\chaptermark}[1]{%
-	\markboth{\thechapter.\ #1}{}}
+	\markboth{\thechapter.\ #1}{}}
+
 \fancyhf{}
 \fancyhead[LE, RO]{\nouppercase{\textsl{\leftmark}}}
 \fancyhead[CE, CO]{Alexander Saoutkin}
@@ -54,73 +65,100 @@ As already mentioned, the JSON file holds an array of games. A game contains the
 \section{Rules of Chess}
 As with any game, there are rules that have to be adhered to for a valid game to be played. For me to have a viable solution to the problem identified, the program I create must follow the rules of chess. Thus in this section I will discuss what these rules are.
 \subsection{The Game Board}
-\begin{center}
-	\includegraphics[width=0.4\textwidth]{images/boards/initial_board}
-\end{center}
+\begin{figure}[H]
+\centering
+	\includegraphics[width=0.3\textwidth]{images/boards/initial_board}
+	\caption{The initial setup of a game of chess.}
+	\label{initial-board}
+\end{figure}
 The initial starting position of the board contains all the types of pieces in the game: pawn, king, queen, bishop, knight and rook. From this point onwards, white is the first to move. Once white has completed a legal move it is then black's turn to do the same and the game continues until the game has reached the state of checkmate and stalemate, which will be explained in detail later. Only one piece can occupy a square on the board, thus a piece cannot take one of its own pieces but can capture opposing pieces as long as it isn't a king.
 
 \paragraph{Note:}when the types of moves that a certain type of piece can make are discussed below, it is assumed that when moved, it does not put the player who is moving the piece into check. In addition, it will be assumed that the move does not mean that the moving piece is in the same place. If this is the case then the move is illegal.
 \subsection{Pawns}
-\begin{center}
+\begin{figure}[H]
+\centering
 	\includegraphics[width=0.3\textwidth]{images/boards/pawn_movement}
-\end{center}
+	\caption{The possible moves a pawn can make.}
+\end{figure}
 The pawn is a type of piece and has two types of moves, depending on the situation. If the pawn is in the same space as its starting position then it can either move one or two spaces forward, given that there is no piece in the way of this movement. In any other position it is only able to move into the next square forward, as long as there is no other piece currently there. 
 \subsubsection{Promotion}
-\begin{center}
+\begin{figure}[H]
+\centering
 	\includegraphics[width=0.3\textwidth]{images/boards/promotion}
-\end{center}
+	\caption{The types of pieces that a pawn can be promoted to.}
+\end{figure}
 When a pawn reaches the other side of the board the pawn must be changed to an additional piece that is a rook, knight, bishop or queen.
 \subsubsection{En Passant}
-\begin{center}
+\begin{figure}[H]
+\centering
 	\includegraphics[width=0.3\textwidth]{images/boards/en_passant}
-\end{center}
+	\caption{A board position in which en passant is possible.}
+\end{figure}
 As can be seen above, if a pawn is moved two spaces forward such that it is horizontally adjacent to an opposing pawn once it is moved, the opposing pawn has an opportunity to capture the pawn and move to the ‘x' marked on the diagram. When this opportunity occurs, whether it is taken or not, it cannot be done again by that player for the rest of the game.
 \subsection{Kings}
-\begin{center}
+\begin{figure}[H]
+\centering
 	\includegraphics[width=0.3\textwidth]{images/boards/king_movement}
-\end{center}
+	\caption{The possible moves of a king.}
+\end{figure}
 The king can move to any adjacent square provided that it is not in check once it completes the move. In addition it should not be adjacent diagonally, horizontally or vertically, to the opposing king after it has moved. 
 \subsubsection{Castling}
-\begin{center}
+\begin{figure}[H]
+\centering
 	\includegraphics[width=0.3\textwidth]{images/boards/castling}
-\end{center}
+	\caption{Movement of king and rook during castling.}
+\end{figure}
 Castling is a move (shown above) that can be performed only if the king and rook have not been moved before. For castling to be performed no pieces must be in the way of the king and the rook moving and any of the squares in between them must not be attacked by an opposing piece.
 \subsection{Bishop}
-\begin{center}
+\begin{figure}[H]
+\centering
 	\includegraphics[width=0.3\textwidth]{images/boards/bishop_movement}
-\end{center}
+	\caption{The possible moves of a bishop.}
+\end{figure}
 The bishop can move diagonally in any direction. Thus, it can only move on the colour of squares that are the same as its starting position.	
 \subsection{Rook}
-\begin{center}
+\begin{figure}[H]
+\centering
 	\includegraphics[width=0.3\textwidth]{images/boards/rook_movement}
-\end{center}
+	\caption{The possibles moves of a rook.}
+\end{figure}
 The rook can move both vertically and horizontally in any direction.
 \subsection{Queen}
-\begin{center}
+\begin{figure}[H]
+\centering
 	\includegraphics[width=0.3\textwidth]{images/boards/queen_movement}
-\end{center}
+	\caption{The possible moves of a queen.}
+\end{figure}
 The queen can both move anywhere diagonally, horizontally and vertically. In other words, a queen can be considered a combination of both the rook and the bishop.
 \subsection{Knight}
-\begin{center}
+\begin{figure}[H]
+\centering
 	\includegraphics[width=0.3\textwidth]{images/boards/knight_movement}
-\end{center}
+	\caption{The possible moves of a knight.}
+\end{figure}
 The knight has one of the more interesting moving patterns. It can move in what is known as an L-shape. To be more precise, the possible moves of a knight can be calculated by moving 2 along vertically and then 1 horizontally either side, and vice-versa. Its attacking moves do not include the path to its possible moves.
 \subsection{Game States}
 In chess there are 3 types of game states that differ from normal play and restrict what legal moves can be made. Two of those are permanent (end of game) states: checkmate and stalemate. The other is check and this means that only moves that take a player out of check can be made. 
 \subsubsection{Check}
-\begin{center}
+\begin{figure}[H]
+\centering
 	\includegraphics[width=0.3\textwidth]{images/boards/check_example}
-\end{center}
+	\caption{An example of check.}
+\end{figure}
 Check occurs when a piece moves such that it is attacking the opposing king. An attacking move is such that if we theoretically suppose that the king is a piece that can be captured by a piece, then it would be captured if the piece moved there. An example of this is the image seen above. An important note is that for pawns this means they cannot check a king if it is horizontally ahead of it, as a pawn cannot move there if we theoretically supposed that a king is able to be captured. However, it can if the king is diagonally adjacent in front of the pawn. 
 \subsubsection{Checkmate}
-\begin{center}
+\begin{figure}[H]
+\centering
 	\includegraphics[width=0.3\textwidth]{images/boards/checkmate_example}
-\end{center}
+	\caption{An example of checkmate.}
+\end{figure}
 Checkmate occurs when a player is put into check and cannot make a move that brings themselves out of check. The person who is in check is the loser of the game and thus the opposing player is the winner. A well-known example is the scholar's mate which can be seen above. The queen cannot be taken by any piece and the king has nowhere to move without still being in check. In addition, the king cannot take the queen as it will put itself in check to the bishop. Thus black concedes the game as it is in a state of checkmate.
 \subsubsection{Stalemate}
-\begin{center}
+\begin{figure}[H]
+\centering
 	\includegraphics[width=0.3\textwidth]{images/boards/stalemate_example}
-\end{center}
+	\caption{An example of stalemate.}
+\end{figure}
 Stalemate occurs when a player who is not in check cannot make any legal moves and thus the game cannot continue. Above is an example of a stalemate. It is black's turn to move but it has no legal moves to make. Any movements are either not available to make or expose the king to being in check to either the far-right pawn or the queen. When a stalemate occurs the game is declared as drawn and there are no winners or losers.
 \section{Setting}
 The program was designed for the school's Chess club and is open for students from year 7 to 13. Chess club currently runs weekly at lunchtimes and is run by a physics teacher – Dr De Silva. Every year a primarily student run inter-house chess competition, with each house having a team of avid chess players, takes place to determine which house has the best chess players. As a member of chess club I identified and researched problems with the current system that the club uses. I also consulted with Dr De Silva about any problems that he has noted in the current system and have used this information to aid me in determining the objectives that I plan for the new system to implement.
@@ -138,7 +176,8 @@ Output is simply where the player moves their piece on the board, which is visib
 In this particular application it is hard to estimate the memory needed to store the data needed to play a game as the data required is dynamic. However, we can make some assumptions about the game and use this to estimate the memory required. 
 
 Firstly, I'll discuss the byte allocations that the Python programming language gives to certain objects and data structures:
-\begin{center}
+\begin{table}[H]
+\centering
 	\begin{tabular}{| l | l | l |}
 		\hline
 		\textbf{Bytes} & \textbf{Type} & \textbf{Details} \\ \hline
@@ -148,12 +187,13 @@ Firstly, I'll discuss the byte allocations that the Python programming language 
 		72 & list & +32 for first element, 8 thereafter. \\ \hline
 		280 & dict & 6th item increases to 1048; 22nd, 3352; 86th, 12568 * \\ \hline
 	\end{tabular}
-\end{center}
-Firstly, the game is stored in a 2D (8*8) list object, with each element of the list containing either an integer with value 0 or a Piece object. However, this is not how the data is stored in the JSON file. Instead, the JSON file mimics all the attributes of the \mintinline{python}/class Board(object)/, apart from the \mintinline{python}/board/ attribute.
+	\caption{Byte allocations for primitive data types in Python.}
+\end{table}
+Firstly, the game is stored in a 2D $ (8\times8) $ list object, with each element of the list containing either an integer with value 0 or a Piece object. However, this is not how the data is stored in the JSON file. Instead, the JSON file mimics all the attributes of the \mintinline{python}/class Board(object)/, apart from the \mintinline{python}/board/ attribute.
 
 In the following table, a list of all the attributes of the board class are contained with the type that they will be stored as in the JSON file. This table will show how many bytes are required to store a game as an upper bound. It is assumed that the player names are 10 characters long, which is unlikely to be the case for one player, let alone two. In addition, it is assumed that no pieces are taken, as if that is the case, then the size of the file will inevitably be smaller.
 
-\begin{center}
+\begin{table}[H]
 	\resizebox{\textwidth}{!}{%
 	\begin{tabular}{| l | l | l | l |}
 		\hline
@@ -184,7 +224,8 @@ In the following table, a list of all the attributes of the board class are cont
 		pieces[*]['has{\_}moved'] & list & $ 72+32+24+8+24=150 $ & 6 (rooks and kings)\\ \hline
 		\multicolumn{2}{|r|}{\textbf{Total}} & \multicolumn{2}{|l|}{11,722 bytes} \\ \hline
 	\end{tabular}}
-\end{center}
+	\caption{Bytes required for the storing of one chess game.}
+\end{table}
 Whilst the following table helps to calculate the size of storing each game, it is not taken into account the overhead of the game list. Thus the formula, $ f(x) $, where $ x $ is the number of games stored, for the upper bound in bytes of the JSON file is:\[ f(x) = (11722)x + (72+32) + 8(x-1) = 11730x + 96\]
 \section{Problems with the Current System}
 The current system consists of chess boards with pieces and paper if results want to be recorded. The main problem that was noticed was that as the club was only hosted on a single lunchtime a week, many games overran past lunchtime and so had to be stopped with no clear winner as the game had not finished. As the game was played on a physical board with pieces and the room that was used for the club is used for lessons as well, the current state of the game is not saved which resulted in the game effectively being cut short. This is incredibly frustrating, especially for higher-level players as their games tend to take longer to finish. 
@@ -238,7 +279,7 @@ The objectives of the new system are as follows:
 \chapter{Documented Design}
 \section{Overall System Design}
 \subsection{Input}
-The first type of input is selecting a piece on the board by clicking on a cell in the 8*8 table that contains a piece corresponding to the player's colour. At this point processing occurs and moves that are legal are added as cells that can be clicked on the table. After this, if a cell is clicked that is not a player's piece then the last clicked piece is moved to that location. If a cell is clicked that is a player's piece the process described above is repeated.
+The first type of input is selecting a piece on the board by clicking on a cell in the $ 8\times8 $ table that contains a piece corresponding to the player's colour. At this point processing occurs and moves that are legal are added as cells that can be clicked on the table. After this, if a cell is clicked that is not a player's piece then the last clicked piece is moved to that location. If a cell is clicked that is a player's piece the process described above is repeated.
 
 The second type of input is the player name's that must be inputted if the game is to be saved. Both names can be edited via 2 separate GUI TextEdit components. 
 
@@ -254,45 +295,56 @@ The second category is the state of the game. When the state of the game changes
 
 The third category is the load dialog. The load dialog greets the user with list of games as rows on a table. The columns of the table give information about each game that is in the JSON file that the program reads from, such as the game ID, players, last played, moved made, winner etc. 
 \section{Modular Structure}
-\subsection{Top Level View}
-\begin{center}
-	\includegraphics{images/design-charts/top_level}
-\end{center}
+\begin{figure}[H]
+\centering
+	\includegraphics[width=1.0\textwidth]{images/design-charts/top_level}
+	\caption{Top level hierarchy chart.}
+\end{figure}
 \subsection{Second Level View}
-\begin{center}
+\begin{figure}[H]
+\centering
 	\includegraphics[width=1.0\textwidth]{images/design-charts/gameplay_level}
-\end{center}
-\begin{center}
+	\caption{Second level hierarchy chart.}
+\end{figure}
+\begin{figure}[H]
+\centering
 	\includegraphics[width=1.0\textwidth]{images/design-charts/filehandling_level}
-\end{center}
+	\caption{Second level hierarchy chart.}
+\end{figure}
 \section{Code Design}
 \subsection{Class Diagrams}
-\begin{center}
+\begin{figure}[H]
+\centering
 	\includegraphics[width=1.0\textwidth]{images/class-diagrams/pieces}
-\end{center}
-\begin{center}
-	\includegraphics[width=0.9\textwidth]{images/class-diagrams/board}
-\end{center}
+	\caption{Class diagram for Piece and its subclasses.}
+\end{figure}
+\begin{figure}[H]
+\centering
+	\includegraphics[width=1.0\textwidth]{images/class-diagrams/board}
+	\caption{Class diagram for the controllers and model of the program.}
+\end{figure}
 \subsection{File and Code Structure}
 As the program is in the form of a Graphical User Interface (GUI) I thought it would be appropriate to design my code around the Model-View-Controller (MVC) framework. The view of the MVC architecture is the definition of the GUI. The model is the logic of the game board and the controller is what accepts inputs and interactions with the view, which converts them to commands to the model. The results of the model processing this data is then given back to the view by the controller. The .ui file type is the file that the Qt framework generates after editing of a GUI occurs in the Qt Designer application. These are then converted to .py by a command line utility pyside-uic. I then collated these files and put them into the views.py file.
-
-\dirtree{%
-.1 /.
-.2 src.
-.3 ui\DTcomment{Contains all the UI files }.
-.4 chessboard.ui.
-.4 loadgame.ui.
-.4 mainwindow.ui.
-.4 promotion.ui.
-.3 algorithms.py\DTcomment{Binary search and quicksort.}.
-.3 board.py\DTcomment{Contains Board class: model for the controller.}.
-.3 Chess.py\DTcomment{Starts the program when run.}.
-.3 controllers.py\DTcomment{Contains all the controllers.}.
-.3 pieces.py\DTcomment{Contains Piece class and its subclasses, used by Board class.}.
-.3 views.py\DTcomment{Contains all the views: these are generated from the .ui files.}.
-.3 resources{\_}rc.py\DTcomment{Contains image data.}.
-.3 requirements.txt\DTcomment{Contains list of all python packages that the program requires to run.}.
-}
+\begin{figure}[H]
+	\dirtree{%
+	.1 /.
+	.2 src.
+	.3 ui\DTcomment{Contains all the UI files }.
+	.4 chessboard.ui.
+	.4 loadgame.ui.
+	.4 mainwindow.ui.
+	.4 promotion.ui.
+	.3 algorithms.py\DTcomment{Binary search and quicksort.}.
+	.3 board.py\DTcomment{Contains Board class: model for the controller.}.
+	.3 Chess.py\DTcomment{Starts the program when run.}.
+	.3 controllers.py\DTcomment{Contains all the controllers.}.
+	.3 pieces.py\DTcomment{Contains Piece class and its subclasses, used by Board class.}.
+	.3 views.py\DTcomment{Contains all the views: these are generated from the .ui files.}.
+	.3 resources{\_}rc.py\DTcomment{Contains image data.}.
+	.3 requirements.txt\DTcomment{Contains list of all python packages that the program requires to run.}.
+	}
+	\caption{Code structure of the program.}
+\end{figure}
 \subsection{Required Software}
 For this program to run via running the Chess.py file it is required that Python 3 up until 3.4 is installed on the computer that the program will be run from, anything higher is not supported. This is because the program relies on PySide being installed and it does not support versions newer than 3.4. 
 \subsection{Code Documentation}
@@ -750,77 +802,106 @@ class Pawn(Piece):
 		"""Calculates all the possible moves for a pawn in a certain position."""
 \end{minted}
 \section{Input Validation}
-\resizebox{\textwidth}{!}{%
-\begin{tabular}{|p{0.25\textwidth}|p{0.2\textwidth}|p{0.3\textwidth}|p{0.25\textwidth}|}
-	\hline
-	\textbf{Field} & \textbf{Validation} & \textbf{Description} & \textbf{Error Message}\\ \hline
-	Player names & Presence & Check for their presence & "Please fill in the player names"\\ \hline
-	Path to JSON file & Valid & Checks that file exists at specified location & "File not found"\\ \hline
-	Name of new JSON file & Presence/Valid & Must not contain special characters & "File not saved"\\ \hline
-	Game to load & Presence & Make sure ID corresponds to existing game & Game not loaded\\ \hline
-	Move to make & Move legality & Checks if a proposed move is valid & Illegal moves are not marked yellow and are not clickable on the table\\ \hline
-\end{tabular}}
+\begin{table}[H]
+\centering
+	\resizebox{\textwidth}{!}{%
+	\begin{tabular}{|p{0.25\textwidth}|p{0.2\textwidth}|p{0.3\textwidth}|p{0.25\textwidth}|}
+		\hline
+		\textbf{Field} & \textbf{Validation} & \textbf{Description} & \textbf{Error Message}\\ \hline
+		Player names & Presence & Check for their presence & "Please fill in the player names"\\ \hline
+		Path to JSON file & Valid & Checks that file exists at specified location & "File not found"\\ \hline
+		Name of new JSON file & Presence/Valid & Must not contain special characters & "File not saved"\\ \hline
+		Game to load & Presence & Make sure ID corresponds to existing game & Game not loaded\\ \hline
+		Move to make & Move legality & Checks if a proposed move is valid & Illegal moves are not marked yellow and are not clickable on the table\\ \hline
+	\end{tabular}}
+	\caption{Table of information on input validation.}
+\end{table}
 \section{Algorithm Commentary}
 In this section, algorithms used in the code base that are considered complex are fully explained.
 \subsection{Binary Search}
-Below is the code for the binary search algorithm
-\begin{minted}[breaklines, breakanywhere, tabsize=4, baselinestretch=1.0, fontsize=\footnotesize, linenos]{python}
-def binary_search(search_term, array):
-	"""Searches for an item in an already sorted list.
+\begin{figure}[h]
+	\begin{minted}[breaklines, breakanywhere, tabsize=4, baselinestretch=1.0, fontsize=\footnotesize, linenos]{python}
+		def binary_search(search_term, array):
+		"""Searches for an item in an already sorted list.
+	
+		Args:
+			search_term (str): term to be searched for in the list.
+			array (list): list to be searched.
+	
+		Returns:
+			True if found, False otherwise.
+		"""
+		half_array = int(len(array)/2)
+		if search_term == array[half_array]:
+			return True
+		elif len(array) == 1:
+			return False
+		elif search_term > array[half_array]:
+			return binary_search(search_term, array[half_array:])
+		else:
+			return binary_search(search_term, array[:half_array])
+	\end{minted}
+	\caption{Source code for the recursive binary search algorithm.}
+\end{figure}
 
-	Args:
-		search_term (str): term to be searched for in the list.
-		array (list): list to be searched.
-
-	Returns:
-		True if found, False otherwise.
-	"""
-	half_array = int(len(array)/2)
-	if search_term == array[half_array]:
-		return True
-	elif len(array) == 1:
-		return False
-	elif search_term > array[half_array]:
-		return binary_search(search_term, array[half_array:])
-	else:
-		return binary_search(search_term, array[:half_array])
-\end{minted}
 As can be noted, this algorithm is a recursive function, with recursive calls at lines 17 and 19. The function is given a sorted array and compares the middle value of the array to the search term. The base case is met when the search term is found (line 13) or if the length of the array to be searched is 1 \textbf{and} the search term is not found (line 15). If that is not the case then if the search term is larger than the middle value, then the left half of the array is passed into the same function. Otherwise the right half is passed into the same function. This carries on until the base case is met. When it is the value of \mintinline{python}/True/ or \mintinline{python}/False/ is passed up the call stack such that the first call of the function will return \mintinline{python}/True/ or \mintinline{python}/False/.
 \subsection{Quicksort}
 Below is the code for the recursive quicksort algorithm:
-\begin{minted}[breaklines, breakanywhere, tabsize=4, baselinestretch=1.0, fontsize=\footnotesize, linenos]{python}
-def quick_sort(array, low, high):
-	"""Sorts a list recursively.
-
-	Args:
-		array (list): the list to be sorted.
-		low (int): index of lowest item to be sorted.
-		high (int): index of highest item to be sorted.
-	"""
-	def partition(array, low, high):
-		"""Partitions array using a pivot value.
-
+\begin{figure}[H]
+	\begin{minted}[breaklines, breakanywhere, tabsize=4, baselinestretch=1.0, fontsize=\footnotesize, linenos]{python}
+	def quick_sort(array, low, high):
+		"""Sorts a list recursively.
+	
 		Args:
 			array (list): the list to be sorted.
 			low (int): index of lowest item to be sorted.
 			high (int): index of highest item to be sorted.
-
-		Returns:
-			The value of the pivot.
 		"""
-		i = low + 1
-		pivot = array[low]
-		for j in range(low+1, high+1):
-			if array[j] < pivot:
-				array[j], array[i] = array[i], array[j]
-				i += 1
-			array[low], array[i-1] = array[i-1], array[low]
-			return i - 1
-			
-	if low < high:
-		pivot = partition(array, low, high)
-		quick_sort(array, low, pivot-1)
-		quick_sort(array, pivot+1, high)
-\end{minted}
+		def partition(array, low, high):
+			"""Partitions array using a pivot value.
+	
+			Args:
+				array (list): the list to be sorted.
+				low (int): index of lowest item to be sorted.
+				high (int): index of highest item to be sorted.
+	
+			Returns:
+				The value of the pivot.
+			"""
+			i = low + 1
+			pivot = array[low]
+			for j in range(low+1, high+1):
+				if array[j] < pivot:
+					array[j], array[i] = array[i], array[j]
+					i += 1
+				array[low], array[i-1] = array[i-1], array[low]
+				return i - 1
+				
+		if low < high:
+			pivot = partition(array, low, high)
+			quick_sort(array, low, pivot-1)
+			quick_sort(array, pivot+1, high)
+	\end{minted}
+	\caption{Source code for the recursive quicksort algorithm.}
+\end{figure}
 It can be noted that there is an inner function defined at line 9. Instead of defining it as another function I decided to use it as an inner function to avoid code repetition and because it has no use outside of the quicksort function. The function accepts an unsorted list, and the index of the lowest and highest element of the list to sort. The partition function is then called, where the pivot value is the first element in the list. The array is changed such that all elements smaller than the pivot are put before it, and all elements bigger are put after it. Then the quicksort function is called twice. Once for values below the pivot and for values after. Once the base case has been met for each recursive call, the list is sorted. It does not need to be returned as an array (list) in python is a mutable change and is thus changed in its scope.
+\section{User Interface}
+\begin{figure}[h!t]
+	\begin{annotatedFigure}
+		{\includegraphics[width=1.0\linewidth]{images/screenshots/gui-overview.PNG}}
+		\annotatedFigureBox{0.0099,0.046}{0.9924,0.9422}{A}{0.0099,0.9422}%tl
+		\annotatedFigureBox{0.6296,0.952}{1,0.996}{B}{0.6296,0.952}%bl
+		\annotatedFigureBox{0.1223,0.0031}{0.2228,0.04}{C}{0.2228,0.04}%tr
+		\annotatedFigureBox{0.4443,0.004}{0.5611,0.044}{D}{0.5611,0.044}%tr
+		\annotatedFigureBox{0.7707,0.002}{0.8875,0.042}{E}{0.8875,0.042}%tr
+	\end{annotatedFigure}
+	\caption{UI of the main program.}
+\end{figure}
+\begin{enumerate}[label=(\Alph*)]
+	\item This is an $ 8\times8 $ table where input is carried out by clicking a piece then clicking again to a place where the piece is desired to be moved to. Only pieces for the player that is currently moving can be clicked. When it is clicked all of its legal moves are made yellow, and its cells are made clickable. All the cells of illegal moves are made unclickable, which simplifies validations of moves proposed a user.
+	\item This is where the name of the second player (black) is added. To the left is where the name of the first player can be added.
+	\item Pressing this button starts a new game, with the board the same as in figure~\ref{initial-board}.
+	\item Pressing this button results in a dialog being shown, where the user can choose which game to load. If the game file is not found then the user will be prompted to insert the file's path.
+	\item Pressing this button saves the game or prompts the user for a path to save the file in.
+\end{enumerate}
 \end{document}          
