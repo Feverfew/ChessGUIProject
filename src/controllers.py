@@ -179,41 +179,39 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
             TypeError: raised when there is an error loading a file.
             KeyError: raised when there is corruption in the JSON file.
         """
-        if self.settings.value('json_location'):
-            try:
-                data = None
-                with open(self.settings.value('json_location')) as json_file:
-                    data = json.load(json_file)
-                game_loader = LoadDialogController(data)
-                game_loader.exec()
-                game = []
-                if game_loader.chosen_game_id != 0:
-                    for temp_game in data['games']:
-                        if game_loader.chosen_game_id == temp_game['id']:
-                            game = temp_game
-                            break
-                    self.board = Board(game)
-                    self.player_one_edit.setText(game['player_one'])
-                    self.player_two_edit.setText(game['player_two'])
-                    self.board.check_game_state()
-                    self.output_board()
-                    if self.board.game_over and self.board.is_stalemate:
-                        self.show_message("Game is a draw. No one wins")
-                    elif self.board.game_over:
-                        self.show_message("{} is the winner".format(self.board.winner))
-                    elif self.board.colour_in_check:
-                        self.show_message("{} is in check".format(self.board.colour_in_check))
-            except (IOError, FileNotFoundError, TypeError):
-                self.show_message("Game file not found!")
-                self.get_load_path()
-                self.show_message("Press Load game again.")
-            except (KeyError):
-                self.show_message("Data file is corrupt. Please choose another file")
-                self.get_load_path()
-                self.load_game("Press Load game again.")
-        else:
+        try:
+            data = None
+            with open(self.settings.value('json_location')) as json_file:
+                data = json.load(json_file)
+            game_loader = LoadDialogController(data)
+            game_loader.exec()
+            game = []
+            if game_loader.chosen_game_id != 0:
+                for temp_game in data['games']:
+                    if game_loader.chosen_game_id == temp_game['id']:
+                        game = temp_game
+                        break
+                self.board = Board(game)
+                self.player_one_edit.setText(game['player_one'])
+                self.player_two_edit.setText(game['player_two'])
+                self.board.check_game_state()
+                self.output_board()
+                if self.board.game_over and self.board.is_stalemate:
+                    self.show_message("Game is a draw. No one wins")
+                elif self.board.game_over:
+                    self.show_message("{} is the winner".format(self.board.winner))
+                elif self.board.colour_in_check:
+                    self.show_message("{} is in check".format(self.board.colour_in_check))
+        except (IOError, FileNotFoundError, TypeError):
+            self.show_message("Game file not found!")
             self.get_load_path()
-            self.load_game("Press Load game again.")
+            if self.settings.value:
+                self.show_message("Press Load game again.")
+        except (KeyError):
+            self.show_message("Data file is corrupt. Please choose another file")
+            self.get_load_path()
+            if self.settings.value:
+                self.load_game("Press Load game again.")
 
     def save_game(self):
         """Saves a currently played game, either in an existing JSON file or a new one.

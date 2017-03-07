@@ -618,8 +618,11 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
 			FileNotFoundError: raised when a file is not found.
 		"""
 		
- 	def get_json_file(self):
-		"""Gets the location of the JSON file from the user"""
+	def get_load_path(self):
+		"""Gets the JSON file to load"""
+		
+	def get_save_path(self):
+		"""Gets the desired path and filename of the file to save."""
 	
  	def get_promotion_piece(self):
 		"""Gets the piece that needs to be promoted"""
@@ -822,24 +825,24 @@ In this section, algorithms used in the code base that are considered complex ar
 \begin{figure}[h]
 	\begin{minted}[breaklines, breakanywhere, tabsize=4, baselinestretch=1.0, fontsize=\footnotesize, linenos]{python}
 		def binary_search(search_term, array):
-		"""Searches for an item in an already sorted list.
+			"""Searches for an item in an already sorted list.
 	
-		Args:
-			search_term (str): term to be searched for in the list.
-			array (list): list to be searched.
+			Args:
+				search_term (str): term to be searched for in the list.
+				array (list): list to be searched.
 	
-		Returns:
-			True if found, False otherwise.
-		"""
-		half_array = int(len(array)/2)
-		if search_term == array[half_array]:
-			return True
-		elif len(array) == 1:
-			return False
-		elif search_term > array[half_array]:
-			return binary_search(search_term, array[half_array:])
-		else:
-			return binary_search(search_term, array[:half_array])
+			Returns:
+				True if found, False otherwise.
+			"""
+			half_array = int(len(array)/2)
+			if search_term == array[half_array]:
+				return True
+			elif len(array) == 1:
+				return False
+			elif search_term > array[half_array]:
+				return binary_search(search_term, array[half_array:])
+			else:
+				return binary_search(search_term, array[:half_array])
 	\end{minted}
 	\caption{Source code for the recursive binary search algorithm.}
 \end{figure}
@@ -898,10 +901,47 @@ It can be noted that there is an inner function defined at line 9. Instead of de
 	\caption{UI of the main program.}
 \end{figure}
 \begin{enumerate}[label=(\Alph*)]
-	\item This is an $ 8\times8 $ table where input is carried out by clicking a piece then clicking again to a place where the piece is desired to be moved to. Only pieces for the player that is currently moving can be clicked. When it is clicked all of its legal moves are made yellow, and its cells are made clickable. All the cells of illegal moves are made unclickable, which simplifies validations of moves proposed a user.
+	\item This is an $ 8\times8 $ table where input is carried out by clicking a piece then clicking again to a place where the piece is desired to be moved to. Only pieces for the player that is currently moving can be clicked. When it is clicked, all of its legal moves are made yellow, and its cells are made clickable. All the cells of illegal moves are made unclickable, which simplifies validations of moves proposed a user.
 	\item This is where the name of the second player (black) is added. To the left is where the name of the first player can be added.
 	\item Pressing this button starts a new game, with the board the same as in figure~\ref{initial-board}.
 	\item Pressing this button results in a dialog being shown, where the user can choose which game to load. If the game file is not found then the user will be prompted to insert the file's path.
 	\item Pressing this button saves the game or prompts the user for a path to save the file in.
 \end{enumerate}
+\begin{figure}[H]
+	\centering
+	\begin{annotatedFigure}
+		{\includegraphics{images/screenshots/load-dialog}}
+		\annotatedFigureBox{0.011,0.8691}{0.9805,0.9347}{A}{0.011,0.8691}%bl
+		\annotatedFigureBox{0.011,0.6813}{0.9815,0.8631}{B}{0.011,0.6813}%bl
+		\annotatedFigureBox{0.72,0.01}{0.9875,0.065}{C}{0.72,0.01}%tl
+	\end{annotatedFigure}
+	\caption{The load dialog of the program.}
+\end{figure}
+\begin{enumerate}[label=(\Alph*)]
+	\item This section comprises of two dropdown lists, one of which determines what to sort the list of games by and the second determines whether they should be shown in ascending or descending order.
+	\item This table shows the list of all of the games that are saved in the JSON file.
+	\item The user can either cancel or open a game. For a game to be successfully loaded, the user must click on a game in the list and then press the 'Open' button.
+\end{enumerate}
+\begin{figure}[H]
+\centering
+	\includegraphics[width=1.0\textwidth]{images/screenshots/save-as-dialog}
+	\caption{A "Save As" dialog used to save a new game file.}
+\end{figure}
+\begin{figure}[H]
+\centering
+	\includegraphics[width=1.0\textwidth]{images/screenshots/load-file-dialog}
+	\caption{A file chooser dialog used to choose the game file to load.}
+\end{figure}
+\chapter{Testing}
+\section{Testing Plan}
+\begin{table}[H]
+	\resizebox{\textwidth}{!}{%
+	\begin{tabular}{|p{0.04\textwidth}|p{0.15\textwidth}|p{0.1\textwidth}|p{0.25\textwidth}|p{0.23\textwidth}|p{0.13\textwidth}|p{0.1\textwidth}|}
+		\hline
+		\textbf{ID} & \textbf{Obj ID} & \textbf{Test Data} & \textbf{Description} & \textbf{Expected Result} & \textbf{Evidence} & \textbf{pass}\\ \hline
+		1 & 1a & N/A & Check that program is usable. & A new game & Figure & Yes \\ \hline
+		1 & 1b & Click piece & Check that other person's piece can't be moved & Not clickable & Figure & Yes \\ \hline
+	\end{tabular}}
+	\caption{List of tests that been conducted and their results.}
+\end{table}
 \end{document}          
