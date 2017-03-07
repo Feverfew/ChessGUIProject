@@ -179,35 +179,41 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
             TypeError: raised when there is an error loading a file.
             KeyError: raised when there is corruption in the JSON file.
         """
-        try:
-            data = None
-            with open(self.settings.value('json_location')) as json_file:
-                data = json.load(json_file)
-            game_loader = LoadDialogController(data)
-            game_loader.exec()
-            game = []
-            if game_loader.chosen_game_id != 0:
-                for temp_game in data['games']:
-                    if game_loader.chosen_game_id == temp_game['id']:
-                        game = temp_game
-                        break
-                self.board = Board(game)
-                self.player_one_edit.setText(game['player_one'])
-                self.player_two_edit.setText(game['player_two'])
-                self.board.check_game_state()
-                self.output_board()
-                if self.board.game_over and self.board.is_stalemate:
-                    self.show_message("Game is a draw. No one wins")
-                elif self.board.game_over:
-                    self.show_message("{} is the winner".format(self.board.winner))
-                elif self.board.colour_in_check:
-                    self.show_message("{} is in check".format(self.board.colour_in_check))
-        except (IOError, FileNotFoundError, TypeError):
-            self.show_message("Game file not found!")
-            self.get_json_file()
-        except (KeyError):
-            self.show_message("Data file is corrupt. Please choose another file")
-            self.get_json_file()
+        if self.settings.value('json_location'):
+            try:
+                data = None
+                with open(self.settings.value('json_location')) as json_file:
+                    data = json.load(json_file)
+                game_loader = LoadDialogController(data)
+                game_loader.exec()
+                game = []
+                if game_loader.chosen_game_id != 0:
+                    for temp_game in data['games']:
+                        if game_loader.chosen_game_id == temp_game['id']:
+                            game = temp_game
+                            break
+                    self.board = Board(game)
+                    self.player_one_edit.setText(game['player_one'])
+                    self.player_two_edit.setText(game['player_two'])
+                    self.board.check_game_state()
+                    self.output_board()
+                    if self.board.game_over and self.board.is_stalemate:
+                        self.show_message("Game is a draw. No one wins")
+                    elif self.board.game_over:
+                        self.show_message("{} is the winner".format(self.board.winner))
+                    elif self.board.colour_in_check:
+                        self.show_message("{} is in check".format(self.board.colour_in_check))
+            except (IOError, FileNotFoundError, TypeError):
+                self.show_message("Game file not found!")
+                self.get_load_path()
+                self.show_message("Press Load game again.")
+            except (KeyError):
+                self.show_message("Data file is corrupt. Please choose another file")
+                self.get_load_path()
+                self.load_game("Press Load game again.")
+        else:
+            self.get_load_path()
+            self.load_game("Press Load game again.")
 
     def save_game(self):
         """Saves a currently played game, either in an existing JSON file or a new one.
@@ -334,7 +340,7 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
                     self.settings.setValue("json_location", "")
                     self.save_game()
             else:
-                self.get_json_file()
+                self.get_save_path()
                 if self.settings.value('json_location'):
                     data = {'games': []}
                     game['id'] = 1
@@ -351,17 +357,24 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
                     self.show_message("File not saved")
         else:
             self.show_message("Please fill in the player names")
-    
-    def get_json_file(self):
-        """Gets the location of the JSON file from the user"""
-        json_dir = QtGui.QFileDialog().getExistingDirectory()
-        json_name = QtGui.QInputDialog.getText(self, "JSON File Name Input", "JSON File Name:")
-        if json_dir and json_name[1] and re.match(r"^[a-zA-Z0-9._-]+$", json_name[0]):
-            json_location = "{}\{}.json".format(json_dir, json_name[0])
-            self.settings.setValue("json_location", json_location)
+
+    def get_load_path(self):
+        """Gets the JSON file to load"""
+        filepath = QtGui.QFileDialog().getOpenFileName(self, "Load Game", QtCore.QDir.homePath(),  "Game file (*.json)")
+        if filepath[0]:
+            self.settings.setValue("json_location", filepath[0])
         else:
-            self.show_message("File not found: Please fill in save directory and name correctly.")
             self.settings.setValue("json_location", "")
+            self.show_message("File not chosen.")
+
+    def get_save_path(self):
+        """Gets the desired path and filename of the file to save."""
+        filepath = QtGui.QFileDialog().getSaveFileName(self, "Save as", QtCore.QDir.homePath(), "Game file (*.json)")
+        if filepath[0]:
+            self.settings.setValue("json_location", filepath[0])
+        else:
+            self.settings.setValue("json_location", "")
+            self.show_message("File not saved")
 
     def get_promotion_piece(self):
         """Gets the piece that needs to be promoted"""
