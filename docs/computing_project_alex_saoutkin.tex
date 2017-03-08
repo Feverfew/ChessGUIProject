@@ -37,13 +37,14 @@
 \fancyhf{}
 \fancyhead[LE, RO]{\nouppercase{\textsl{\leftmark}}}
 \fancyhead[CE, CO]{Alexander Saoutkin}
-\fancyhead[RE, LO]{Candidate Number: 0191}
+\fancyhead[RE, LO]{Candidate Number: 2159}
 \fancyfoot[LE, RO]{\thepage}
 
 
 % Title Page
 \title{Chess for students; written in Python}
-\author{Alexander Saoutkin}
+\author{Alexander Saoutkin\\Candidate Number: 2159\\Centre Number: 10834}
+\date{March 2017}
 
 
 \begin{document}
@@ -898,6 +899,7 @@ It can be noted that there is an inner function defined at line 9. Instead of de
 		\annotatedFigureBox{0.4443,0.004}{0.5611,0.044}{D}{0.5611,0.044}%tr
 		\annotatedFigureBox{0.7707,0.002}{0.8875,0.042}{E}{0.8875,0.042}%tr
 	\end{annotatedFigure}
+	\label{gui-overview}
 	\caption{UI of the main program.}
 \end{figure}
 \begin{enumerate}[label=(\Alph*)]
@@ -936,12 +938,19 @@ It can be noted that there is an inner function defined at line 9. Instead of de
 \section{Testing Plan}
 \begin{table}[H]
 	\resizebox{\textwidth}{!}{%
-	\begin{tabular}{|p{0.04\textwidth}|p{0.15\textwidth}|p{0.1\textwidth}|p{0.25\textwidth}|p{0.23\textwidth}|p{0.13\textwidth}|p{0.1\textwidth}|}
+	\begin{tabular}{|p{0.04\textwidth}|p{0.1\textwidth}|p{0.15\textwidth}|p{0.25\textwidth}|p{0.23\textwidth}|p{0.13\textwidth}|p{0.1\textwidth}|}
 		\hline
-		\textbf{ID} & \textbf{Obj ID} & \textbf{Test Data} & \textbf{Description} & \textbf{Expected Result} & \textbf{Evidence} & \textbf{pass}\\ \hline
-		1 & 1a & N/A & Check that program is usable. & A new game & Figure & Yes \\ \hline
+		\textbf{ID} & \textbf{Obj ID} & \textbf{Test Data} & \textbf{Description} & \textbf{Expected Result} & \textbf{Evidence} & \textbf{Passed}\\ \hline
+		1 & 1a & Start Program & Check that program is usable. & A new game & Figure~\ref{gui-overview} & Yes \\ \hline
 		1 & 1b & Click piece & Check that other person's piece can't be moved & Not clickable & Figure & Yes \\ \hline
+		1 & 1c & Click piece & Check that other person's piece can't be moved & Not clickable & Figure & Yes \\ \hline
+		
 	\end{tabular}}
 	\caption{List of tests that been conducted and their results.}
 \end{table}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1.0\textwidth]{images/screenshots/load-file-dialog}
+	\caption{A file chooser dialog used to choose the game file to load.}
+\end{figure}
 \end{document}          
