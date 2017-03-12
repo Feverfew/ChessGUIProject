@@ -1,0 +1,33 @@
+\chapter{Testing}
+To be able to evaluate the effectiveness of the solution in its fulfilment of the objectives outlined in section \ref{objectives} on page \pageref{objectives}, it is necessary to conduct testing of the new system. Thus a test plan has been created, which when carried out, will determine whether the solution has met the requirements that have been agreed by the client and developer. The evidence (screen shots) of these tests have been included in the Appendix and start on page \pageref{appendix}.
+\section{Testing Plan}
+\footnotesize
+\begin{longtable}{|p{0.03\textwidth}|p{0.08\textwidth}|p{0.16\textwidth}|p{0.16\textwidth}|p{0.2\textwidth}|p{0.1\textwidth}|p{0.08\textwidth}|}
+\hline
+\textbf{ID} & \textbf{Obj ID} & \textbf{Test Data} & \textbf{Description} & \textbf{Expected Result} & \textbf{Evidence} & \textbf{Passed}\\ \hline
+1 & 1a & Start Program. & Check that program is usable. & A new game & Figure~\ref{test-1} & Yes \\ \hline
+2 & 1b & Click piece. & Check that other person's piece can't be moved & Not clickable. & Figure~\ref{test-2} & Yes \\ \hline
+3 & 1c & Click queen. & Checks that the queen moves as expected & Legal moves shown in yellow. & Figure~\ref{test-3} & Yes \\ \hline
+4 & 1c & Click king. & Checks that the king moves as expected & Legal moves shown in yellow. & Figure~\ref{test-4} & Yes \\ \hline
+5 & 1c & Click bishop. & Checks that the bishop moves as expected & Legal moves shown in yellow. & Figure~\ref{test-5} & Yes \\ \hline
+6 & 1c & Click knight. & Checks that the knight moves as expected & Legal moves shown in yellow. & Figure~\ref{test-6} & Yes \\ \hline
+7 & 1c & Click rook. & Checks that the rook moves as expected & Legal moves shown in yellow. & Figure~\ref{test-7} & Yes \\ \hline
+8 & 1c & Click pawn. & Checks that the pawn moves as expected & Legal moves shown in yellow. & Figure~\ref{test-8} & Yes \\ \hline
+9 & 1c & Click pawn. & Checks that the pawn can do en passant & En passant move shown in yellow. & Figure~\ref{test-9} & Yes \\ \hline
+10 & 1c & Click king. & Checks that king can castle & Castling move shown in yellow & Figure~\ref{test-10} & Yes \\ \hline
+11 & 1d & Put player into check. & Correctly identifies change in game state & Dialog shown when game state changes. & Figure~\ref{test-11} & Yes \\ \hline
+12 & 1d & Put player into checkmate. & Correctly identifies change in game state & Dialog shown when game state changes. & Figure~\ref{test-12} & Yes \\ \hline
+13 & 1d & Put game into stalemate. & Correctly identifies change in game state & Dialog shown when game state changes. & Figure~\ref{test-13} & Yes \\ \hline
+14 & 1e & Move pawn. & Checks that promotion feature works. & Dialog allowing user to choose a new piece. & Figure~\ref{test-14} & Yes \\ \hline
+15 & 2 & "Keith", "Michael" & Allows names of players to be added & Names correctly saved. & Figure~\ref{test-15} & Yes \\ \hline
+16 & 2 & "Simon", "Alice" & Allows names of players to be changed & Changed names correctly saved. & Figure~\ref{test-16} & Yes \\ \hline
+17 & 3a & Press "Save Game" when there is no file path. & Allow a game that is currently in play to be saved & Dialog allowing file path to be chosen. & Figure~\ref{test-17} & Yes \\ \hline
+18 & 3b/d & Press "Save Game" when there is a file path. & Allow a game that is currently in play to be saved & Dialog stating that game has been saved. & Figure~\ref{test-18} & Yes \\ \hline
+19 & 3c & Press "Save Game" when there is a file path but no file there.& Allow a game that is currently in play to be saved & Dialog allowing file path to be chosen. & Figure~\ref{test-19} & Yes \\ \hline
+20 & 3e & Press "Save Game" when player names are not filled. & Save only when required data is filled. & Dialog requesting that names be filled. & Figure~\ref{test-20} & Yes \\ \hline
+21 & 3f & Open existing game and make a move. & Check that existing games can be overwritten. & Game saved & Figure~\ref{test-21} & Yes \\ \hline
+22 & 4a & Press "Load Game" when file does not exist. & Allow user to select the game file to load from. & Dialog requesting for path to file & Figure~\ref{test-22} & Yes \\ \hline
+23 & 4bi & Press "Load Game" & Check that list of games is shown & Load dialog present. & Figure~\ref{test-23} & Yes \\ \hline
+24 & 4bii & Choose parameters and press sort & Check that games can be sorted. & Correctly sorted list of games. & Figure~\ref{test-24} & Yes \\ \hline
+\caption{List of tests that been conducted and their results.} 
+\end{longtable}

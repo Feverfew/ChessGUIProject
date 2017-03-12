@@ -1,0 +1,43 @@
+\usepackage{float}
+\usepackage{minted}
+% Table Settings
+\usepackage{longtable}
+\usepackage{adjustbox}
+% Margin settings
+\usepackage[a4paper, portrait, margin=1in]{geometry}
+%Table of Contents settings
+\usepackage[hidelinks]{hyperref}
+\hypersetup{linktoc=all}
+% Chapter settings
+\usepackage{titlesec}
+\titleformat{\chapter}[display]{\normalfont\Large\bfseries}{}{0.5ex}{}{}
+% Paragraph settings
+\setlength{\parskip}{1em}
+\setlength{\parindent}{0pt}
+\linespread{1.6} % Double line-spacing
+% Images
+\usepackage{graphicx}
+\usepackage{tikz}
+\newcommand*\annotatedFigureBoxCustom[8]{\draw[#5,thick,rounded corners] (#1) rectangle (#2);\node at (#4) [fill=#6,thick,shape=circle,draw=#7,inner sep=2pt,font=\sffamily,text=#8] {\textbf{#3}};}
+%\annotatedFigureBox{bottom-left}{top-right}{label}{label-position}
+\newcommand*\annotatedFigureBox[4]{\annotatedFigureBoxCustom{#1}{#2}{#3}{#4}{black}{white}{black}{black}}
+\newcommand*\annotatedFigureText[4]{\node[draw=none, anchor=south west, text=#2, inner sep=0, text width=#3\linewidth,font=\sffamily] at (#1){#4};}
+\newenvironment {annotatedFigure}[1]{\centering\begin{tikzpicture}
+	\node[anchor=south west,inner sep=0] (image) at (0,0) { #1};\begin{scope}[x={(image.south east)},y={(image.north west)}]}{\end{scope}\end{tikzpicture}}
+
+% Directory Tree
+\usepackage{dirtree}
+% Lists
+\usepackage{enumitem}
+% Header & Footer Style
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+% \renewcommand{\chaptermark}[1]{\markboth{#1}{}}
+\renewcommand{\chaptermark}[1]{%
+	\markboth{\thechapter.\ #1}{}}
+
+\fancyhf{}
+\fancyhead[LE, RO]{\nouppercase{\textsl{\leftmark}}}
+\fancyhead[CE, CO]{Alexander Saoutkin}
+\fancyhead[RE, LO]{Candidate Number: 2159}
+\fancyfoot[LE, RO]{\thepage}
