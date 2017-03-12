@@ -1,6 +1,9 @@
 \documentclass[twoside, 12pt]{report}
 \usepackage{float}
 \usepackage{minted}
+% Table Settings
+\usepackage{longtable}
+\usepackage{adjustbox}
 % Margin settings
 \usepackage[a4paper, portrait, margin=1in]{geometry}
 %Table of Contents settings
@@ -234,7 +237,7 @@ The current system consists of chess boards with pieces and paper if results wan
 Another problem came from when in-school chess competitions occurred. These competitions required results to be recorded such that it could be determined who plays who in further rounds of the competition, i.e. what teams play against one another in the final. These are recorded at lunchtime on the board and then recorded later on paper. There are of course problems with such a system. Firstly, results can easily be lost as it is held in one location. This also means that only one person can view the results at the time, unless the results are published in an e-mail which takes time to produce. In addition, it does not store the final state of the game when finished which may be of interest to students and teachers alike.
 
 A problem that has been noted by students is that even though they are willing to attend chess club, many are unable to attend at lunchtimes on a certain day because they have other commitments and so end up not attending at all despite their desire to do so. Many students would like to be able to play chess games outside of club hours amongst each other with results recorded at school.
-\section{Objectives}
+\section{Objectives} \label{objectives}
 After the analysis of the current system and the requirements that would be needed for an improved system I have created SMART (Specific, Measurable, Achievable, Realistic and Timely) objectives which make clear to me - the developer – what the client requires for their new system which has been determined to be accomplishable and adheres to all of the letters of the SMART abbreviation: Specific, Measurable, Achievable, Realistic, Timely.
 
 The objectives of the new system are as follows:
@@ -247,6 +250,7 @@ The objectives of the new system are as follows:
 		\begin{enumerate}
 			\item For each type of piece calculate where it could possibly go assuming there are no other pieces on the board (i.e. bishops diagonally, rooks horizontally/vertically etc.).
 			\item Taking into account where other pieces are on the board, calculate the possible moves for that piece.
+			\item If we are checking moves for a king, check that castling is possible. If we are checking moves for a pawn, check that en passant is possible.
 			\item Considering the moves that have been calculated, check that each position does not result in the moving player to be in check. 
 			\begin{enumerate}
 				\item If a move results in a player going into check then remove that move from the list of legal moves.
@@ -823,7 +827,7 @@ class Pawn(Piece):
 \section{Algorithm Commentary}
 In this section, algorithms used in the code base that are considered complex are fully explained.
 \subsection{Binary Search}
-\begin{figure}[h]
+\begin{figure}[H]
 	\begin{minted}[breaklines, breakanywhere, tabsize=4, baselinestretch=1.0, fontsize=\footnotesize, linenos]{python}
 		def binary_search(search_term, array):
 			"""Searches for an item in an already sorted list.
@@ -892,9 +896,9 @@ It can be noted that there is an inner function defined at line 9. Instead of de
 \section{User Interface}
 \begin{figure}[h!t]
 	\begin{annotatedFigure}
-		{\includegraphics[width=1.0\linewidth]{images/screenshots/gui-overview.PNG}}
-		\annotatedFigureBox{0.0099,0.046}{0.9924,0.9422}{A}{0.0099,0.9422}%tl
-		\annotatedFigureBox{0.6296,0.952}{1,0.996}{B}{0.6296,0.952}%bl
+		{\includegraphics[width=1.0\linewidth]{images/screenshots/gui-overview}}
+		\annotatedFigureBox{0.0099,0.046}{0.9924,0.95}{A}{0.0099,0.95}%tl
+		\annotatedFigureBox{0.6,0.96}{1,1}{B}{0.6,0.96}%bl
 		\annotatedFigureBox{0.1223,0.0031}{0.2228,0.04}{C}{0.2228,0.04}%tr
 		\annotatedFigureBox{0.4443,0.004}{0.5611,0.044}{D}{0.5611,0.044}%tr
 		\annotatedFigureBox{0.7707,0.002}{0.8875,0.042}{E}{0.8875,0.042}%tr
@@ -935,22 +939,176 @@ It can be noted that there is an inner function defined at line 9. Instead of de
 	\caption{A file chooser dialog used to choose the game file to load.}
 \end{figure}
 \chapter{Testing}
+To be able to evaluate the effectiveness of the solution in its fulfilment of the objectives outlined in section \ref{objectives} on page \pageref{objectives}, it is necessary to conduct testing of the new system. Thus a test plan has been created, which when carried out, will determine whether the solution has met the requirements that have been agreed by the client and developer.
 \section{Testing Plan}
-\begin{table}[H]
-	\resizebox{\textwidth}{!}{%
-	\begin{tabular}{|p{0.04\textwidth}|p{0.1\textwidth}|p{0.15\textwidth}|p{0.25\textwidth}|p{0.23\textwidth}|p{0.13\textwidth}|p{0.1\textwidth}|}
-		\hline
-		\textbf{ID} & \textbf{Obj ID} & \textbf{Test Data} & \textbf{Description} & \textbf{Expected Result} & \textbf{Evidence} & \textbf{Passed}\\ \hline
-		1 & 1a & Start Program & Check that program is usable. & A new game & Figure~\ref{gui-overview} & Yes \\ \hline
-		1 & 1b & Click piece & Check that other person's piece can't be moved & Not clickable & Figure & Yes \\ \hline
-		1 & 1c & Click piece & Check that other person's piece can't be moved & Not clickable & Figure & Yes \\ \hline
-		
-	\end{tabular}}
-	\caption{List of tests that been conducted and their results.}
-\end{table}
+\footnotesize
+\begin{longtable}{|p{0.03\textwidth}|p{0.08\textwidth}|p{0.16\textwidth}|p{0.16\textwidth}|p{0.2\textwidth}|p{0.1\textwidth}|p{0.08\textwidth}|}
+\hline
+\textbf{ID} & \textbf{Obj ID} & \textbf{Test Data} & \textbf{Description} & \textbf{Expected Result} & \textbf{Evidence} & \textbf{Passed}\\ \hline
+1 & 1a & Start Program. & Check that program is usable. & A new game & Figure~\ref{gui-overview} & Yes \\ \hline
+2 & 1b & Click piece. & Check that other person's piece can't be moved & Not clickable. & Figure & Yes \\ \hline
+3 & 1c & Click queen. & Checks that the queen moves as expected & Legal moves shown in yellow. & Figure~\ref{test-3} & Yes \\ \hline
+4 & 1c & Click king. & Checks that the king moves as expected & Legal moves shown in yellow. & Figure. & Yes \\ \hline
+5 & 1c & Click bishop. & Checks that the bishop moves as expected & Legal moves shown in yellow. & Figure~\ref{test-5} & Yes \\ \hline
+6 & 1c & Click knight. & Checks that the knight moves as expected & Legal moves shown in yellow. & Figure~\ref{test-6} & Yes \\ \hline
+7 & 1c & Click rook. & Checks that the rook moves as expected & Legal moves shown in yellow. & Figure~\ref{test-8} & Yes \\ \hline
+8 & 1c & Click pawn. & Checks that the pawn moves as expected & Legal moves shown in yellow. & Figure. & Yes \\ \hline
+9 & 1c & Click pawn. & Checks that the pawn can do en passant & En passant move shown in yellow. & Figure. & Yes \\ \hline
+10 & 1c & Click king. & Checks that king can castle & Castling move shown in yellow & Figure. & Yes \\ \hline
+11 & 1d & Put player into check. & Correctly identifies change in game state & Dialog shown when game state changes. & Figure & Yes \\ \hline
+12 & 1d & Put player into checkmate. & Correctly identifies change in game state & Dialog shown when game state changes. & Figure & Yes \\ \hline
+13 & 1d & Put game into stalemate. & Correctly identifies change in game state & Dialog shown when game state changes. & Figure & Yes \\ \hline
+14 & 1e & Move pawn. & Checks that promotion feature works. & Dialog allowing user to choose a new piece. & Figure & Yes \\ \hline
+15 & 2 & "Keith", "Michael" & Allows names of players to be added & Names correctly saved. & Figure & Yes \\ \hline
+16 & 2 & "Simon", "Alice" & Allows names of players to be changed & Changed names correctly saved. & Figure & Yes \\ \hline
+17 & 3a & Press "Save Game" when there is no file path. & Allow a game that is currently in play to be saved & Dialog allowing file path to be chosen. & Figure & Yes \\ \hline
+18 & 3b/d & Press "Save Game" when there is a file path. & Allow a game that is currently in play to be saved & Dialog stating that game has been saved. & Figure & Yes \\ \hline
+19 & 3c & Press "Save Game" when there is a file path but no file there.& Allow a game that is currently in play to be saved & Dialog allowing file path to be chosen. & Figure & Yes \\ \hline
+20 & 3e & Press "Save Game" when player names are not filled. & Save only when required data is filled. & Dialog requesting that names be filled. & Figure & Yes \\ \hline
+21 & 3f & Open existing game and make a move. & Check that existing games can be overwritten. & Game saved & Figure & Yes \\ \hline
+22 & 4a & Press "Load Game" when file does not exist. & Allow user to select the game file to load from. & Dialog requesting for path to file & Figure & Yes \\ \hline
+23 & 4bi & Press "Load Game" & Check that list of games is shown & Load dialog present. & Figure & Yes \\ \hline
+24 & 4bii & Choose parameters and press sort & Check that games can be sorted. & Correctly sorted list of games. & Figure & Yes \\ \hline
+\caption{List of tests that been conducted and their results.} 
+\end{longtable}
+\section{Testing Evidence}
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=1.0\textwidth]{images/screenshots/load-file-dialog}
-	\caption{A file chooser dialog used to choose the game file to load.}
+	\includegraphics{images/screenshots/test-2}
+	\caption{Evidence for test 2: white move, black pieces are greyed out (not clickable).}
+	\label{test-2}
 \end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics{images/screenshots/test-3}
+	\caption{Evidence for test 3: legal moves of a queen.}
+	\label{test-3}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics{images/screenshots/test-4}
+	\caption{Evidence for test 4: legal moves of a king.}
+	\label{test-4}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics{images/screenshots/test-5}
+	\caption{Evidence for test 5: legal moves of a bishop.}
+	\label{test-5}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics{images/screenshots/test-6}
+	\caption{Evidence for test 6: legal moves of a knight.}
+	\label{test-6}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics{images/screenshots/test-7}
+	\caption{Evidence for test 7: legal moves of a rook.}
+	\label{test-7}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics{images/screenshots/test-8}
+	\caption{Evidence for test 8: legal moves of a pawn.}
+	\label{test-8}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics{images/screenshots/test-9}
+	\caption{Evidence for test 9: en passant move.}
+	\label{test-9}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics{images/screenshots/test-10}
+	\caption{Evidence for test 10: castling move.}
+	\label{test-10}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics{images/screenshots/test-11}
+	\caption{Evidence for test 11: dialog notifying user of check.}
+	\label{test-11}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1.0\textwidth]{images/screenshots/test-12}
+	\caption{Evidence for test 12: dialog notifying user of checkmate.}
+	\label{test-12}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1.0\textwidth]{images/screenshots/test-13}
+	\caption{Evidence for test 13: dialog notifying user of stalemate.}
+	\label{test-13}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1.0\textwidth]{images/screenshots/test-14}
+	\caption{Evidence for test 14: check that promotion works.}
+	\label{test-14}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1.0\textwidth]{images/screenshots/test-15}
+	\caption{Evidence for test 15: check that game saved only when required data is filled.}
+	\label{test-15}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1.0\textwidth]{images/screenshots/test-16}
+	\caption{Evidence for test 16: check that game saved only when required data is filled.}
+	\label{test-16}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1.0\textwidth]{images/screenshots/test-17}
+	\caption{Evidence for test 17: "Save as" dialog to save game.}
+	\label{test-17}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics{images/screenshots/test-18}
+	\caption{Evidence for test 18: dialog showing that game has been saved.}
+	\label{test-18}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1.0\textwidth]{images/screenshots/test-17}
+	\caption{Evidence for test 19: "Save as" dialog to save game.}
+	\label{test-19}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1.0\textwidth]{images/screenshots/test-20}
+	\caption{Evidence for test 20: check that game saved only when required data is filled.}
+	\label{test-20}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1.0\textwidth]{images/screenshots/test-21}
+	\caption{Evidence for test 21: check that game saved only when required data is filled.}
+	\label{test-21}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1.0\textwidth]{images/screenshots/test-22}
+	\caption{Evidence for test 22: check that game saved only when required data is filled.}
+	\label{test-22}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1.0\textwidth]{images/screenshots/test-23}
+	\caption{Evidence for test 23: check that game saved only when required data is filled.}
+	\label{test-23}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1.0\textwidth]{images/screenshots/test-24}
+	\caption{Evidence for test 24: check that game saved only when required data is filled.}
+	\label{test-24}
+\end{figure}
+
 \end{document}          

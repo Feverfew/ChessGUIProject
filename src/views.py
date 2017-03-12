@@ -20,7 +20,7 @@ class MainWindow(object):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
-        MainWindow.setWindowTitle(QtGui.QApplication.translate("MainWindow", "MainWindow", None, QtGui.QApplication.UnicodeUTF8))
+        MainWindow.setWindowTitle(QtGui.QApplication.translate("Chess for students", "Chess for students", None, QtGui.QApplication.UnicodeUTF8))
 
 class ChessBoard(object):
     def setupUi(self, Form):
@@ -127,8 +127,8 @@ class ChessBoard(object):
 
     def retranslateUi(self, Form):
         Form.setWindowTitle(QtGui.QApplication.translate("Form", "Form", None, QtGui.QApplication.UnicodeUTF8))
-        self.player_one_label.setText(QtGui.QApplication.translate("Form", "Player 1:", None, QtGui.QApplication.UnicodeUTF8))
-        self.player_two_label.setText(QtGui.QApplication.translate("Form", "Player 2:", None, QtGui.QApplication.UnicodeUTF8))
+        self.player_one_label.setText(QtGui.QApplication.translate("Form", "Player 1 (White):", None, QtGui.QApplication.UnicodeUTF8))
+        self.player_two_label.setText(QtGui.QApplication.translate("Form", "Player 2 (Black):", None, QtGui.QApplication.UnicodeUTF8))
         self.new_btn.setText(QtGui.QApplication.translate("Form", "New Game", None, QtGui.QApplication.UnicodeUTF8))
         self.load_btn.setText(QtGui.QApplication.translate("Form", "Load Game", None, QtGui.QApplication.UnicodeUTF8))
         self.save_btn.setText(QtGui.QApplication.translate("Form", "Save Game", None, QtGui.QApplication.UnicodeUTF8))

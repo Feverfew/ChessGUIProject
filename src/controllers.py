@@ -224,6 +224,10 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
             self.board.player_one = self.player_one_edit.text()
             self.board.player_two = self.player_two_edit.text()
             self.board.check_game_state()
+            if self.board.winner == "White":
+                self.board.winner = self.player_one_edit.text()
+            elif self.board.winner == "Black":
+                self.board.winner = self.player_one_edit.text()
             now = datetime.datetime.now()
             year = str(now.year)
             month = int(now.month)
@@ -351,8 +355,6 @@ class ChessBoardController(QtGui.QWidget, views.ChessBoard):
                     except (FileNotFoundError, OSError):
                         self.show_message("File not saved. Invalid file name.")
                         self.settings.setValue("json_location", "")
-                else:
-                    self.show_message("File not saved")
         else:
             self.show_message("Please fill in the player names")
 
