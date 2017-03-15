@@ -611,11 +611,11 @@ Below is the code for the recursive quicksort algorithm:
 \end{figure}
 It can be noted that there is an inner function defined at line 9. Instead of defining it as another function I decided to use it as an inner function to avoid code repetition and because it has no use outside of the quicksort function. The function accepts an unsorted list, and the index of the lowest and highest element of the list to sort. The partition function is then called, where the pivot value is the first element in the list. The array is changed such that all elements smaller than the pivot are put before it, and all elements bigger are put after it. Then the quicksort function is called twice. Once for values below the pivot and for values after. Once the base case has been met for each recursive call, the list is sorted. It does not need to be returned as an array (list) in python is a mutable change and is thus changed in its scope.
 \section{User Interface}
-\begin{figure}[h!t]
+\begin{figure}[H]
 	\begin{annotatedFigure}
-		{\includegraphics[width=1.0\linewidth]{images/screenshots/gui-overview}}
+		{\includegraphics[width=1.0\textwidth]{images/screenshots/gui-overview}}
 		\annotatedFigureBox{0.0099,0.046}{0.9924,0.95}{A}{0.0099,0.95}%tl
-		\annotatedFigureBox{0.6,0.96}{1,1}{B}{0.6,0.96}%bl
+		\annotatedFigureBox{0.6,0.95}{0.99, 1}{B}{0.6,0.95}%bl
 		\annotatedFigureBox{0.1223,0.0031}{0.2228,0.04}{C}{0.2228,0.04}%tr
 		\annotatedFigureBox{0.4443,0.004}{0.5611,0.044}{D}{0.5611,0.044}%tr
 		\annotatedFigureBox{0.7707,0.002}{0.8875,0.042}{E}{0.8875,0.042}%tr
@@ -633,7 +633,7 @@ It can be noted that there is an inner function defined at line 9. Instead of de
 \begin{figure}[H]
 	\centering
 	\begin{annotatedFigure}
-		{\includegraphics{images/screenshots/load-dialog}}
+		{\includegraphics[width=1.0\textwidth]{images/screenshots/load-dialog}}
 		\annotatedFigureBox{0.011,0.8691}{0.9805,0.9347}{A}{0.011,0.8691}%bl
 		\annotatedFigureBox{0.011,0.6813}{0.9815,0.8631}{B}{0.011,0.6813}%bl
 		\annotatedFigureBox{0.72,0.01}{0.9875,0.065}{C}{0.72,0.01}%tl

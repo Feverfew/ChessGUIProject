@@ -57,21 +57,24 @@ class Board(object):
             self.player_two = game['player_two']
             self.board = [[0 for x in range(8)] for y in range(8)]
             for piece in game['pieces']['queens']:
-                self.board[piece['position'][0]][piece['position'][1]] = Queen(piece['position'], piece['colour'])
+                self.board[piece['position'][0]][piece['position'][1]] = \
+                    Queen(piece['position'], piece['colour'])
             for piece in game['pieces']['knights']:
-                self.board[piece['position'][0]][piece['position'][1]] = Knight(piece['position'], piece['colour'])
+                self.board[piece['position'][0]][piece['position'][1]] = \
+                    Knight(piece['position'], piece['colour'])
             for piece in game['pieces']['bishops']:
-                self.board[piece['position'][0]][piece['position'][1]] = Bishop(piece['position'], piece['colour'])
+                self.board[piece['position'][0]][piece['position'][1]] = \
+                    Bishop(piece['position'], piece['colour'])
             for piece in game['pieces']['kings']:
-                self.board[piece['position'][0]][piece['position'][1]] = King(piece['position'], piece['colour'],
-                                                                              piece['has_moved'],
-                                                                              ['castling_moves'])
+                self.board[piece['position'][0]][piece['position'][1]] = \
+                    King(piece['position'],
+                         piece['colour'],piece['has_moved'],['castling_moves'])
             for piece in game['pieces']['pawns']:
-                self.board[piece['position'][0]][piece['position'][1]] = Pawn(piece['position'], piece['colour'],
-                                                                              piece['first_moved'])
+                self.board[piece['position'][0]][piece['position'][1]] = \
+                    Pawn(piece['position'], piece['colour'],piece['first_moved'])
             for piece in game['pieces']['rooks']:
-                self.board[piece['position'][0]][piece['position'][1]] = Rook(piece['position'], piece['colour'],
-                                                                              piece['has_moved'])
+                self.board[piece['position'][0]][piece['position'][1]] = \
+                    Rook(piece['position'], piece['colour'],piece['has_moved'])
         else:
             self.id = None
             self.last_played = None
@@ -148,7 +151,7 @@ class Board(object):
             Rook([7, 7], "White")
         ]
         self.board.append(row)
-     
+
     def preliminary_move_piece(self, chess_board, old_coords, new_coords):
         """"Will move a piece temporarily. e.g. used to see if piece puts itself in check.
 
@@ -566,7 +569,7 @@ class Board(object):
             return piece.possible_moves
         else:
             return legal_moves
-        
+
     def calculate_is_checkmate(self, colour, board):
         """Finds out if a player is in checkmate.
 
@@ -623,7 +626,7 @@ class Board(object):
                     if king_coords in self.get_attacking_moves(possible_board[x][y], possible_board):
                         return True
         return False
-    
+
     def get_castling_moves(self, king, original_board):
         """Finds castling moves, if they exist, for a given king.
 
@@ -651,7 +654,7 @@ class Board(object):
                             original_board = copy.deepcopy(self.board)
                             possible_board = self.preliminary_move_piece(original_board, king.position, [king.position[0], king.position[1]+2])
                             if not self.is_in_check(king.colour, possible_board):
-                                king.castling_moves.append([king.position[0], king.position[1]+2])                
+                                king.castling_moves.append([king.position[0], king.position[1]+2])
             else:
                 if isinstance(original_board[7][0], Rook):
                     if original_board[7][0].colour == "White" and not original_board[7][0].has_moved and not(original_board[7][2] or original_board[7][3]):
