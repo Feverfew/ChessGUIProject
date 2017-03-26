@@ -21,6 +21,7 @@
 % Images
 \usepackage{graphicx}
 \usepackage{tikz}
+\usetikzlibrary{positioning}
 \newcommand*\annotatedFigureBoxCustom[8]{\draw[#5,thick,rounded corners] (#1) rectangle (#2);\node at (#4) [fill=#6,thick,shape=circle,draw=#7,inner sep=2pt,font=\sffamily,text=#8] {\textbf{#3}};}
 %\annotatedFigureBox{bottom-left}{top-right}{label}{label-position}
 \newcommand*\annotatedFigureBox[4]{\annotatedFigureBoxCustom{#1}{#2}{#3}{#4}{black}{white}{black}{black}}

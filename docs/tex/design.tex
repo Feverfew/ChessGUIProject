@@ -24,22 +24,88 @@ In terms of output there are three categories of output that the user will see. 
 The second category is the state of the game. When the state of the game changes after a move, such as a player being in check or the game is over due to checkmate/stalemate, then the user is informed of this change by a dialog that appears. This dialog has a button to dismiss it to allow the players to continue to interact with the rest of the program, and forces users to acknowledge the change in game state.
 
 The third category is the load dialog. The load dialog greets the user with list of games as rows on a table. The columns of the table give information about each game that is in the JSON file that the program reads from, such as the game ID, players, last played, moved made, winner etc. 
-\section{Modular Structure}
+\section{Heirarchy Charts}
+\subsection{Top Level View}
 \begin{figure}[H]
-\centering
-	\includegraphics[width=1.0\textwidth]{images/design-charts/top_level}
-	\caption{Top level hierarchy chart.}
+	\centering
+ 	\begin{tikzpicture}
+ 		\node[rectangle, draw] (game) {Chess Game};
+ 		\node[rectangle, draw] (gameplay) [below left=of game]{Gameplay};
+ 		\node[rectangle, draw] (filehandling) [below right=of game]{File Handling};
+ 		\draw [->] (game.south) -- (gameplay.north);
+ 		\draw [->] (game.south) -- (filehandling.north);
+ 	\end{tikzpicture}
+ 	\caption{Top level hierarchy chart.}
 \end{figure}
 \subsection{Second Level View}
 \begin{figure}[H]
-\centering
-	\includegraphics[width=1.0\textwidth]{images/design-charts/gameplay_level}
-	\caption{Second level hierarchy chart.}
+	\centering
+	\resizebox {\columnwidth} {!} {
+		\begin{tikzpicture}[every node/.style={node distance= 10pt}]
+		\node[rectangle, draw] (gameplay) {Gameplay};
+		
+		\node[rectangle, draw] (promotions) [below right=of gameplay] {Manage Promotions};
+		\node[rectangle, draw] (piece-promote) [below right=of promotions] {Choose Piece to Promote};
+		
+		\node[rectangle, draw] (clicks) [below left=of gameplay] {Manage Table Clicks};
+		\node[rectangle, draw] (select-piece) [below=of clicks] {Selecting a Piece to Move};
+		\node[rectangle, draw] (move-piece) [left=of select-piece] {Moving a Piece};
+		
+		
+		\node[rectangle, draw] (calculations) [right=of select-piece] {Game Calculations};
+		\node[rectangle, draw] (game-state) [below=of calculations] {Check Game State};
+		\node[rectangle, draw] (attack-move) [left=of game-state] {Attacking Moves};
+		\node[rectangle, draw] (legal-move) [right=of game-state] {Legal Moves};
+		
+		\draw [->] (gameplay.south) -- (calculations.north);
+		\draw [->] (gameplay.south) -- (clicks.north);
+		\draw [->] (gameplay.south) -- (promotions.north);
+		\draw [->] (clicks.south) -- (move-piece.north);
+		\draw [->] (clicks.south) -- (select-piece.north);
+		\draw [->] (calculations.south) -- (attack-move.north);
+		\draw [->] (calculations.south) -- (game-state.north);
+		\draw [->] (calculations.south) -- (legal-move.north);
+		\draw [->] (promotions.south) -- (piece-promote.north);
+		\end{tikzpicture}
+	}
+	\caption{Second level hierarchy chart: Gameplay.}
 \end{figure}
 \begin{figure}[H]
-\centering
-	\includegraphics[width=1.0\textwidth]{images/design-charts/filehandling_level}
-	\caption{Second level hierarchy chart.}
+	\centering
+	\resizebox {\columnwidth} {!} {
+		\begin{tikzpicture}[every node/.style={node distance= 10pt}]
+		\node[rectangle, draw] (filehandling) {Game File Handling};
+		
+		\node[rectangle, draw] (load-game) [below=of filehandling] {Load Game};
+		
+		
+		\node[rectangle, draw] (save-game) [left=of load-game]{Save Game};
+		\node[rectangle, draw] (create-json) [below=of save-game] {Create JSON};
+		\node[rectangle, draw] (edit-json) [left=of create-json] {Edit JSON};
+		
+		
+		\node[rectangle, draw] (filepath) [right=of load-game] {File Destination};
+		\node[rectangle, draw] (filename) [below=of filepath] {Choose Filename};
+		\node[rectangle, draw] (directory) [right=of filename] {Choose Directory};
+		
+		\node[rectangle, draw] (choose-game) [below right=of create-json] {Choose Game};
+		\node[rectangle, draw] (sort-game) [right=of choose-game] {Sort Game};
+		
+		\draw [->] (filehandling.south) -- (load-game.north);
+		\draw [->] (filehandling.south) -- (save-game.north);
+		\draw [->] (filehandling.south) -- (filepath.north);
+		
+		\draw [->] (save-game.south) -- (edit-json.north);
+		\draw [->] (save-game.south) -- (create-json.north);
+		
+		\draw [->] (load-game.south) -- (choose-game.north);
+		\draw [->] (load-game.south) -- (sort-game.north);
+		
+		\draw [->] (filepath.south) -- (filename.north);
+		\draw [->] (filepath.south) -- (directory.north);
+		\end{tikzpicture}
+	}
+	\caption{Second level hierarchy chart: Game File Handling.}
 \end{figure}
 \section{Code Design}
 \subsection{Class Diagrams}
