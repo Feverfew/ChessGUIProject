@@ -1,13 +1,6 @@
 \chapter{Analysis}
-\section{Introduction}
-The goal of this project was to build a desktop application which can be used to play chess amongst 2 human players. It will be used by those who attend chess club to not only play games but to save, load and continue playing them. This program is to be developed in Python and for the graphical user interface Qt has been chosen, with the Pyside library serving as a python wrapper around the Qt GUI framework. 
-
-It consists of a visual representation of a chess board which is held in a table GUI element. This allows players to move pieces via clicking on a piece and then on the place it wants to move the piece to. It contains several buttons, which all complete several different functions. There is functionality to start a new game and to save, and load, existing games. Saving a game works by converting a python dictionary into JSON format and saving it in an existing JSON file by adding it to an array of dictionaries (games). If this file does not exist then the program allows the user to select a location for a new JSON file to be created, this location is saved as a setting so that the program can find this location again whenever it is relaunched.
- 
-Loading a game opens the JSON file from the location path that is saved as a setting and scans the array of games, showing them as a table in a dialog, so that the user can choose which game to open. If the location of the file does not exist, then the user is given the option of locating a different pre-existing JSON file to open from if it exists.
-
-As already mentioned, the JSON file holds an array of games. A game contains the data needed to load a game: pieces and their positions, total moves, state of the game and other variables that are used to determine whether certain moves are possible, such as castling. Each game has a unique ID which allows users to load game that haven't been finished and to carry them on. For the program's loading and saving feature to be most useful for the school's chess club, it is best to store the JSON file in the school's shared area such that all games can be loaded and saved from any computer that has this program installed.
-
+\section{Introduction} \label{introduction}
+The goal of this project is to build a new system for a teacher who runs a chess club At Alleyn's School, London. In this section, research has been done to learn what the current system does. This research will inform me of what the new system that I will build should be able to do and what additional features it will provide over the current implementation. My research consisted of giving a questionnaire to the user and of researching the rules of chess.
 \section{Rules of Chess}
 As with any game, there are rules that have to be adhered to for a valid game to be played. For me to have a viable solution to the problem identified, the program I create must follow the rules of chess. Thus in this section I will discuss what these rules are.
 \subsection{The Game Board}
@@ -106,6 +99,28 @@ Checkmate occurs when a player is put into check and cannot make a move that bri
 	\caption{An example of stalemate.}
 \end{figure}
 Stalemate occurs when a player who is not in check cannot make any legal moves and thus the game cannot continue. Above is an example of a stalemate. It is black's turn to move but it has no legal moves to make. Any movements are either not available to make or expose the king to being in check to either the far-right pawn or the queen. When a stalemate occurs the game is declared as drawn and there are no winners or losers.
+\section{Questionnaire}
+As mentioned in section~\ref{introduction}, a questionnaire would form part of my research. The teacher who runs the chess club is the one who has answered the following questionnaire. In this questionnaire, it is determined what the current system does, the problems it has, and the objectives of the new system which I will be creating.
+
+\textbf{Explain the background of the current system.}
+
+I work at Alleyn's School in Dulwich as a teacher and run the chess club every Wednesday lunch. Pupils from ages 11-18 are allowed to play chess. Every year we run an inter-house chess competition, where each house of the school assembles a team together to determine which house is best at chess. Approximately 20 pupils show up to the club every week, with this number rising to about 50 during competitions. The inter-house chess competition is particularly popular and I run it once a year for about 4 or 5 weeks. The competition take place in two rooms in the Science Department. The competition is played on approximately 25 Chess Boards.  
+
+\textbf{What kind of data is stored on the system and how is it processed?}
+
+When the chess competition happens, we must store data on the results of individual games. Specifically, we store the names of the player and the winner of each game. The game board used by the players serves as a way of recording the state of the game. The game board also serves as a way of making moves and seeing moves being made. The rules of the game are adhered to by the players themselves, as it is assumed that is in the best interest of each player to make sure that the other is not cheating. If a game overruns past lunchtime, then the players can take a picture of the board and then continue the game later. This information is currently displayed on the whiteboard during the lunchtime of the competition, and then is transferred to my personal notebook once lunchtime is over. 
+
+\textbf{What problems does this current system have?}
+
+Firstly, there can be times where there are disagreements between two players over the game. The issues tend to be centred around possible cheating. It would be good to have a system where arguments over cheating would not occur. Secondly, there are many clubs and activities run at the school, which clash with chess club. This results in people who cannot play chess with us even though they want to. It would be nice to be able to allow people to play chess outside of school hours. Thirdly, whilst a photo of the game board can be taken to allow the game to be continued elsewhere if it runs over lunch, information about whether en passant is still possible and who’s move it is cannot be done via a picture.  In addition, when a chess competition occurs, many players are interested in seeing the results of certain games. However, as all games are stored on my notebook students are usually individually told or e-mailed the results of games if they are interested. It would be useful to have a system in place where interested parties can view the results of all chess games played.
+
+\textbf{What data would you like to be stored in a new system?}
+
+I would like for games to be stored. The data on each game should be such that it is possible to continue playing later. Thus, it must include the position of all the pieces on the board, the current game state (e.g. is a player in check?), whether en passant is possible and where it can occur, and whose turn it is. In addition, the names of both players must be stored, the number of moves made, when the last time the game was played and the name of the winner if there is one. 
+
+\textbf{Could you outline the core requirements of the new system?}
+
+The new system should be able to identify all the legal moves of a given piece and display this information clearly to the user. In addition, the game must be able to identify changes in the state of the game and display these changes to the user when they occur. These requirements must be satisfied as it should be possible to play chess using this new system, where moves can be made and the results of these moves should be clearly shown. All games that are played must have the ability to be saved, including the names of the players, so that the game can be played at a later date. Thus, all games that are saved must be able to be easily loaded by the user.
 \section{Setting}
 The program was designed for the school's Chess club and is open for students from year 7 to 13. Chess club currently runs weekly at lunchtimes and is run by a physics teacher – Dr De Silva. Every year a primarily student run inter-house chess competition, with each house having a team of avid chess players, takes place to determine which house has the best chess players. As a member of chess club I identified and researched problems with the current system that the club uses. I also consulted with Dr De Silva about any problems that he has noted in the current system and have used this information to aid me in determining the objectives that I plan for the new system to implement.
 \section{Users}
@@ -180,7 +195,7 @@ Another problem came from when in-school chess competitions occurred. These comp
 
 A problem that has been noted by students is that even though they are willing to attend chess club, many are unable to attend at lunchtimes on a certain day because they have other commitments and so end up not attending at all despite their desire to do so. Many students would like to be able to play chess games outside of club hours amongst each other with results recorded at school.
 \section{Objectives} \label{objectives}
-After the analysis of the current system and the requirements that would be needed for an improved system I have created SMART (Specific, Measurable, Achievable, Realistic and Timely) objectives which make clear to me - the developer – what the client requires for their new system which has been determined to be accomplishable and adheres to all of the letters of the SMART abbreviation: Specific, Measurable, Achievable, Realistic, Timely.
+After the analysis of the current system and the requirements that would be needed for an improved system I have created SMART (Specific, Measurable, Achievable, Realistic and Timely) objectives which make clear to me - the developer – what the client requires for their new system which has been determined to be feasible to complete and adheres to all of the letters of the SMART abbreviation.
 
 The objectives of the new system are as follows:
 \begin{enumerate}

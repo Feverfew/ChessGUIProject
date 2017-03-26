@@ -1,9 +1,17 @@
 \chapter{Documented Design}
+\section{Introduction}
+It has been decided that the new system will be a desktop application which can be used to play chess amongst two human players. It will be used by those who attend chess club to not only play games but to save, load and continue playing them. This program is to be developed in Python and for the graphical user interface Qt has been chosen, with the Pyside library serving as a python wrapper around the Qt GUI framework. 
+
+It will consist of a visual representation of a chess board which is held in a table GUI element. This will allow players to move pieces via clicking on a piece and then on the place it wants to move the piece to. It  will contain several buttons, which all serve different functions. There will be functionality to start a new game and to save, and load, existing games. Saving a game will work by converting a python dictionary into JSON format and saving it in an existing JSON file by adding it to an array of dictionaries (games). If this file does not exist then the program will allow the user to select a location for a new JSON file to be created. This location will be saved as a setting so that the program can find this location again whenever it is relaunched.
+
+Loading a game will open the JSON file from the location path specified by the user and scans the array of games, showing them as a table in a dialog so that the user can choose which game to open. If the location of the file does not exist, then the user will be given the option of locating a different pre-existing JSON file to open from if it exists.
+
+As already mentioned, the JSON file will hold an array of games. A game contains the data needed to load a game: pieces and their positions, total moves, state of the game and other variables that are used to determine whether certain moves are possible, such as castling. Each game will have a unique ID which will allow users to load games that haven't been finished and to carry them on. For the program's loading and saving feature to be most useful for the school's chess club, it is best to store the JSON file in the school's shared area such that all games can be loaded and saved from any computer that has this program installed.
 \section{Overall System Design}
 \subsection{Input}
 The first type of input is selecting a piece on the board by clicking on a cell in the $ 8\times8 $ table that contains a piece corresponding to the player's colour. At this point processing occurs and moves that are legal are added as cells that can be clicked on the table. After this, if a cell is clicked that is not a player's piece then the last clicked piece is moved to that location. If a cell is clicked that is a player's piece the process described above is repeated.
 
-The second type of input is the player name's that must be inputted if the game is to be saved. Both names can be edited via 2 separate GUI TextEdit components. 
+The second type of input is the player name's that must be set if the game is to be saved. Both names can be edited via 2 separate GUI TextEdit components. 
 
 The third type of input is to do with saving and loading games. A dialog asking for the location of a JSON file (or where to save it) allows the user to select the game file for the program. When the ‘Load Button' game is pressed a dialog is shown where the user can choose a game to play from the file via a table.
 \subsection{Processing}

@@ -1,0 +1,29 @@
+\chapter{Evaluation}
+\section{Introduction}
+In this section, the user is asked for feedback. In particular, the user is asked to determine whether the new system has met the SMART objectives that were agreed upon in section~\ref{objectives}. Furthermore, the user explains what improvements could have been made to the new system. 
+\section{User Feedback}
+\subsection{User Acceptance Testing}
+The UAT involves the user testing the core functionality of the system to ensure it meets their requirements as specified in the SMART objectives. It is assumed that testing has already taken place and there are no major bugs. References to figures are made where it is deemed that it helps illustrate the point the user is trying to make.
+
+\textbf{The showing of an interactive chess board allowing movement of pieces by users which adheres to all chess rules. (Objective 1)}
+
+When the game first runs the default setting is a new game, the board is displayed ready to play with spaces for both players to enter names.  The interface is very clear and intuitive.  Selecting a piece results in all its legal moves being displayed in yellow in their corresponding cells. Legal moves are calculated correctly with no bugs noticed in this regard. When the game state changes, such as a player being put into check, this change is shown quickly to me via the use of a dialog. Special types of moves such as en passant, castling and promotion are implemented quickly and intuitive to perform.
+
+\textbf{Editing of player names (Objective 2)}
+
+Editing of the names of the two players is very simple to do and the textboxes to change names are clearly shown at the top of the program. When the game is saved changes in names are correctly saved.
+
+\textbf{Saving a game (Objective 3)}
+
+When saving the game I was afforded the opportunity to select the filename and path for the new game file. Once this was done I was informed that the game was successfully saved. As I continued playing I periodically saved the game, which was seamless and each time I was informed of its success. In addition, I could create completely new games and save them in the same game file.
+
+\textbf{Loading a game (Objective 4)}
+
+Loading games that I had previously played was a simple procedure. I was shown a list of all the games that were saved and could sort them in ascending/descending order based on a wide range of parameters. Once I chose a game it loaded quickly and could continue playing it. Saving changes worked correctly.
+
+\textbf{Overall evaluation}
+
+This project definitely meets all the objectives that were agreed to at the start of the project. Thus, I have no suggestions in terms of features that could be added to meet the current requirements. However, there are some things outside of the scope of the requirements that would be nice to have. Due to the ubiquity of tablets and smartphones, it would be nice to have an application that would work on those form factors, not just on a laptop or personal computer. In addition, it would be nice if there was a server for the storage of games, so that students could play outside of the school system in their own time.
+\subsection{Possible Improvements}
+The user identified that he would like to see this new system to be ported to handheld devices and for the storage of games to be held on a server, to allow games to be played anywhere at any time. To do this a server could be setup with a Linux distribution (e.g. Ubuntu) and a web server such as NGINX, where Python could be used for the back-end code which connects to a MySQL database. A REST API could be created such that it can be easy to make a front-end interface for all types of devices. Applications for Android and Windows/Linux could be written in Java, whilst for iOS, Swift or Objective-C would be used for development. Obviously doing all this could take a lot of time to learn these languages and their associated frameworks for development. There is a simpler method of creating a REST API and then connecting it to a Single Page Application (SPA) using a JavaScript framework such as Angular. This would allow the application to be used by any device that has access to a browser.
+
