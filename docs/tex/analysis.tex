@@ -1,6 +1,6 @@
 \chapter{Analysis}
 \section{Introduction} \label{introduction}
-The goal of this project is to build a new system for a teacher who runs a chess club At Alleyn's School, London. In this section, research has been done to learn what the current system does. This research will inform me of what the new system that I will build should be able to do and what additional features it will provide over the current implementation. My research consisted of giving a questionnaire to the user and of researching the rules of chess.
+The goal of this project is to build a new system for a teacher who runs a chess club at Alleyn's School, London. In this section, research has been done to learn what the current system does. This research will inform me of what the new system that I will build should be able to do and what additional features it will provide over the current implementation. My research consisted of giving a questionnaire to the user and of researching the rules of chess.
 \section{Rules of Chess}
 As with any game, there are rules that have to be adhered to for a valid game to be played. For me to have a viable solution to the problem identified, the program I create must follow the rules of chess. Thus in this section I will discuss what these rules are.
 \subsection{The Game Board}
@@ -10,7 +10,7 @@ As with any game, there are rules that have to be adhered to for a valid game to
 	\caption{The initial setup of a game of chess.}
 	\label{initial-board}
 \end{figure}
-The initial starting position of the board contains all the types of pieces in the game: pawn, king, queen, bishop, knight and rook. From this point onwards, white is the first to move. Once white has completed a legal move it is then black's turn to do the same and the game continues until the game has reached the state of checkmate and stalemate, which will be explained in detail later. Only one piece can occupy a square on the board, thus a piece cannot take one of its own pieces but can capture opposing pieces as long as it isn't a king.
+The initial starting position of the board contains all the types of pieces in the game: pawn, king, queen, bishop, knight and rook. From this point onwards, white is the first to move. Once white has completed a legal move it is then black's turn to do the same and the game continues until the game has reached the state of checkmate or stalemate, which will be explained in detail later. Only one piece can occupy a square on the board, thus a piece cannot take one of its own pieces but can capture opposing pieces as long as it isn't a king.
 
 \paragraph{Note:}when the types of moves that a certain type of piece can make are discussed below, it is assumed that when moved, it does not put the player who is moving the piece into check. In addition, it will be assumed that the move does not mean that the moving piece is in the same place. If this is the case then the move is illegal.
 \subsection{Pawns}
@@ -19,7 +19,7 @@ The initial starting position of the board contains all the types of pieces in t
 	\includegraphics[width=0.3\textwidth]{images/boards/pawn_movement}
 	\caption{The possible moves a pawn can make.}
 \end{figure}
-The pawn is a type of piece and has two types of moves, depending on the situation. If the pawn is in the same space as its starting position then it can either move one or two spaces forward, given that there is no piece in the way of this movement. In any other position it is only able to move into the next square forward, as long as there is no other piece currently there. 
+The pawn is a type of piece and has two types of moves, depending on the situation. If the pawn is in the same space as its starting position then it can either move one or two spaces forward, given that there is no piece in the way of this movement. In any other position it is only able to move into the next square forward, as long as there is no other piece currently there. It is also able to capture any opposing pieces that are diagonally in front of it.
 \subsubsection{Promotion}
 \begin{figure}[H]
 \centering
@@ -33,7 +33,7 @@ When a pawn reaches the other side of the board the pawn must be changed to an a
 	\includegraphics[width=0.3\textwidth]{images/boards/en_passant}
 	\caption{A board position in which en passant is possible.}
 \end{figure}
-As can be seen above, if a pawn is moved two spaces forward such that it is horizontally adjacent to an opposing pawn once it is moved, the opposing pawn has an opportunity to capture the pawn and move to the ‘x' marked on the diagram. When this opportunity occurs, whether it is taken or not, it cannot be done again by that player for the rest of the game.
+As can be seen above, if a pawn is moved two spaces forward such that it is horizontally adjacent to an opposing pawn once it is moved, the opposing pawn has an opportunity to capture the pawn and move to the 'x' marked on the diagram. When this opportunity occurs, whether it is taken or not, it cannot be done again by that player for the rest of the game.
 \subsection{Kings}
 \begin{figure}[H]
 \centering
@@ -47,7 +47,7 @@ The king can move to any adjacent square provided that it is not in check once i
 	\includegraphics[width=0.3\textwidth]{images/boards/castling}
 	\caption{Movement of king and rook during castling.}
 \end{figure}
-Castling is a move (shown above) that can be performed only if the king and rook have not been moved before. For castling to be performed no pieces must be in the way of the king and the rook moving and any of the squares in between them must not be attacked by an opposing piece.
+Castling is a move (shown above) that can be performed only if the king and rook have not been moved before. For castling to be performed no pieces must be in the way of the king and the rook moving and any of the squares in between them must not be attacked by an opposing piece. The king cannot castle when it is under attack.
 \subsection{Bishop}
 \begin{figure}[H]
 \centering
@@ -112,7 +112,7 @@ When the chess competition happens, we must store data on the results of individ
 
 \textbf{What problems does this current system have?}
 
-Firstly, there can be times where there are disagreements between two players over the game. The issues tend to be centred around possible cheating. It would be good to have a system where arguments over cheating would not occur. Secondly, there are many clubs and activities run at the school, which clash with chess club. This results in people who cannot play chess with us even though they want to. It would be nice to be able to allow people to play chess outside of school hours. Thirdly, whilst a photo of the game board can be taken to allow the game to be continued elsewhere if it runs over lunch, information about whether en passant is still possible and who’s move it is cannot be done via a picture.  In addition, when a chess competition occurs, many players are interested in seeing the results of certain games. However, as all games are stored on my notebook students are usually individually told or e-mailed the results of games if they are interested. It would be useful to have a system in place where interested parties can view the results of all chess games played.
+Firstly, there can be times where there are disagreements between two players over the game. The issues tend to be centred around possible cheating. It would be good to have a system where arguments over cheating would not occur. Secondly, there are many clubs and activities run at the school, which clash with chess club. This results in people who cannot play chess with us even though they want to. It would be nice to be able to allow people to play chess outside of school hours. Thirdly, whilst a photo of the game board can be taken to allow the game to be continued elsewhere if it runs over lunch, information about whether en passant is still possible and who’s move it is cannot be saved via a picture.  In addition, when a chess competition occurs, many players are interested in seeing the results of certain games. However, as all games are stored on my notebook students are usually individually told or e-mailed the results of games if they are interested. It would be useful to have a system in place where interested parties can view the results of all chess games played in their own time.
 
 \textbf{What data would you like to be stored in a new system?}
 
