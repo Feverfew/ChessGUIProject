@@ -711,6 +711,113 @@ Below is the code for the recursive quicksort algorithm:
 	\caption{Source code for the recursive quicksort algorithm.}
 \end{figure}
 It can be noted that there is an inner function defined at line 9. Instead of defining it as another function I decided to use it as an inner function to avoid code repetition and because it has no use outside of the quicksort function. The function accepts an unsorted list, and the index of the lowest and highest element of the list to sort. The partition function is then called, where the pivot value is the first element in the list. The array is changed such that all elements smaller than the pivot are put before it, and all elements bigger are put after it. Then the quicksort function is called twice. Once for values below the pivot and for values after. Once the base case has been met for each recursive call, the list is sorted. It does not need to be returned as an array (list) in python is a mutable change and is thus changed in its scope.
+\subsection{Legal Move Calculation}
+The algorithm for the calculation of legal moves requires the use of three functions. I have chosen to only show parts of the functions relating to the business logic of legal moves for the Rook class as these functons are fairly large and showing the business logic for calculating legal moves for the Rook class is sufficient to illustrate how the algorithm works.
+\begin{figure}[H]
+	\begin{minted}[breaklines, breakanywhere, tabsize=4, baselinestretch=1.0, fontsize=\footnotesize, linenos]{python}
+	    def calculate_possible_moves(self):
+			"""Calculates all the possible moves for a rook in a certain position."""
+			self.possible_moves = []
+			for i in range(8):
+				if self.position[1] != i:
+					self.possible_moves.append([self.position[0], i])
+				if self.position[0] != i:
+					self.possible_moves.append([i, self.position[1]]
+	\end{minted}
+	\caption{Source code for the functions which calculate the legal moves.}
+	\label{calculate-possible-moves}
+\end{figure}		
+\begin{figure}[H]	
+	\begin{minted}[breaklines, breakanywhere, tabsize=4, baselinestretch=1.0, fontsize=\footnotesize, linenos]{python}				
+ 		def get_attacking_moves(self, piece, board):
+		"""
+		Get all the attacking moves of a piece and return them.
+		The difference between this function and get_legal_moves() is that
+		this shows you what pieces can force a check while the other functions
+		tells you whether the piece can move there.
+		
+		Args:
+		piece (Piece): The piece to calculate the legal moves for.
+		board (board): board used to determine attacking moves.
+		
+		Returns:
+		list: A list of all attacking moves a piece can make.
+		"""
+		legal_moves = []
+		illegal_moves = []
+		illegal_moves.append(piece.position)
+		def get_legal_moves():
+			for move in piece.possible_moves:
+				if move not in illegal_moves:
+					legal_moves.append(move)
+			return legal_moves
+		if isinstance(piece, Rook):
+			for move in piece.possible_moves:
+				# If there is a piece in the way
+				if board[move[0]][move[1]]:
+					# If piece in the way is above
+					if piece.position[0] > move[0]:
+						# Then it cannot influence anything above that piece
+						for i in range(move[0]):
+							if [i, move[1]] not in illegal_moves:
+								illegal_moves.append([i, move[1]])
+					# If piece in the way is below
+					elif piece.position[0] < move[0]:
+						# Then it cannot influence anything below that piece
+						for i in range(7, move[0], -1):
+							if [i, move[1]] not in illegal_moves:
+								illegal_moves.append([i, move[1]])
+					# If piece in the way is to the left
+					elif piece.position[1] > move[1]:
+						# Then it cannot influence anything to the left
+						for i in range(move[1]):
+							if [move[0], i] not in illegal_moves:
+								illegal_moves.append([move[0], i])
+					# If piece in the way is to the right
+					elif piece.position[1] < move[1]:
+						# Then it cannot influence anything to the right
+						for i in range(7, move[1], -1):
+							if [move[0], i] not in illegal_moves:
+								illegal_moves.append([move[0], i])
+			return get_legal_moves()
+	\end{minted}
+	\caption{Source code for the functions which calculate the legal moves.}
+	\label{get-attacking-moves}
+\end{figure}
+\begin{figure}[H]	
+	\begin{minted}[breaklines, breakanywhere, tabsize=4, baselinestretch=1.0, fontsize=\footnotesize, linenos]{python}	
+ 		def calculate_legal_moves(self, piece):
+		"""Gets all the legal moves of a piece and returns them.
+	
+		Args:
+		piece (Piece): The piece to calculate the legal moves for.
+		
+		Returns:
+		list: A list of all the legal moves a piece can make.
+		"""
+		legal_moves = []
+		original_board = copy.deepcopy(self.board) # fixed the moving bug.
+		possible_legal_moves = self.get_attacking_moves(piece, original_board)
+		if not isinstance(piece, Pawn):
+			for move in possible_legal_moves:
+				original_board = copy.deepcopy(self.board)
+				if isinstance(original_board[move[0]][move[1]], Piece) and not isinstance(original_board[move[0]][move[1]], King):
+					if not piece.colour == original_board[move[0]][move[1]].colour:
+						possible_board = self.preliminary_move_piece(original_board, piece.position, move)
+						if not self.is_in_check(piece.colour, possible_board):
+							legal_moves.append(move)
+				elif not isinstance(original_board[move[0]][move[1]], King):
+					possible_board = self.preliminary_move_piece(original_board, piece.position, move)
+					if not self.is_in_check(piece.colour, possible_board):
+						legal_moves.append(move)
+		return legal_moves			
+	\end{minted}
+	\caption{Source code for the functions which calculate the legal moves.}
+	\label{calculate-legal-moves}
+\end{figure}
+In figure~\ref{calculate-possible-moves}, the function uses the position of the Rook to store all the possible moves (assuming there are no other pieces on the board) in the attribute \mintinline{python}/Rook.possible_moves/, akin to figure~\ref{rook-possible-moves}.
+
+In figure~\ref{get-attacking-moves}, attacking moves are generated from the possible moves. This is done by removing any possible moves which are blocked by another piece. This function is called by the function in figure~\ref{calculate-legal-moves} which then takes out any attacking moves which contain a King, a piece of the same colour or that puts the moving player into check.
 \section{User Interface}
 \begin{figure}[H]
 	\label{gui-overview}
@@ -725,7 +832,7 @@ It can be noted that there is an inner function defined at line 9. Instead of de
 	\caption{UI of the main program.}
 \end{figure}
 \begin{enumerate}[label=(\Alph*)]
-	\item This is an $ 8\times8 $ table where input is carried out by clicking a piece then clicking again to a place where the piece is desired to be moved to. Only pieces for the player that is currently moving can be clicked. When it is clicked, all of its legal moves are made yellow, and its cells are made clickable. All the cells of illegal moves are made unclickable, which simplifies validations of moves proposed a user.
+	\item This is an $ 8\times8 $ table where input is carried out by clicking a piece then clicking again to a place where the piece is desired to be moved to. Only pieces for the player that is currently moving can be clicked. When it is clicked, all of its legal moves are made yellow, and its cells are made clickable. All the cells of illegal moves are made unclickable, which simplifies validations of moves proposed by a user.
 	\item This is where the name of the second player (black) is added. To the left is where the name of the first player can be added.
 	\item Pressing this button starts a new game, with the board the same as in figure~\ref{initial-board}.
 	\item Pressing this button results in a dialog being shown, where the user can choose which game to load. If the game file is not found then the user will be prompted to insert the file's path.
