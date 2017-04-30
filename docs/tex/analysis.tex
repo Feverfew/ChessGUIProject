@@ -205,37 +205,23 @@ The objectives of the new system are as follows:
 		\item When program loads, show default chess starting position (a new game).
 		\item Ensure only pieces of the moving player's corresponding colour are clickable.
 		\item When a piece is clicked calculate all of its legal moves.
-		\begin{enumerate}
-			\item For each type of piece calculate where it could possibly go assuming there are no other pieces on the board (i.e. bishops diagonally, rooks horizontally/vertically etc.).
-			\item Taking into account where other pieces are on the board, calculate the possible moves for that piece.
-			\item If we are checking moves for a king, check that castling is possible. If we are checking moves for a pawn, check that en passant is possible.
-			\item Considering the moves that have been calculated, check that each position does not result in the moving player to be in check. 
-			\begin{enumerate}
-				\item If a move results in a player going into check then remove that move from the list of legal moves.
-			\end{enumerate}
-			\item When this calculation is done, cells in the table corresponding to the legal moves must be made clickable so that the player can move the appropriate piece there if they wish.
-			
-		\end{enumerate}
 		\item After a piece is moved perform a check of the game state. If the state has changed (i.e. if a player has been put into check or the game has ended) then inform the user of this via a dialog.
 		\item If the pawn has successfully reached the other side of the board, then open a dialog to let the user decide to what piece the pawn should be converted to.
 	\end{enumerate}
 	\item Allow the editing of player's names via textboxes.
 	\item Allow a game that is currently in play to be saved.
 	\begin{enumerate}
-		\item If there is no file path to save the game to, prompt the user for a path and filename to save a new JSON file to.
-		\item If there is a file path and the JSON file is found, then save the game to the file.
-		\item If there is a file path and the JSON isn't found, then prompt the user for a path and filename to save a new JSON file to.
+		\item Allow user to choose where the game will be saved.
 		\item If a game has been successfully saved, convey this information to the user via a dialog.
-		\item If the player names have not been filled in, then do not save the game and inform the user that they have to fill in the names in the form of a dialog.
-		\item If the game has an ID then save it by replacing the element of the games array with the same name by searching for the appropriate ID with a binary search.
+		\item If the player names have not been filled in, then do not save the game and inform the user that they have to fill in the names.
 	\end{enumerate}
 	\item Allow a user to load a game and to continue to play it.
 	\begin{enumerate}
-		\item If the JSON file is not found then prompt the user to input the path to the game.
+		\item Allow user to choose what file to load a game from.
 		\item Display the list of games in a table to allow the user to know which game to choose.
 		\begin{enumerate}
 			\item Information that must be shown in the table: ID, name of player 1 and 2, winner, moves made, last played.
-			\item Using a quicksort algorithm, allow the user to sort the list of games based on parameters such as ID and the names of players.
+			\item Allow the user to sort the list of games based on parameters such as ID and the names of players.
 		\end{enumerate}
 	\end{enumerate}
 \end{enumerate}
